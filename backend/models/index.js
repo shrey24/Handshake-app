@@ -34,4 +34,23 @@ Object.keys(db).forEach(modelName => {
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
+// Models/tables
+db.student_auth = require('./student_auth')(sequelize, Sequelize);
+db.student_profile = require('./student_profile')(sequelize, Sequelize);
+db.student_education = require('./student_education')(sequelize, Sequelize);
+db.student_experience = require('./student_experience')(sequelize, Sequelize);
+
+// relations
+db.student_profile.hasMany(db.student_education);
+db.student_education.belongsTo(db.student_profile, {
+  foreignKey: 'student_id',
+  onDelete: 'CASCADE'
+});
+
+db.student_profile.hasMany(db.student_experience);
+db.student_experience.belongsTo(db.student_experience, {
+  foreignKey: 'student_id',
+  onDelete: 'CASCADE'
+});
+
 module.exports = db;

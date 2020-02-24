@@ -6,12 +6,14 @@ const app = express(); // create an express app , npx eslint -init
 const bodyParser = require('body-parser'); // require express middleware body-parser
 const session = require('express-session'); // require express session
 const cookieParser = require('cookie-parser');
+const morgan = require('morgan');
 const path = require('path');
 
 const homeRoutes = require('./api/routes/home');
 
 app.use(express.static(path.join(__dirname, '/public'))); // specify the path of static directory
 
+app.use(morgan('dev'));
 // use body parser to parse JSON and urlencoded request bodies
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -31,6 +33,17 @@ app.use(function(req, res, next) {
   res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers');
   res.setHeader('Cache-Control', 'no-cache');
   next();
+});
+
+db.sequelize.sync()
+  .then(() => console.log('Database SYNC: connected'))
+  .catch( e => console.log('Database SYNC ERROR:', e));
+
+app.use((error, req, res, next) => {
+  res.status(err.status || 500);
+  res.json({
+    error: error.message
+  })
 });
 
 app.use('/home', homeRoutes);
