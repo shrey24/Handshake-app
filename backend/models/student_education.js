@@ -2,10 +2,10 @@
 const sequelize = require('sequelize')
 module.exports = (sequelize, DataTypes) => {
   const student_education = sequelize.define('student_education', {
-    student_id : {
-      type: DataTypes.INTEGER,
-      allowNull: false   
-    },
+    // user_id : {
+    //   type: DataTypes.INTEGER,
+    //   allowNull: false   
+    // },
     degree : {
       type: DataTypes.STRING,
     },

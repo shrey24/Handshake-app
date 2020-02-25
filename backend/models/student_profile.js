@@ -3,7 +3,7 @@
 
 module.exports = (sequelize, DataTypes) => {
     const student_profile = sequelize.define('student_profile', {
-        student_id : {
+        user_id : {
             type: DataTypes.INTEGER,
             primaryKey: true,
             allowNull: false,

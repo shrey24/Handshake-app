@@ -1,9 +1,10 @@
 'use strict';
+
 const bcrypt = require('bcrypt');
 
 module.exports = (sequelize, DataTypes) => {
-  const student_auth = sequelize.define('student_auth', {
-    student_id : {
+  const user_auth = sequelize.define('user_auth', {
+    user_id : {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
@@ -17,6 +18,10 @@ module.exports = (sequelize, DataTypes) => {
     },
     password: {
       type: DataTypes.STRING,
+      allowNull: false
+    },
+    user_type: {
+      type: DataTypes.INTEGER,
       allowNull: false
     }
   }, {
@@ -36,5 +41,5 @@ module.exports = (sequelize, DataTypes) => {
   // student_auth.associate = function(models) {
   //   // associations can be defined here
   // };
-  return student_auth;
+  return user_auth;
 };

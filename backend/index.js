@@ -9,7 +9,10 @@ const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
 const path = require('path');
 
+const db = require('./models');
 const homeRoutes = require('./api/routes/home');
+const loginRoutes = require('./api/routes/login');
+const registerRoutes = require('./api/routes/register');
 
 app.use(express.static(path.join(__dirname, '/public'))); // specify the path of static directory
 
@@ -35,7 +38,7 @@ app.use(function(req, res, next) {
   next();
 });
 
-db.sequelize.sync()
+db.sequelize.sync({ force: true })
   .then(() => console.log('Database SYNC: connected'))
   .catch( e => console.log('Database SYNC ERROR:', e));
 
@@ -47,6 +50,8 @@ app.use((error, req, res, next) => {
 });
 
 app.use('/home', homeRoutes);
+app.use('/login', loginRoutes);
+app.use('/register', registerRoutes);
 
 const server = app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);

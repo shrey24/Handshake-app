@@ -1,10 +1,10 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
   const student_experience = sequelize.define('student_experience', {
-    student_id : {
-      type: DataTypes.INTEGER,
-      allowNull: false    
-    },
+    // user_id : {
+    //   type: DataTypes.INTEGER,
+    //   allowNull: false    
+    // },
     company_name : {
       type: DataTypes.STRING,
     },
