@@ -2,17 +2,21 @@ import React, {Component} from 'react';
 import Main from './components/Main'
 import {BrowserRouter, Route} from 'react-router-dom';
 
+import { Provider } from 'react-redux';
+import store from './store/index'
 
 //App Component
 class App extends Component {
   render() {
     return (
-      //Use Browser Router to route to different pages   
-      <div>
-        <BrowserRouter>
-          <Main />
-        </BrowserRouter>
-      </div>
+      <Provider store={store}>
+        {/* Use Browser Router to route to different pages */}
+        <div>
+          <BrowserRouter>
+            <Main />
+          </BrowserRouter>
+        </div>
+      </Provider>
     );
   }
 }

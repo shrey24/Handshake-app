@@ -7,9 +7,7 @@ import  StudentProfile from "./Student/StudentProfile/StudentProfile";
 class Main extends Component {
 
    
-    render(){
-        console.log("main component rendered");
-        
+    render(){        
         return(
             <div>
                 <Route exact path="/" component={Login}/>

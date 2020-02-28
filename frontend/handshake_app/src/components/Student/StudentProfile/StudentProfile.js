@@ -7,9 +7,11 @@ class StudentProfile extends Component {
 
     constructor(props){
         super(props);
+
     }
-    
+
     render() {
+        const career_objective = "Gain experinece and progress with new skills";
         return (
             <div>
                 <NavBar />
@@ -20,17 +22,14 @@ class StudentProfile extends Component {
                             <h2>Profile Pic</h2>
                         </Col>
                         <Col>
-                        <Row>
+                        
                             <Jumbotron>
-                               
+                                <h3>Objective</h3>
+                               {career_objective}
                             </Jumbotron>
-                        </Row> 
-                            <Row>
-                                <EducationSection />
-                            </Row> 
-                            <Row>
-                                <EducationSection />
-                            </Row> 
+                            <EducationSection />
+                            <EducationSection />
+                            
                         </Col>
                     </Row>
                 </Container>                
