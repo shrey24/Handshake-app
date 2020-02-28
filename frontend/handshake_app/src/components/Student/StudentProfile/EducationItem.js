@@ -5,11 +5,6 @@ class EducationItem extends Component {
     constructor(props){
         super(props);
     }
-
-    handleEdit = (itemData) => {
-        console.log("handle edit Education Item: passing:: ", itemData);
-        this.props.handleEdit(itemData);
-    }
     
     render() {
         const {item} = this.props;
@@ -27,7 +22,7 @@ class EducationItem extends Component {
                <CardText>
                    GPA: {item.gpa}
                </CardText>
-               <Button onClick={() => this.handleEdit(item)}>
+               <Button onClick={() => this.props.handleEdit(item)}>
                    Edit
                </Button>
            </Card>

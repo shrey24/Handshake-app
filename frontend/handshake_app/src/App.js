@@ -3,7 +3,7 @@ import Main from './components/Main'
 import {BrowserRouter, Route} from 'react-router-dom';
 
 import { Provider } from 'react-redux';
-import store from './store/index'
+import store from './store'
 
 //App Component
 class App extends Component {

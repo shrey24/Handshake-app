@@ -27,9 +27,7 @@ class StudentProfile extends Component {
                                 <h3>Objective</h3>
                                {career_objective}
                             </Jumbotron>
-                            <EducationSection />
-                            <EducationSection />
-                            
+                            <EducationSection />                            
                         </Col>
                     </Row>
                 </Container>                

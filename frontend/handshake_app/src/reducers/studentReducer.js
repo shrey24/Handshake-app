@@ -3,6 +3,7 @@ import * as actions from '../actions/types';
 const initialState = {
     educationItems : [
         {
+            id:1,
             college_name: "college_name1",
             degree: "Masters",
             major: "Computer Science",
@@ -11,6 +12,7 @@ const initialState = {
             gpa: 4.0
         },
         {
+            id:2,
             college_name: "college_name2",
             degree: "Bachelors",
             major: "Computer Science",

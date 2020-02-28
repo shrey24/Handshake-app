@@ -1,57 +1,49 @@
 import React, { Component } from 'react'
-import { Button, Card, Label, CardTitle, CardSubtitle, CardText, CardBody } from 'reactstrap';
+import { Button } from 'reactstrap';
 import EducationItem from './EducationItem';
+import EducationForm from './EducationForm'
 // import {Flex, Item} from 'react-flex';
 // import 'react-flex/index.css';
+import { connect } from 'react-redux'
+import { getStudentEducations } from "../../../actions/types";
+import propTypes from 'prop-types';
+
 
 // Smart component
-export default class EducationSection extends Component {
+class EducationSection extends Component {
     constructor(props) {
         super(props);
         this.state = {
             addNew : false,
-            items : [
-                {
-                    college_name: "college_name1",
-                    degree: "Masters",
-                    major: "Computer Science",
-                    start_date: 2018,
-                    end_date: 2018,
-                    gpa: 4.0
-                },
-                {
-                    college_name: "college_name2",
-                    degree: "Bachelors",
-                    major: "Computer Science",
-                    start_date: 2018,
-                    end_date: 2018,
-                    gpa: 4.0
-                }
-            ]
+            editItem: null
         }
     }
 
+    componentDidMount(){
+        this.props.getStudentEducations();
+    }
+
     handleAddBtn = (e) => {
-        e.preventDafault();
         this.setState({addNew : true});
     }
 
     setAddNew = (bool) => {
-        this.setState({addNew : bool});
+        this.setState({addNew : bool, editItem:null});
     }
 
     handleEdit = (item) => {
-        console.log("EducationSection handleEdit REDUX");
+        this.setState({editItem: item});
     }
     render() {
-        const items = this.props.items;
+        console.log(this.props);
+        const {educationItems} = this.props.student;
 
-        const newItem = null;
+        let newItem = null;
         if (!this.state.addNew) {
             newItem = <Button 
                         onClick = {this.handleAddBtn}
                         color="green"> Add a new education 
-                    </Button>
+                      </Button>
         } else {
             newItem = <EducationForm setAddNew={this.setAddNew}/>
         }
@@ -60,13 +52,22 @@ export default class EducationSection extends Component {
             <div>
                 <h2> Education: </h2>                
                 {
-                    items.map((item) => {
-                        return (
-                            <EducationItem 
-                                item={item} 
-                                handleEdit = {this.handleEdit}
-                            />                            
-                        );
+                    educationItems.map((item) => {
+                        if(this.state.editItem && this.state.editItem.id === item.id) {
+                            return (
+                                <EducationForm
+                                item={item}
+                                setAddNew={this.setAddNew}
+                                />
+                            )
+                        } else {
+                            return (
+                                <EducationItem 
+                                    item={item} 
+                                    handleEdit = {this.handleEdit}
+                                />                            
+                            );
+                        }
                     })
                 }
                 { newItem }   
@@ -74,3 +75,13 @@ export default class EducationSection extends Component {
         )
     }
 }
+
+EducationSection.prototypes = {
+    getStudentEducations: propTypes.func.isRequired,
+    student: propTypes.object.isRequired
+}
+
+const mapStateToProps = (state) => ({
+    student : state.student
+});
+export default connect(mapStateToProps, {getStudentEducations})(EducationSection);
