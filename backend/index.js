@@ -38,9 +38,9 @@ app.use(function(req, res, next) {
   next();
 });
 
-db.sequelize.sync({ force: true })
-  .then(() => console.log('Database SYNC: connected'))
-  .catch( e => console.log('Database SYNC ERROR:', e));
+// db.sequelize.sync({ force: true })
+//   .then(() => console.log('Database SYNC: connected'))
+//   .catch( e => console.log('Database SYNC ERROR:', e));
 
 app.use((error, req, res, next) => {
   res.status(err.status || 500);

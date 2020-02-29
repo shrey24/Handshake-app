@@ -18,30 +18,53 @@ export default class EducationForm extends Component {
         
         this.handleInput = this.handleInput.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
+        this.onDelete = this.onDelete.bind(this);
     }
 
-    onSubmit(e) {
-        e.preventDefault();
-        console.log("EducationForm call API/update: ", this.state);
-        this.props.setAddNew(false);
-    }
-    
-    onCancel(e) {
-        this.props.setAddNew(false);
-    }
-    handleInput(e) {
-        this.setState({[e.target.name] : e.target.value});  
-    }
     componentDidMount(){
         if(this.props.item) {
             this.setState({isEditMode:true, ...this.props.item});
         }
     }
 
+    onSubmit(e) {
+        e.preventDefault();
+        const {isEditMode, ...eduData } = this.state;
+        if(isEditMode) {
+            console.log("EducationForm call API/UPDATE: ", eduData);
+            this.props.updateItem(eduData);
+            this.props.showForm(false);
+
+        } else {
+            console.log("EducationForm call API/ADD: ", eduData);
+            this.props.addNewItem(eduData);
+            this.props.showForm(false);
+        }        
+    }
+    
+    onCancel(e) {
+        this.props.showForm(false);
+    }
+
+    onDelete(e) {
+        this.props.deleteItem(this.props.item);
+        console.log("calling prop onDelete");
+    }
+
+    handleInput(e) {
+        this.setState({[e.target.name] : e.target.value});  
+    }
+
+
+
+    
+
     render() {  
         // let {id, ...fields} = this.state;
-        let header = null;
+        let header = null, deleteBtn=null;
         if(!this.state.isEditMode) header =  <h5> Add a new Education </h5>;
+        else deleteBtn = <Button onClick={(e) => this.onDelete(e)} >Delete</Button>;
+        
         return (
             
             <div>
@@ -116,8 +139,10 @@ export default class EducationForm extends Component {
                 <Col>
                 <Button onClick={(e) => this.onCancel(e)} >Cancel</Button>
                 </Col>
+                <Col>
+                { deleteBtn }
+                </Col>
                 </Row>
-               
                 
                 
                 </Form> 

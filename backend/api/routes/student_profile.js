@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../../models');
+// const db = require('../../models');
+const db = require('./database');
 
 router.post('/todo', (req, res, next) => {
     console.log(req.body);

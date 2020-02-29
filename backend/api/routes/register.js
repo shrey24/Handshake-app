@@ -1,8 +1,31 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../../models');
+// const db = require('../../models');
 const { user_types } = require('../../config/datatypes');
+const db = require('./database');
 
+// Insert post 1
+// app.get('/addpost1', (req, res) => {
+//     let post = {title:'Post One', body:'This is post number one'};
+//     let sql = 'INSERT INTO posts SET ?';
+//     let query = db.query(sql, post, (err, result) => {
+//         if(err) throw err;
+//         console.log(result);
+//         res.send('Post 1 added...');
+//     });
+// });
+
+router.post('/', (req, res, next) => {
+    console.log(req.body);
+    let InsertSql = 'INSERT INTO user_auth SET ?';
+    // const student = {
+    //     user_id:
+    //     email:
+    //     password:
+    //     user_type:
+    // }
+});
+/*
 router.post('/', (req, res, next) => {
     console.log(req.body);
     const { email, password, type } = req.body;
@@ -43,5 +66,5 @@ router.post('/', (req, res, next) => {
     })
     .catch((err) => res.send("error, user_auth NOT created. you sent: " + err));
 });
-
+*/
 module.exports = router;

@@ -5,7 +5,10 @@ import EducationForm from './EducationForm'
 // import {Flex, Item} from 'react-flex';
 // import 'react-flex/index.css';
 import { connect } from 'react-redux'
-import { getStudentEducations } from "../../../actions/types";
+import { getStudentEducations, 
+        deleteStudentEducations,
+        addStudentEducations,
+        updateStudentEducations } from "../../../actions/types";
 import propTypes from 'prop-types';
 
 
@@ -27,8 +30,23 @@ class EducationSection extends Component {
         this.setState({addNew : true});
     }
 
-    setAddNew = (bool) => {
+    showForm = (bool) => {
         this.setState({addNew : bool, editItem:null});
+    }
+
+    deleteItem = (item) => {
+        console.log("delete the item: ", item);
+        this.props.deleteStudentEducations(item.id);
+    }
+
+    addNewItem = (item) => {
+        console.log("Add the item: ", item);
+        this.props.addStudentEducations(item);
+    }
+
+    updateItem = (item) => {
+        console.log("Add the item: ", item);
+        this.props.updateStudentEducations(item);
     }
 
     handleEdit = (item) => {
@@ -45,7 +63,11 @@ class EducationSection extends Component {
                         color="green"> Add a new education 
                       </Button>
         } else {
-            newItem = <EducationForm setAddNew={this.setAddNew}/>
+            newItem = <EducationForm 
+                        showForm={this.showForm}
+                        deleteItem={this.deleteItem}
+                        addNewItem={this.addNewItem}
+                        />
         }
 
         return (
@@ -57,7 +79,10 @@ class EducationSection extends Component {
                             return (
                                 <EducationForm
                                 item={item}
-                                setAddNew={this.setAddNew}
+                                showForm={this.showForm}
+                                deleteItem={this.deleteItem}
+                                addNewItem={this.addNewItem}
+                                updateItem= {this.updateItem}
                                 />
                             )
                         } else {
@@ -78,10 +103,15 @@ class EducationSection extends Component {
 
 EducationSection.prototypes = {
     getStudentEducations: propTypes.func.isRequired,
+    deleteStudentEducations: propTypes.func.isRequired,
     student: propTypes.object.isRequired
 }
 
 const mapStateToProps = (state) => ({
     student : state.student
 });
-export default connect(mapStateToProps, {getStudentEducations})(EducationSection);
+export default connect(mapStateToProps, 
+    {getStudentEducations, 
+    deleteStudentEducations,
+    addStudentEducations,
+    updateStudentEducations})(EducationSection);

@@ -27,6 +27,32 @@ export default function(state = initialState, action) {
     switch (action.type) {
         case actions.GET_STUDENT_EDUCATIONS:
             return Object.assign({}, state);
+
+        case actions.DELETE_STUDENT_EDUCATION:
+            return Object.assign({}, 
+                state, 
+                {educationItems: state.educationItems.filter(item => item.id !== action.payload)}
+                );
+
+        case actions.ADD_STUDENT_EDUCATION:
+            return Object.assign({}, 
+                state, 
+                {educationItems: state.educationItems.concat(action.payload)}
+                );
+
+        case actions.UPDATE_STUDENT_EDUCATION:
+            return Object.assign({}, 
+                state, 
+                {
+                    educationItems: state.educationItems.map((item) => {
+                        if(action.payload.id === item.id) {
+                            return action.payload;
+                        } else {
+                            return item;
+                        }
+                    })
+                }
+                );
         
         default:
             return state;
