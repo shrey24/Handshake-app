@@ -15,10 +15,10 @@ router.post('/student', (req, res, next) => {
             if(!user){
                 msg = "Authentication Failed: No such user";
                 res.header(401).json({ error : msg });
-            } else if(user.type !== user_types['student']) {
+            } else if(user.user_type !== user_types['student']) {
                 msg = "Authentication Failed: user type in not student";
                 res.header(401).json({ error : msg });
-            } else if (!user.validPassword(password)) {
+            } else if (!db.user_auth.validPassword(password)) {
                 msg = "Authentication Failed: incorrect password";
                 res.header(401).json({ error : msg});
             } else { //success
