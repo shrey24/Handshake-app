@@ -10,9 +10,9 @@ const morgan = require('morgan');
 const path = require('path');
 
 const db = require('./models');
-const homeRoutes = require('./api/routes/home');
-const loginRoutes = require('./api/routes/login');
-const registerRoutes = require('./api/routes/register');
+const homeRoutes = require('./routes/home');
+const loginRoutes = require('./routes/login');
+const registerRoutes = require('./routes/register');
 
 app.use(express.static(path.join(__dirname, '/public'))); // specify the path of static directory
 
@@ -38,9 +38,9 @@ app.use(function(req, res, next) {
   next();
 });
 
-db.sequelize.sync({ force: true })
-  .then(() => console.log('Database SYNC: connected'))
-  .catch( e => console.log('Database SYNC ERROR:', e));
+// db.sequelize.sync({ force: true })
+//   .then(() => console.log('Database SYNC: connected'))
+//   .catch( e => console.log('Database SYNC ERROR:', e));
 
 app.use((error, req, res, next) => {
   res.status(err.status || 500);

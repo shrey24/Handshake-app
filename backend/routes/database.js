@@ -6,6 +6,7 @@ const pool = mysql.createPool({
     user : "root",
     password: "Myroot@20",
     database: "handshake_sql", 
+    insecureAuth : true,
     debug: false,
     multipleStatements: true,
     connectionLimit: 100

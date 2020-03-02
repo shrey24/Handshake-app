@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../../models');
+const db = require('../models');
 
 router.get('/todo', (req, res, next) => {
     db.Todo.findAll().then((todo) => res.send(todo));

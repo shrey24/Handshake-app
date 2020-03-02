@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../../models');
-const { user_types } = require('../../config/datatypes');
+const db = require('../models');
+const { user_types } = require('../config/datatypes');
 
 
 // response: email, password
