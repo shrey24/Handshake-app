@@ -1,8 +1,16 @@
 const express = require('express');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const router = express.Router();
 // const db = require('../models');
 const { user_types } = require('../config/datatypes');
 const db = require('./database');
+
+
+const hashPassword = (password) => {
+    const salt = bcrypt.genSaltSync();
+    return bcrypt.hashSync(password, salt);
+}
 
 router.post('/student', (req, res, next) => {
     /*
@@ -11,14 +19,19 @@ router.post('/student', (req, res, next) => {
     console.log(req.body);
     const { email, password, curr_university, curr_major, edu_end } = req.body;
     const user_type = user_types['student'];
-    let user_auth = { email, password, user_type };
+    let user_auth = { 
+                        email, 
+                        password: hashPassword(password), 
+                        user_type
+                    };
+
     let InsertSql = ' INSERT INTO user_auth SET ?; ';
     let selectSql= ` SELECT * FROM user_auth WHERE email = ?;`;
 
     db.query(selectSql, [email], (err, result) => {
         if(err) {
             console.log(err);
-            throw err;
+            res.status(500).send(err);
         }
         console.log(result);
         if (result.length !== 0) {
@@ -35,14 +48,27 @@ router.post('/student', (req, res, next) => {
                     let user_id = result['insertId'];
                     let student_profile_data = { user_id, email, curr_university, curr_major, edu_end };
                     db.query(insertStudentProfileSql, 
-                        student_profile_data, (err, result) => {
+                        student_profile_data, (err, results) => {
                             if (err) {
                                 res.status(500).send(err);
                                 console.log(err);
                                 return;    
                             }
-                            console.log(result);
-                            res.status(200).json({'user_Id' : result['insertId']});
+                            console.log(results);
+
+                            const token = jwt.sign({
+                                email,
+                                user_id : results['insertId'],
+                                user_type : user_type
+                                },
+                                process.env.JWT_KEY,
+                                { expiresIn: '1h' }
+                                );
+                            //Sucess, send a jwt token back
+                            res.status(200).json({
+                                'msg': 'new student created',
+                                token
+                            });
                         });
                 }
             });

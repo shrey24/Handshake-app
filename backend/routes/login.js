@@ -1,10 +1,54 @@
 const express = require('express');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const router = express.Router();
-const db = require('../models');
+// const db = require('../models');
+const db = require('./database');
 const { user_types } = require('../config/datatypes');
 
+const isValidPassword = (chk_password, db_password_hash) => {
+    return bcrypt.compareSync(chk_password, db_password_hash);
+}
+ 
+router.post('/student', (req, res, next) => {
+    const {email, password} = req.body;
+    let queryUser = 'SELECT * FROM user_auth WHERE ?';
+    db.query(queryUser,  [email] , (err, results) => {
+        if(err) {
+            console.log(err);
+            res.status(500).send(err);
+        } else {
+            if(results.length > 1) { // check password
+                if(isValidPassword(password, results[0].password) && 
+                results[0].user_type === user_types['student']) {
+                    console.log(results[0]);
+                    const token = jwt.sign({
+                            email,
+                            user_id : results[0].user_id,
+                            user_type : results[0].user_type
+                            }, 
+                            process.env.JWT_KEY,
+                            { expiresIn: '1h' }
+                        );
+                    //Sucess, send a jwt token back
+                    res.status(200).josn({
+                        'msg': 'authentication successful',
+                        token
+                    });
+
+                } else {
+                    res.status(401).send('Unauthorized');
+                    return;
+                }
+            } else {
+                res.status(401).send('No such user');
+            }
+        }
+    });
+});
 
 // response: email, password
+/*
 router.post('/student', (req, res, next) => {
     const {email, password} = req.body;
     let msg = "";
@@ -32,5 +76,7 @@ router.post('/student', (req, res, next) => {
             res.header(401).json({ error : e});
         });
 });
+*/
+
 
 module.exports = router;

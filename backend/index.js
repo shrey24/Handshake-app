@@ -1,6 +1,9 @@
 // import express module
 const express = require('express');
-const PORT = 3001;
+const dotenv = require('dotenv');
+dotenv.config();
+
+const PORT =  process.env.PORT;
 
 const app = express(); // create an express app , npx eslint -init
 const bodyParser = require('body-parser'); // require express middleware body-parser
@@ -13,6 +16,7 @@ const db = require('./models');
 const homeRoutes = require('./routes/home');
 const loginRoutes = require('./routes/login');
 const registerRoutes = require('./routes/register');
+const studentProfileRoutes = require('./routes/student_profile');
 
 app.use(express.static(path.join(__dirname, '/public'))); // specify the path of static directory
 
@@ -22,12 +26,13 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 // use cookie parser to parse request headers
 app.use(cookieParser());
+
 // use session to store user data between HTTP requests
-app.use(session({
-  secret: 'cmpe_273_secure_string',
-  resave: false,
-  saveUninitialized: true,
-}));
+// app.use(session({
+//   secret: 'cmpe_273_secure_string',
+//   resave: false,
+//   saveUninitialized: true,
+// }));
 //Allow Access Control
 app.use(function(req, res, next) {
   res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
@@ -52,6 +57,7 @@ app.use((error, req, res, next) => {
 app.use('/home', homeRoutes);
 app.use('/login', loginRoutes);
 app.use('/register', registerRoutes);
+app.use('/student-profile', studentProfileRoutes);
 
 const server = app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
