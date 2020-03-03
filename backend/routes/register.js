@@ -38,12 +38,13 @@ router.post('/student', (req, res, next) => {
             res.status(200).json({
                 error: `user ${email} already exists`
             });
-        } else { // insert new user
+        } else { // insert new user to user_auth table
             db.query(InsertSql, user_auth, (err, result, fields) => {
                 if (err) {
                     res.status(500).send(err);
                     console.log(err);      
-                } else {                    
+                } else {  
+                    // insert new student to student_profile table                  
                     let insertStudentProfileSql = ' INSERT INTO student_profile SET ?; ';
                     let user_id = result['insertId'];
                     let student_profile_data = { user_id, email, curr_university, curr_major, edu_end };
