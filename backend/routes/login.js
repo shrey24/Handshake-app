@@ -12,13 +12,14 @@ const isValidPassword = (chk_password, db_password_hash) => {
  
 router.post('/student', (req, res, next) => {
     const {email, password} = req.body;
-    let queryUser = 'SELECT * FROM user_auth WHERE ?';
+    let queryUser = 'SELECT * FROM user_auth WHERE email = ?';
     db.query(queryUser,  [email] , (err, results) => {
         if(err) {
             console.log(err);
             res.status(500).send(err);
         } else {
-            if(results.length > 1) { // check password
+            console.log(results);
+            if(results.length > 0) { // check password
                 if(isValidPassword(password, results[0].password) && 
                 results[0].user_type === user_types['student']) {
                     console.log(results[0]);
@@ -31,7 +32,7 @@ router.post('/student', (req, res, next) => {
                             { expiresIn: '1h' }
                         );
                     //Sucess, send a jwt token back
-                    res.status(200).josn({
+                    res.status(200).json({
                         'msg': 'authentication successful',
                         token
                     });
