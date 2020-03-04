@@ -1,7 +1,8 @@
-import React, { Component } from 'react'
-import NavBar from '../NavBar'
-import EducationSection from './EducationSection'
-import { Container, Row, Col, Jumbotron } from 'reactstrap';
+import React, { Component } from 'react';
+import NavBar from '../NavBar';
+import EducationSection from './EducationSection';
+import ProfileSection from './ProfileSection';
+import { Container, Row, Col, Jumbotron, Card, CardBody } from 'reactstrap';
 
 class StudentProfile extends Component {
 
@@ -12,22 +13,37 @@ class StudentProfile extends Component {
 
     render() {
         const career_objective = "Gain experinece and progress with new skills";
+        const prof = {
+            name: "Shrey Patel",
+            curr_major : "CMPE",
+            
+            edu_end :2020
+        };
+
         return (
+            
             <div>
                 <NavBar />
-                <h1> Student Profile </h1>
                 <Container>
                     <Row>
-                        <Col>
-                            <h2>Profile Pic</h2>
+                        <Col sm={4}>
+                            <ProfileSection data = { prof }/>
                         </Col>
-                        <Col>
-                        
-                            <Jumbotron>
+                        <Col sm={8}>
+                        <Container>
+                            <Card>
+                                <CardBody>
+                                
                                 <h3>Objective</h3>
                                {career_objective}
-                            </Jumbotron>
-                            <EducationSection />                            
+                                
+                                </CardBody>
+                            
+                            </Card>
+                       
+                            <EducationSection />   
+                        </Container>
+                                                    
                         </Col>
                     </Row>
                 </Container>                

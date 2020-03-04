@@ -76,6 +76,19 @@ router.put('/education/:id', checkAuth, (req, res) => {
     });
 });
 
+router.delete('/education/:id', checkAuth, (req, res) => {
+    //  TODO check same user session
+    let deleteEduSql = 'DELETE FROM student_education WHERE id = ? AND user_id = ?;';
+    const id = req.params.id;
+    db.query(deleteEduSql, [id, req.jwtData.user_id], (err, result) => {
+        if(err) res.status(500).send(err);
+        else {
+            res.status(200).json({ msg: 'success', result: result });
+        }
+    });
+});
+
+
 // experience section
 router.post('/experience', checkAuth, (req, res) => {
     const { company_name, title, location, start_date, end_date, work_desc } = req.body;
@@ -98,6 +111,18 @@ router.put('/experience/:id', checkAuth, (req, res) => {
     console.log(`update data for user id: ${id}`);
     console.log('data: ', data);    
     db.query(updateEduSql, [data, id, req.jwtData.user_id], (err, result) => {
+        if(err) res.status(500).send(err);
+        else {
+            res.status(200).json({ msg: 'success', result: result });
+        }
+    });
+});
+
+router.delete('/experience/:id', checkAuth, (req, res) => {
+    //  TODO check same user session
+    updateEduSql = 'DELETE FROM student_experience WHERE id = ? AND user_id = ?;';
+    const id = req.params.id;
+    db.query(updateEduSql, [id, req.jwtData.user_id], (err, result) => {
         if(err) res.status(500).send(err);
         else {
             res.status(200).json({ msg: 'success', result: result });

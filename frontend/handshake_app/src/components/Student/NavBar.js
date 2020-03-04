@@ -38,8 +38,8 @@ class NavBar extends Component {
         //   );
 
         return(
-          <Container>
-            <Navbar color="light" light expand="md">
+          <Container fluid="true">
+            <Navbar color="light" light expand="md" sticky="top">
               <NavbarBrand> Handshake </NavbarBrand>
               
               <Nav className="mr-auto" navbar>

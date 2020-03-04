@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Button, Label, Form, FormGroup, Input, Container, Col, Row } from 'reactstrap';
+import { Button, Label, Form, FormGroup, Input, Container, Col, Row, CardText } from 'reactstrap';
 
 
 export default class EducationForm extends Component {
@@ -147,6 +147,7 @@ export default class EducationForm extends Component {
                 
                 </Form> 
                 </Container>
+                
             </div>
         )
     }

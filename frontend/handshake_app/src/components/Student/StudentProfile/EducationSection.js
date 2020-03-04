@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
-import { Button } from 'reactstrap';
+import { Button, Card, CardTitle, CardBody } from 'reactstrap';
 import EducationItem from './EducationItem';
-import EducationForm from './EducationForm'
+import EducationForm from './EducationForm';
 // import {Flex, Item} from 'react-flex';
 // import 'react-flex/index.css';
 import { connect } from 'react-redux'
@@ -72,7 +72,12 @@ class EducationSection extends Component {
 
         return (
             <div>
-                <h2> Education: </h2>                
+                
+                <Card >
+                <CardBody>                
+                <CardTitle>
+                    <h3> Education </h3>
+                </CardTitle>
                 {
                     educationItems.map((item) => {
                         if(this.state.editItem && this.state.editItem.id === item.id) {
@@ -95,7 +100,9 @@ class EducationSection extends Component {
                         }
                     })
                 }
-                { newItem }   
+                { newItem }  
+                </CardBody>
+                </Card> 
             </div>
         )
     }
