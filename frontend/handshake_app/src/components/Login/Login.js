@@ -1,5 +1,6 @@
 // import { Button, Grid, TextField, Paper, Container, Typography } from '@material-ui/core';
 import { Button, Form, FormGroup, Label, Input, FormText } from 'reactstrap';
+import { Row, Col, Container } from 'react-bootstrap';
 import React, { Component } from 'react'
 import axios from 'axios';
 import cookie from 'react-cookies';
@@ -53,9 +54,18 @@ handleInput(e) {
 render() {
     const errBox = (this.state.error != null) ? <ErrorBox message={this.state.error}/>:null;
     return (
-        <div className="row ">
+        
+
+        <Container fluid={true}>
+        <Row sm={10}>
+        <Col sm={5} style={{background : '#1569e0', color: '#fff'  }}>
+        <Container fluid='true' >
+            <h1>Welcome to handshake</h1>
+        </Container>
+        </Col>
+        <Col  sm={5}>
+        <Container fluid={false}>
             {errBox}
-            <div className="col-md-4 col-md-offset-4">
             <Form onSubmit={this.onSubmit}>
                 <h2> Student Sign In </h2>
             <FormGroup>
@@ -73,10 +83,15 @@ render() {
             </FormGroup>
             <Button onClick={this.onSubmit}>Submit</Button>
             </Form> 
+        </Container>
+        
 
-            </div>
+        </Col>
            
-        </div>
+        </Row>
+        
+        </Container>
+     
             
     );
   }
