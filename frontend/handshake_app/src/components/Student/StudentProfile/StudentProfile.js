@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import NavBar from '../NavBar';
+import NavBar from '../../NavBar';
 import EducationSection from './EducationSection';
 import ProfileSection from './ProfileSection';
 import { Container, Row, Col, Jumbotron, Card, CardBody } from 'reactstrap';

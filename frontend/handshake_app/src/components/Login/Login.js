@@ -9,6 +9,7 @@ import ErrorBox from "./ErrorBox";
 import { connect } from "react-redux";
 import { setAlert } from '../../actions/alert';
 import propTypes from 'prop-types';
+import AlertComp from '../Alert'
 
 class Login extends Component {
 constructor(props){
@@ -61,6 +62,7 @@ render() {
     return (
         
 
+
         <Container fluid={true}>
         <Row sm={10}>
         <Col sm={5} style={{background : '#1569e0', color: '#fff'  }}>
@@ -71,6 +73,7 @@ render() {
         <Col  sm={5}>
         <Container fluid={false}>
             {errBox}
+            <AlertComp />
             <Form onSubmit={this.onSubmit}>
                 <h2> Student Sign In </h2>
             <FormGroup>
@@ -96,6 +99,7 @@ render() {
         </Row>
         
         </Container>
+
      
             
     );
