@@ -6,20 +6,24 @@ import axios from 'axios';
 import cookie from 'react-cookies';
 import {Redirect} from 'react-router';
 import ErrorBox from "./ErrorBox";
+import { connect } from "react-redux";
+import { setAlert } from '../../actions/alert';
+import propTypes from 'prop-types';
 
 class Login extends Component {
 constructor(props){
   super(props);
+  console.log("LOGIN PROPS: ", props);
   this.state={
   email:'',
   password:'',
   error: null
   }
   this.handleInput = this.handleInput.bind(this);
-  this.onSubmit = this.onSubmit.bind(this);
+//   this.onSubmit = this.onSubmit.bind(this);
 }
 
-onSubmit(e) {
+onSubmit = (e) => {
     e.preventDefault();
         const data = {
             email : this.state.email,
@@ -30,7 +34,7 @@ onSubmit(e) {
         console.log('sending data to POST/login: ', data);
         
         //make a post request with the user data
-        axios.post('http://localhost:3001/login', data)
+        axios.post('http://localhost:3001/login/student', data)
             .then(response => {
                 console.log("Status Code : ",response.status);
                 if(response.status === 200){
@@ -40,10 +44,11 @@ onSubmit(e) {
                 }
             })
             .catch((err) => {
-                console.log(err);
-                this.setState({
-                    error : 'Invalid User Name or password'
-                });
+                console.log('ERR /login/student', err);
+                this.props.setAlert('Invalid User Name or password', 'danger');
+                // this.setState({
+                //     error : 'Invalid User Name or password'
+                // });
             });
 }
 
@@ -97,4 +102,8 @@ render() {
   }
 }
 
-export default Login;
+Login.prototypes = {
+    setAlert: propTypes.func.isRequired,
+}
+
+export default connect(null, {setAlert})(Login);

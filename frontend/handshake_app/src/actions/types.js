@@ -3,6 +3,9 @@ export const ADD_STUDENT_EDUCATION = 'ADD_STUDENT_EDUCATION';
 export const DELETE_STUDENT_EDUCATION = 'DELETE_STUDENT_EDUCATION';
 export const UPDATE_STUDENT_EDUCATION = 'UPDATE_STUDENT_EDUCATION';
 
+export const SET_ALERT = 'SET_ALERT';
+export const REMOVE_ALERT = 'SET_ALERT';
+
 export const getStudentEducations = () => {
     return {
         type: GET_STUDENT_EDUCATIONS
