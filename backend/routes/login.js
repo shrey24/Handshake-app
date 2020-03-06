@@ -3,13 +3,39 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
 // const db = require('../models');
+const checkAuth = require('./check_auth'); // middleware
 const db = require('./database');
 const { user_types } = require('../config/datatypes');
 
 const isValidPassword = (chk_password, db_password_hash) => {
     return bcrypt.compareSync(chk_password, db_password_hash);
 }
- 
+
+// API: GET /login
+// used to get the user data if authenticated
+router.get('/', checkAuth, (req, res) => {
+    let queryUser = 'SELECT * FROM user_auth WHERE user_id = ?';
+    // query user_auth table with jwt data to check if the jwt token is still valid
+    db.query(queryUser, [req.jwtData.user_id], (err, results) => {
+        if (err) {
+            console.log(err);
+            res.status(500).send(err);
+        } else { 
+            if(results.length > 0) {
+                // jwtData is valid (token authorized): send user data
+                res.json({
+                    user_id: req.jwtData.user_id,
+                    email: req.jwtData.email,
+                    user_type: req.jwtData.user_type
+                });
+            } else {  // jwtData is invalid
+                res.status(401).send('Unauthorized');
+            }
+        }
+    });
+});
+
+// login student - return jwt
 router.post('/student', (req, res, next) => {
     const {email, password} = req.body;
     let queryUser = 'SELECT * FROM user_auth WHERE email = ?';
@@ -26,7 +52,7 @@ router.post('/student', (req, res, next) => {
                     const token = jwt.sign({
                             email,
                             user_id : results[0].user_id,
-                            user_type : results[0].user_type
+                            user_type : 'student'
                             }, 
                             process.env.JWT_KEY,
                             { expiresIn: '1h' }

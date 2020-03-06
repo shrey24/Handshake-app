@@ -5,11 +5,13 @@ import React, { Component } from 'react'
 import axios from 'axios';
 import cookie from 'react-cookies';
 import {Redirect} from 'react-router';
+import { Link } from 'react-router-dom';
 import ErrorBox from "./ErrorBox";
 import { connect } from "react-redux";
 import { setAlert } from '../../actions/alert';
 import propTypes from 'prop-types';
 import AlertComp from '../Alert'
+import { loginUser } from '../../actions/auth';
 
 class Login extends Component {
 constructor(props){
@@ -24,33 +26,29 @@ constructor(props){
 //   this.onSubmit = this.onSubmit.bind(this);
 }
 
-onSubmit = (e) => {
+onSubmit = async (e, user_type) => {
     e.preventDefault();
-        const data = {
-            email : this.state.email,
-            password : this.state.password
-        }
-        //set the with credentials to true
-        axios.defaults.withCredentials = true;
-        console.log('sending data to POST/login: ', data);
-        
-        //make a post request with the user data
-        axios.post('http://localhost:3001/login/student', data)
-            .then(response => {
-                console.log("Status Code : ",response.status);
-                if(response.status === 200){
-                    this.setState({
-                        error : null
-                    });
-                }
-            })
-            .catch((err) => {
-                console.log('ERR /login/student', err);
-                this.props.setAlert('Invalid User Name or password', 'danger');
-                // this.setState({
-                //     error : 'Invalid User Name or password'
-                // });
-            });
+    const data = {
+        email : this.state.email,
+        password : this.state.password
+    }
+    //set the with credentials to true
+    axios.defaults.withCredentials = true;
+    let loginApi = null
+    if(user_type === 'student') {
+        loginApi = 'http://localhost:3001/login/student';
+    } else {
+        loginApi = 'http://localhost:3001/login/company';
+    }
+    console.log(`sending data to ${loginApi} `, data);
+    try {
+        const res = await axios.post(loginApi, data);
+        console.log("Status Code : ",res.status);
+        console.log("Login Success", res);
+    } catch (error) {
+        console.log("Login Error: ", error.response );
+        this.props.setAlert('Invalid username or password', 'danger');               
+    }
 }
 
 handleInput(e) {
@@ -70,8 +68,13 @@ render() {
             <h1>Welcome to handshake</h1>
         </Container>
         </Col>
+
         <Col  sm={5}>
+
         <Container fluid={false}>
+            <p>
+                <Link to='/register'> Dont have an account? Sign up</Link>
+            </p>
             {errBox}
             <AlertComp />
             <Form onSubmit={this.onSubmit}>
@@ -89,7 +92,7 @@ render() {
                 onChange={this.handleInput}
             type="password" name="password" id="password" placeholder="password" />
             </FormGroup>
-            <Button onClick={this.onSubmit}>Submit</Button>
+            <Button onClick={(e) => this.onSubmit(e, 'student')}>Submit</Button>
             </Form> 
         </Container>
         
@@ -99,8 +102,6 @@ render() {
         </Row>
         
         </Container>
-
-     
             
     );
   }
@@ -108,6 +109,7 @@ render() {
 
 Login.prototypes = {
     setAlert: propTypes.func.isRequired,
+    loginUser: PropTypes.func.isRequired,
 }
 
-export default connect(null, {setAlert})(Login);
+export default connect(null, { setAlert, loginUser })(Login);

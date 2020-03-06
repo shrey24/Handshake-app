@@ -1,4 +1,6 @@
 import React, { useState } from 'react'
+import axios from 'axios';
+import { registerStudent } from '../../api/api';
 import { Button, Label, Form, FormGroup, Input, Container, Col, Row, CardText } from 'reactstrap';
 
 const StudentRegister = () => {
@@ -15,12 +17,41 @@ const StudentRegister = () => {
     });
 
     const handleInput = e => {
-        setStdFormData({...stdFormData, [e.target.name]: e.target.value});
+        let val = e.target.value;
+        if(e.target.type === 'number') {
+            val = Number(e.target.value);
+        } 
+        setStdFormData({...stdFormData, [e.target.name]: val});
     };
 
-    const onSubmit = (e) => {
+    const onSubmit = async (e) => {
         e.preventDefault();
         console.log('send data to /student: ', stdFormData);
+
+        try {
+            const config = {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }
+
+            const res = await axios.post('/register/student', 
+                JSON.stringify(stdFormData),
+                config
+            );
+            if (!res.data.error) {
+                console.log("User Created!! ", res);
+            } else {
+                console.log(res.data.error);
+            }
+            
+        } catch (error) {
+            console.log(error);                        
+        }
+
+        // const token = res.data.token;
+        //             console.log("TOKEN: ", token);
+        //             localStorage.setItem('jwtToken', token);
     }
 
     return (

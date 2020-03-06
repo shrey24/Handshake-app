@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import StudentRegister from "./StudentRegister";
 import CompanyRegister from "./CompanyRegister";
+import { Link } from 'react-router-dom';
 
 class Register extends Component {
     constructor(props) {
@@ -21,11 +22,13 @@ class Register extends Component {
         let renderForm = (this.state.type === 'student') ? <StudentRegister /> : <CompanyRegister />;
         return (
             <div>
-                <span onClick={this.handleChangeUserType}> 
-                Not a {this.state.type} ? Click here 
-                </span>
+                <Link to='/login'> Already have an account? Sign in</Link>
                 
+                {/* <span onClick={this.handleChangeUserType}> 
+                Not a {this.state.type} ? Click here 
+                </span> */}
                 {renderForm}
+                <Link to='#' onClick={this.handleChangeUserType}>  Not a {this.state.type} ? Click here </Link>
             </div>
         );
     }
