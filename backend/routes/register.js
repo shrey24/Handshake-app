@@ -12,7 +12,8 @@ const hashPassword = (password) => {
     return bcrypt.hashSync(password, salt);
 }
 
-router.post('/student', (req, res, next) => {
+// Post: /register/student
+router.post('/student', (req, res) => {
     /*
         req: college, major, edu_end, name, email, password
     */
@@ -35,7 +36,7 @@ router.post('/student', (req, res, next) => {
         }
         console.log(result);
         if (result.length !== 0) {
-            res.status(200).json({
+            res.status(500).json({
                 error: `user ${email} already exists`
             });
         } else { // insert new user to user_auth table
@@ -59,8 +60,8 @@ router.post('/student', (req, res, next) => {
 
                             const token = jwt.sign({
                                 email,
-                                user_id : results['insertId'],
-                                user_type : user_type
+                                user_id : user_id,
+                                user_type : 'student'
                                 },
                                 process.env.JWT_KEY,
                                 { expiresIn: '1h' }
@@ -68,7 +69,12 @@ router.post('/student', (req, res, next) => {
                             //Sucess, send a jwt token back
                             res.status(200).json({
                                 'msg': 'new student created',
-                                token
+                                token,
+                                user: {
+                                    email,
+                                    user_id : user_id,
+                                    user_type : 'student'
+                                }
                             });
                         });
                 }

@@ -16,7 +16,7 @@ export async function setAuthTokenToHeaders(token) {
     }
 };
 
-// LOAD user and check auth
+// LOAD user and check auth using saved token
 export const loadUser = () => async dispatch => {
     if(localStorage.token) {
         setAuthTokenToHeaders(localStorage.token);
@@ -36,7 +36,7 @@ export const loadUser = () => async dispatch => {
     }
 };
 
-// login user
+// login user to get user object and token
 export const loginUser = (email, password, user_type) => async dispatch => {
     const loginRoute = (user_type === 'student') ? '/login/student': '/login/company';
 
@@ -71,6 +71,37 @@ export const loginUser = (email, password, user_type) => async dispatch => {
     }
 };
 
+// Register new user, and set redux user state if success
+export const registerUser = (userFormData, user_type) => async dispatch => {
+    const registerRoute = (user_type === 'student') ? '/register/student': '/register/company';
+
+    const config = {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    const body = JSON.stringify(userFormData);
+    try {
+        axios.defaults.withCredentials = true;
+        const res = await axios.post(registerRoute, body, config);
+
+        console.log('Register success: dispatching payload: ', res.data);
+        //login success
+        dispatch({
+            type: REGISTER_SUCCESS,
+            payload: res.data
+        });
+        dispatch(loadUser());
+
+    } catch (err) {
+        console.log(`/POST ${registerRoute} error:`);
+        console.log('actions/auth/registerUser', err);
+        dispatch(setAlert(err.body.error, 'danger'));
+        dispatch({
+            type: AUTH_ERROR
+        });
+    }
+};
 
 // register user
 // export const register

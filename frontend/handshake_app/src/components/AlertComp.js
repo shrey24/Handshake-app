@@ -10,7 +10,6 @@ const AlertComp = ({ alerts }) =>
         <Alert key={alert.id} color={alert.alertType}>
             {alert.msg}
         </Alert>
-
     ));
 
 AlertComp.propTypes = {

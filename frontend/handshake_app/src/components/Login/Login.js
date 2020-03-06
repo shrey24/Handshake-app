@@ -10,7 +10,7 @@ import ErrorBox from "./ErrorBox";
 import { connect } from "react-redux";
 import { setAlert } from '../../actions/alert';
 import propTypes from 'prop-types';
-import AlertComp from '../Alert'
+import AlertComp from '../AlertComp'
 import { loginUser } from '../../actions/auth';
 
 class Login extends Component {
@@ -36,18 +36,7 @@ handleInput = (e) => {
     this.setState({[e.target.name] : e.target.value});  
 };
 
-componentDidMount() {
-    if(this.props.isAuthenticated) {
-        if(this.props.user.user_type === 'student')
-            return <Redirect to='/student/profile' />;
-        else {
-            console.log('USER already logged in.. REDIRECT TO Company...');
-        }
-    }
-}
-
 render() {
-    
     // Redirect if logged in
     if(this.props.isAuthenticated) {
         if(this.props.user.user_type === 'student')
@@ -104,7 +93,7 @@ render() {
   }
 }
 
-Login.prototypes = {
+Login.propTypes = {
     setAlert: propTypes.func.isRequired,
     loginUser: propTypes.func.isRequired,
     isAuthenticated: propTypes.bool,

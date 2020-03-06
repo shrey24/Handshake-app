@@ -1,9 +1,13 @@
 import React, { useState } from 'react'
 import axios from 'axios';
-import { registerStudent } from '../../api/api';
+import { connect } from 'react-redux';
+import AlertComp from '../AlertComp';
+import { setAlert } from '../../actions/alert';
+import { registerUser } from '../../actions/auth';
+import propTypes from 'prop-types';
 import { Button, Label, Form, FormGroup, Input, Container, Col, Row, CardText } from 'reactstrap';
 
-const StudentRegister = () => {
+const StudentRegister = (props) => {
 
     const [stdFormData, setStdFormData] = useState({
         email: '',
@@ -27,27 +31,28 @@ const StudentRegister = () => {
     const onSubmit = async (e) => {
         e.preventDefault();
         console.log('send data to /student: ', stdFormData);
-
-        try {
-            const config = {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            }
-
-            const res = await axios.post('/register/student', 
-                JSON.stringify(stdFormData),
-                config
-            );
-            if (!res.data.error) {
-                console.log("User Created!! ", res);
-            } else {
-                console.log(res.data.error);
-            }
+        props.registerUser(stdFormData, 'student');
+        // try {
+        //     const config = {
+        //         headers: {
+        //             'Content-Type': 'application/json'
+        //         }
+        //     };
+        //     const res = await axios.post('/register/student', 
+        //         JSON.stringify(stdFormData),
+        //         config
+        //     );
+        //     if (!res.data.error) {
+        //         console.log("User Created!! ", res);
+        //         props.registerUser(res.data);
+        //     } else {
+        //         props.setAlert(res.data.error, 'danger');
+        //     }
             
-        } catch (error) {
-            console.log(error);                        
-        }
+        // } catch (error) {
+        //     console.log(error);  
+        //     props.setAlert(error.body, 'danger');
+        // }
 
         // const token = res.data.token;
         //             console.log("TOKEN: ", token);
@@ -58,6 +63,9 @@ const StudentRegister = () => {
         <div>
         <Container>
             <h3> Student Registration </h3>
+
+            <AlertComp />
+            
         <Form onSubmit={e => onSubmit(e)}>
         <FormGroup>
         <Label for="curr_university">University:</Label>
@@ -152,4 +160,9 @@ const StudentRegister = () => {
     );
 }
 
-export default StudentRegister;
+StudentRegister.propTypes = {
+    setAlert: propTypes.func.isRequired,
+    registerUser: propTypes.func.isRequired
+}
+
+export default connect(null, { setAlert, registerUser })(StudentRegister);

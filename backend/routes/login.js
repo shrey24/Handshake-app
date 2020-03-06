@@ -62,9 +62,9 @@ router.post('/student', (req, res, next) => {
                         'msg': 'authentication successful',
                         token,
                         user: {
-                        email,
-                        user_id : results[0].user_id,
-                        user_type : 'student'
+                            email,
+                            user_id : results[0].user_id,
+                            user_type : 'student'
                         }
                     });
 

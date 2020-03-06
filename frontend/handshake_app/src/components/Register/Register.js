@@ -1,7 +1,9 @@
 import React, {Component} from 'react'
 import StudentRegister from "./StudentRegister";
 import CompanyRegister from "./CompanyRegister";
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
+import { connect } from 'react-redux';
+import propTypes from 'prop-types';
 
 class Register extends Component {
     constructor(props) {
@@ -19,6 +21,15 @@ class Register extends Component {
     }
 
     render() {
+        //check login 
+        if (this.props.user) {
+            if(this.props.user.user_type === 'student') {
+                return <Redirect to='/student/profile' />;
+            } else {
+                console.log('Already company login, Redirect to /companyLandingPage');
+            }
+        }
+
         let renderForm = (this.state.type === 'student') ? <StudentRegister /> : <CompanyRegister />;
         return (
             <div>
@@ -35,4 +46,11 @@ class Register extends Component {
     
 }
 
-export default Register;
+Register.propTypes = {
+    user: propTypes.object
+}
+
+const mapStateToProps = (state) => ({
+    user: state.auth.user
+});
+export default connect(mapStateToProps, null)(Register);
