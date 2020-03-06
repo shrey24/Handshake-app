@@ -49,18 +49,21 @@ export const loginUser = (email, password, user_type) => async dispatch => {
     try {
         axios.defaults.withCredentials = true;
         const res = await axios.post(loginRoute, body, config);
+
+        console.log('Login success: dispatching payload: ', res.data);
         //login success
         dispatch({
             type: LOGIN_SUCCESS,
             payload: res.data
         });
-
+        console.log('call loadUser: ');
         dispatch(loadUser());
 
     } catch (err) {
-        const error_msg = err.response.data;
-        const status = err.response.status;
-        console.log('actions/auth/loginUser', status, error_msg);
+        console.log(`/POST ${loginRoute} error:`);
+        // const error_msg = err.response.data;
+        // const status = err.response.status;
+        console.log('actions/auth/loginUser', err);
         dispatch(setAlert('Invalid username or password', 'danger'));
         dispatch({
             type: AUTH_ERROR

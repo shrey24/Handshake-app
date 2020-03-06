@@ -4,8 +4,8 @@ import { Row, Col, Container } from 'react-bootstrap';
 import React, { Component } from 'react'
 import axios from 'axios';
 import cookie from 'react-cookies';
-import {Redirect} from 'react-router';
-import { Link } from 'react-router-dom';
+
+import { Link, Redirect } from 'react-router-dom';
 import ErrorBox from "./ErrorBox";
 import { connect } from "react-redux";
 import { setAlert } from '../../actions/alert';
@@ -17,50 +17,48 @@ class Login extends Component {
 constructor(props){
   super(props);
   console.log("LOGIN PROPS: ", props);
-  this.state={
+  this.state = {
   email:'',
   password:'',
   error: null
   }
-  this.handleInput = this.handleInput.bind(this);
+//   this.handleInput = this.handleInput.bind(this);
 //   this.onSubmit = this.onSubmit.bind(this);
 }
 
 onSubmit = async (e, user_type) => {
     e.preventDefault();
-    const data = {
-        email : this.state.email,
-        password : this.state.password
-    }
-    //set the with credentials to true
-    axios.defaults.withCredentials = true;
-    let loginApi = null
-    if(user_type === 'student') {
-        loginApi = 'http://localhost:3001/login/student';
-    } else {
-        loginApi = 'http://localhost:3001/login/company';
-    }
-    console.log(`sending data to ${loginApi} `, data);
-    try {
-        const res = await axios.post(loginApi, data);
-        console.log("Status Code : ",res.status);
-        console.log("Login Success", res);
-    } catch (error) {
-        console.log("Login Error: ", error.response );
-        this.props.setAlert('Invalid username or password', 'danger');               
-    }
-}
+    console.log("onSubmit Login:", user_type);
+    this.props.loginUser(this.state.email, this.state.password, user_type);
+};
 
-handleInput(e) {
+handleInput = (e) => {
     this.setState({[e.target.name] : e.target.value});  
+};
+
+componentDidMount() {
+    if(this.props.isAuthenticated) {
+        if(this.props.user.user_type === 'student')
+            return <Redirect to='/student/profile' />;
+        else {
+            console.log('USER already logged in.. REDIRECT TO Company...');
+        }
+    }
 }
 
 render() {
-    const errBox = (this.state.error != null) ? <ErrorBox message={this.state.error}/>:null;
+    
+    // Redirect if logged in
+    if(this.props.isAuthenticated) {
+        if(this.props.user.user_type === 'student')
+            return <Redirect to='/student/profile' />;
+        else {
+            console.log('USER already logged in.. REDIRECT TO Company...');
+        }
+    }
+    else
+    // const errBox = (this.state.error != null) ? <ErrorBox message={this.state.error}/>:null;
     return (
-        
-
-
         <Container fluid={true}>
         <Row sm={10}>
         <Col sm={6} style={{background : '#1569e0', color: '#fff'  }}>
@@ -75,7 +73,6 @@ render() {
             <p>
                 <Link to='/register'> Dont have an account? Sign up</Link>
             </p>
-            {errBox}
             <AlertComp />
             <Form onSubmit={this.onSubmit}>
                 <h2> Student Sign In </h2>
@@ -109,7 +106,14 @@ render() {
 
 Login.prototypes = {
     setAlert: propTypes.func.isRequired,
-    loginUser: PropTypes.func.isRequired,
+    loginUser: propTypes.func.isRequired,
+    isAuthenticated: propTypes.bool,
+    user: propTypes.object
 }
 
-export default connect(null, { setAlert, loginUser })(Login);
+const mapStateToProps = (state) => ({
+    isAuthenticated: state.auth.isAuthenticated,
+    user: state.auth.user
+});
+
+export default connect(mapStateToProps, { setAlert, loginUser })(Login);

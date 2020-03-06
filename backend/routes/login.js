@@ -60,7 +60,12 @@ router.post('/student', (req, res, next) => {
                     //Sucess, send a jwt token back
                     res.status(200).json({
                         'msg': 'authentication successful',
-                        token
+                        token,
+                        user: {
+                        email,
+                        user_id : results[0].user_id,
+                        user_type : 'student'
+                        }
                     });
 
                 } else {
