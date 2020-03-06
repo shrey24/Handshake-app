@@ -49,7 +49,13 @@ class ProfileSection extends Component {
     render() { 
         console.log(this.props);
         const { data } = this.props;
-        const { name, curr_major, curr_university, avatar_path, resume_path, ...info} = data;
+        const { name, 
+                curr_major,
+                curr_degree,
+                curr_university, 
+                avatar_path, 
+                resume_path, ...info} = data;
+
         if(this.state.editMode) { // render form
             return (
                 <div>
@@ -119,7 +125,7 @@ class ProfileSection extends Component {
                     />
                     <CardTitle><h5>{name} </h5></CardTitle>
                     <CardSubtitle>{curr_university}</CardSubtitle>
-                    <CardSubtitle>{curr_major}</CardSubtitle>
+                    <CardSubtitle>{curr_degree} in {curr_major}</CardSubtitle>
                    
                     {
                         Object.keys(info).map((key, index) => {

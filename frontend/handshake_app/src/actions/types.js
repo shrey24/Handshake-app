@@ -4,7 +4,7 @@ export const DELETE_STUDENT_EDUCATION = 'DELETE_STUDENT_EDUCATION';
 export const UPDATE_STUDENT_EDUCATION = 'UPDATE_STUDENT_EDUCATION';
 
 export const SET_ALERT = 'SET_ALERT';
-export const REMOVE_ALERT = 'SET_ALERT';
+export const REMOVE_ALERT = 'REMOVE_ALERT';
 
 export const getStudentEducations = () => {
     return {

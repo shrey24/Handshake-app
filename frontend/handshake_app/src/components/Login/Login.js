@@ -65,7 +65,7 @@ render() {
 
         <Container fluid={true}>
         <Row sm={10}>
-        <Col sm={5} style={{background : '#1569e0', color: '#fff'  }}>
+        <Col sm={6} style={{background : '#1569e0', color: '#fff'  }}>
         <Container fluid='true' >
             <h1>Welcome to handshake</h1>
         </Container>

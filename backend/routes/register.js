@@ -17,7 +17,7 @@ router.post('/student', (req, res, next) => {
         req: college, major, edu_end, name, email, password
     */
     console.log(req.body);
-    const { email, password, curr_university, curr_major, edu_end } = req.body;
+    const { email, password, curr_university, curr_major, curr_degree, edu_end } = req.body;
     const user_type = user_types['student'];
     let user_auth = { 
                         email, 
@@ -47,7 +47,7 @@ router.post('/student', (req, res, next) => {
                     // insert new student to student_profile table                  
                     let insertStudentProfileSql = ' INSERT INTO student_profile SET ?; ';
                     let user_id = result['insertId'];
-                    let student_profile_data = { user_id, email, curr_university, curr_major, edu_end };
+                    let student_profile_data = { user_id, email, curr_university, curr_major, curr_degree, edu_end };
                     db.query(insertStudentProfileSql, 
                         student_profile_data, (err, results) => {
                             if (err) {
