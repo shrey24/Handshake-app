@@ -22,7 +22,7 @@ router.get('/:user_id', (req, res) => {
             } else {
                 if(results[0].length === 0) {
                     console.log(`'${user_id}' doesnot exists`);
-                    res.status(400).json({ msg:`'${user_id}' doesnot exists` });
+                    res.status(400).json({ error:`'${user_id}' doesnot exists` });
                     return;
                 }
                 const profile_data = {
@@ -30,7 +30,7 @@ router.get('/:user_id', (req, res) => {
                     student_education: results[1],
                     student_experience: results[2]
                 }
-                res.send(profile_data);
+                res.status(200).json(profile_data);
             }
         });    
 });

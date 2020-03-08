@@ -6,48 +6,32 @@ import AlertComp from '../../AlertComp';
 
 const ExperienceForm = (props) => {
     const [experience, setExperience] = useState({
-        isEditMode: false,
-        data: {
             "company_name": '',
             "title": '',
             "location": '',
             "start_date": '',
             "end_date": '',
             "work_desc": ''
-        }
     });
 
+    const [isEditMode, setEditMode] = useState(false);
+
     if(props.data) { // edit mode
-        setExperience({
-            ...experience,
-            isEditMode: true,
-            data: Object.assign({}, props.data) // also contains id & user_id
-        });
+        setEditMode(true);
+        setExperience(Object.assign({}, props.data)); // also contains id & user_id
     }
 
     const handleInput = e => {
         let val = e.target.value;
-        setExperience({ 
-            ...experience,
-            data: {
-                ...data,
-                [e.target.name]: val
-            } 
-        });
+        setExperience({ ...experience, [e.target.name]: val });
     };
 
     const onSubmit = async (e) => {
         e.preventDefault();
-        if (experience.isEditMode)
-            console.log('Call action Update experience', stdFormData);
+        if (isEditMode)
+            console.log('Call action Update experience', experience);
         else 
             console.log('Call Action AddExperience');
-    }
-
-    const onCancel = async (e) => {
-        e.preventDefault();
-        console.log('send data to /student: ', stdFormData);
-        props.registerUser(stdFormData, 'student');
     }
 
     return (
@@ -61,7 +45,7 @@ const ExperienceForm = (props) => {
             <Input 
                 onChange={handleInput}
                 name="company_name"
-                value = {experience.data.company_name}
+                value = {experience.company_name}
                 type="text"
                 required
             />
@@ -71,7 +55,7 @@ const ExperienceForm = (props) => {
             <Input 
                 onChange={handleInput}
                 name="title"
-                value = {experience.data.title}
+                value = {experience.title}
                 type="text"
                 required
             />
@@ -81,7 +65,7 @@ const ExperienceForm = (props) => {
             <Input 
                 onChange={handleInput}
                 name="location"
-                value = {experience.data.location}
+                value = {experience.location}
                 type="text"
                 required
             />
@@ -91,7 +75,7 @@ const ExperienceForm = (props) => {
             <Input 
                 onChange={handleInput}
                 name="start_date"
-                value = {experience.data.start_date}
+                value = {experience.start_date}
                 placeholder = 'start date'
                 type="number"
             />
@@ -101,7 +85,7 @@ const ExperienceForm = (props) => {
             <Input 
                 onChange={handleInput}
                 name="end_date"
-                value = {experience.data.end_date}
+                value = {experience.end_date}
                 placeholder = 'end date'
                 type="text"
             />
@@ -111,7 +95,7 @@ const ExperienceForm = (props) => {
             <Input 
                 onChange={handleInput}
                 name="word_desc"
-                value = {experience.data.word_desc}
+                value = {experience.word_desc}
                 type="textarea"
             />
         </FormGroup>
@@ -121,13 +105,13 @@ const ExperienceForm = (props) => {
         <Button 
         onClick={(e) => onSubmit(e)} 
         color="success">
-            { experience.isEditMode ? 'Update' : 'Add new experince' }
+            { isEditMode ? 'Update' : 'Add new experince' }
         </Button>
         </Col>
 
         <Col>
         <Button 
-        onClick={(e) => onCancel(e)} 
+        onClick={(e) => props.onCancel()} 
         color="secondary">
             Cancel
         </Button>

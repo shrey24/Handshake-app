@@ -1,5 +1,6 @@
 import {
     GET_STUDENT_PROFILE,
+    GET_STUDENT_PROFILE_ERR,
     UPDATE_STUDENT_EDUCATION,
     DELETE_STUDENT_EDUCATION,
     ADD_STUDENT_EDUCATION
@@ -18,6 +19,8 @@ export default function(state = initialState, action) {
     switch (type) {
         case GET_STUDENT_PROFILE:
             return Object.assign({}, state, ...payload);
+        case GET_STUDENT_PROFILE_ERR:
+            return Object.assign({}, state, initialState);
 
         case DELETE_STUDENT_EDUCATION:
             return Object.assign({}, 

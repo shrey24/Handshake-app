@@ -61,13 +61,13 @@ class ProfileSection extends Component {
             "gpa": 'GPA',
         }
         console.log(this.props);
-        const { data } = this.props;
-        const { name, 
+        const { user_id,
+                name, 
                 curr_major,
                 curr_degree,
                 curr_university, 
                 avatar_path, 
-                resume_path, ...info} = data;
+                resume_path, ...info} = this.props.data;
 
         if(this.state.editMode) { // render form
             return (
