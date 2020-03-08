@@ -55,15 +55,11 @@ export default class EducationForm extends Component {
         this.setState({[e.target.name] : e.target.value});  
     }
 
-
-
-    
-
     render() {  
         // let {id, ...fields} = this.state;
         let header = null, deleteBtn=null;
         if(!this.state.isEditMode) header =  <h5> Add a new Education </h5>;
-        else deleteBtn = <Button onClick={(e) => this.onDelete(e)} >Delete</Button>;
+        else deleteBtn = <Button color='danger' onClick={(e) => this.onDelete(e)} >Delete</Button>;
         
         return (
             
@@ -134,10 +130,14 @@ export default class EducationForm extends Component {
                 </FormGroup>
                 <Row>
                 <Col>
-                <Button onClick={(e) => this.onSubmit(e)} >Submit</Button>
+                <Button color='primary' onClick={(e) => this.onSubmit(e)} >
+                    Submit
+                </Button>
                 </Col>
                 <Col>
-                <Button onClick={(e) => this.onCancel(e)} >Cancel</Button>
+                <Button color='secondary' onClick={(e) => this.onCancel(e)} >
+                    Cancel
+                </Button>
                 </Col>
                 <Col>
                 { deleteBtn }

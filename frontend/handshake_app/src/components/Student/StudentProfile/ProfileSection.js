@@ -46,7 +46,20 @@ class ProfileSection extends Component {
     }
 
     // email phone name dob curr_university curr_major edu_end avatar_path resume_path
-    render() { 
+    render() {
+
+        const fieldNames = {
+            "dob": 'birth date',
+            "address_city": '',
+            "address_state": '',
+            "address_country": '',
+            "curr_university": '',
+            "curr_degree": '',
+            "curr_major": '',
+            "edu_start": 'From: ',
+            "edu_end": ' To: ',
+            "gpa": 'GPA',
+        }
         console.log(this.props);
         const { data } = this.props;
         const { name, 
@@ -125,11 +138,11 @@ class ProfileSection extends Component {
                     />
                     <CardTitle><h5>{name} </h5></CardTitle>
                     <CardSubtitle>{curr_university}</CardSubtitle>
-                    <CardSubtitle>{curr_degree} in {curr_major}</CardSubtitle>
+                    <CardSubtitle>{curr_degree} - {curr_major}</CardSubtitle>
                    
                     {
                         Object.keys(info).map((key, index) => {
-                            return (<CardText> {key} : {info[key]} </CardText>)
+                            return (<CardText> {fieldNames[key]} {info[key]} </CardText>)
                         })
                     }
                 

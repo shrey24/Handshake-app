@@ -3,6 +3,7 @@ import {setAlert} from './alert';
 import {
     REGISTER_SUCCESS,
     REGISTER_FAIL,
+    LOGOUT,
     USER_LOADED,
     AUTH_ERROR,
     LOGIN_SUCCESS
@@ -103,5 +104,7 @@ export const registerUser = (userFormData, user_type) => async dispatch => {
     }
 };
 
-// register user
-// export const register
+// logout
+export const logout = () => dispatch => {
+    dispatch({ type: LOGOUT });
+}

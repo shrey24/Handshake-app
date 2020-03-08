@@ -1,10 +1,10 @@
 import { combineReducers } from "redux";
-import studentReducer from "./studentReducer";
+import studentProfile from "./studentProfile";
 import  alert from "./alert";
 import  auth from "./auth";
 
 export default combineReducers({
-    student: studentReducer,
+    studentProfile: studentProfile,
     alert: alert,
     auth: auth
 });

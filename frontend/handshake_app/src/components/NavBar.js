@@ -2,80 +2,115 @@ import React, {Component} from 'react'
 import {Link} from 'react-router-dom';
 import cookie from 'react-cookies';
 import {Redirect} from 'react-router';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types'
+import { logout } from '../actions/auth';
+// import {
+//   Collapse,
+//   Navbar,
+//   NavbarToggler,
+//   NavbarBrand,
+//   Nav,
+//   NavItem,
+//   NavLink,
+//   UncontrolledDropdown,
+//   DropdownToggle,
+//   DropdownMenu,
+//   DropdownItem,
+//   NavbarText,
+//   Container
+// } from 'reactstrap';
 import {
-  Collapse,
+  Row,
+  Col,
   Navbar,
-  NavbarToggler,
-  NavbarBrand,
   Nav,
-  NavItem,
-  NavLink,
-  UncontrolledDropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
-  NavbarText,
+  Form,
+  FormControl,
+  NavDropdown,
+  Button,
   Container
-} from 'reactstrap';
+} from 'react-bootstrap';
 
 class NavBar extends Component {
+    constructor(props) {
+      super(props)
+    }
 
-    // const { isAuthenticated } = this.props.auth;
+  render() {
+    const studentLinks = (
+      <Nav className="mr-auto">
+      <Form inline>
+        <FormControl type="text" placeholder="Search" className="mr-sm-2" />
+      </Form>
+      <Nav.Link> <Link to='/register' style= {{ all: "inherit" }}>
+          Register
+      </Link></Nav.Link>  
+      <Nav.Link> <Link to='/Jobs' style= {{ all: "inherit" }}>
+          Jobs
+      </Link></Nav.Link>   
+      <Nav.Link> <Link to='/Students' style= {{ all: "inherit" }}>
+          Students
+      </Link></Nav.Link>   
+      <Nav.Link> <Link to='/Events' style= {{ all: "inherit" }}>
+          Events
+      </Link></Nav.Link>
+  </Nav>
+    );
 
-   
-    render(){
-        // const userLinks = (
-        //     <ul className="nav navbar-nav navbar-right">
-        //       <li><a href="#" onClick={this.logout.bind(this)}>Logout</a></li>
-        //     </ul>
-        //   );
-      
-        //   const guestLinks = (
-        //     <ul className="nav navbar-nav navbar-right">
-        //       <li><Link to="/signup">Sign up</Link></li>
-        //       <li><Link to="/login">Login</Link></li>
-        //     </ul>
-        //   );
+const companyLinks = studentLinks;
+const links = null;
+if(this.props.user) {
+  const links = this.props.user.user_type === 'student' ? studentLinks : companyLinks;
+}
 
-        return(
-          <Container fluid="true">
-            <Navbar color="light" light expand="md" sticky="top">
-              <NavbarBrand> Handshake </NavbarBrand>
-              
-              <Nav className="mr-auto" navbar>
-                <NavItem>
-                <Link to="/register">
-                            Register
-                </Link>
-                </NavItem>
-              </Nav> 
-            </Navbar>
-          </Container>
-        );
-    //     return (
-    //         <div className="container">
-    //         <nav className="navbar navbar-default">
-    //     <div className="container-fluid">
-    //       <div className="navbar-header">
-    //         <Link to="/" className="navbar-brand">Handshake</Link>
-    //       </div>
 
-    //       <div className="collapse navbar-collapse">
-    //         {/* { isAuthenticated ? userLinks : guestLinks } */}
-    //         <ul className="nav navbar-nav navbar-right">
-    //             <li><Link to="/register">
-    //                     Register
-    //                 </Link>
-    //             </li>
-    //         </ul>
+return(
+  <Navbar bg="light" varient='light' expand="lg" sticky="top">
+  <Navbar.Brand href="#home">Handshake</Navbar.Brand>
+  <Navbar.Toggle aria-controls="basic-navbar-nav" />
+  <Navbar.Collapse id="basic-navbar-nav">
+  { links }
 
-    //       </div>
-    //     </div>
-    //   </nav>
-    // </div>
+  <Row>
+    <Col >
+    <NavDropdown title="Profile" id="basic-nav-dropdown">
+      <NavDropdown.Item href="#action/3.1">View Profile</NavDropdown.Item>
+      <NavDropdown.Divider />
+      <NavDropdown.Item onClick={this.props.logout}>Sign Out</NavDropdown.Item>
+    </NavDropdown>
+    </Col>
+    <Col xs={{span:7}}> </Col>
+  </Row>
+  </Navbar.Collapse>
+  </Navbar>
+);
+        
+      // return(
+      //   <Container fluid="true">
+      //     <Navbar color="light" light expand="md" sticky="top">
+      //       <NavbarBrand> Handshake </NavbarBrand>
             
-    //     );
+      //       <Nav className="mr-auto" navbar>
+      //         <NavItem>
+      //         <Link to="/register">
+      //                     Register
+      //         </Link>
+      //         </NavItem>
+      //       </Nav> 
+      //     </Navbar>
+      //   </Container>
+      // );   
   }     
 }
 
-export default NavBar;
+NavBar.propTypes = {
+  user: PropTypes.object.isRequired,
+  logout: PropTypes.func.isRequired,
+}
+
+const mapStateToProps = (state) => ({
+  user: state.auth.user
+})
+
+export default connect(mapStateToProps, { logout })(NavBar);

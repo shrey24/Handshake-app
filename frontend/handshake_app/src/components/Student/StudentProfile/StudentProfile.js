@@ -4,6 +4,12 @@ import EducationSection from './EducationSection';
 import ProfileSection from './ProfileSection';
 import { Container, Row, Col, Jumbotron, Card, CardBody } from 'reactstrap';
 
+import { Link, Redirect } from 'react-router-dom';
+import { connect } from "react-redux";
+
+import propTypes from 'prop-types';
+import AlertComp from '../../AlertComp'
+
 class StudentProfile extends Component {
 
     constructor(props){
@@ -12,38 +18,36 @@ class StudentProfile extends Component {
     }
 
     render() {
-        const career_objective = "Gain experinece and progress with new skills";
-        const prof = {
-            name: "Shrey Patel",
-            curr_major : "CMPE",
-            
-            edu_end :2020
-        };
+
+        if(!this.props.isAuthenticated) {
+            return <Redirect to='/login' />
+        }
+
+        const { student_profile, student_education, student_experience } = this.props.studentProfile;
+        const { career_objective, ...profile_data} = student_profile[0];
 
         return (
-            
             <div>
                 <NavBar />
+
                 <Container>
                     <Row>
                         <Col sm={4}>
-                            <ProfileSection data = { prof }/>
+                            <ProfileSection data = { profile_data }/>
                         </Col>
                         <Col sm={8}>
                         <Container>
                             <Card>
-                                <CardBody>
-                                
+                                <CardBody>     
                                 <h3>Objective</h3>
                                {career_objective}
-                                
                                 </CardBody>
-                            
-                            </Card>
-                       
-                            <EducationSection />   
-                        </Container>
-                                                    
+                            </Card>                
+                            <br/>
+                            <EducationSection data = { student_education }/>
+                            <br />
+                            <ExperienceSection data = { student_experience }/>
+                        </Container>                            
                         </Col>
                     </Row>
                 </Container>                
@@ -52,4 +56,15 @@ class StudentProfile extends Component {
     }
 }
 
-export default StudentProfile;
+StudentProfile.prototypes = {
+    getStudentProfile: propTypes.func.isRequired,
+    deleteStudentEducations: propTypes.func.isRequired,
+    student: propTypes.object.isRequired
+}
+
+const mapStateToProps = (state) => ({
+    isAuthenticated: state.auth.isAuthenticated,
+    studentProfile : state.studentProfile
+});
+
+export default connect(mapStateToProps)(StudentProfile);

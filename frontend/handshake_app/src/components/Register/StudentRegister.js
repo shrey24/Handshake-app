@@ -32,31 +32,6 @@ const StudentRegister = (props) => {
         e.preventDefault();
         console.log('send data to /student: ', stdFormData);
         props.registerUser(stdFormData, 'student');
-        // try {
-        //     const config = {
-        //         headers: {
-        //             'Content-Type': 'application/json'
-        //         }
-        //     };
-        //     const res = await axios.post('/register/student', 
-        //         JSON.stringify(stdFormData),
-        //         config
-        //     );
-        //     if (!res.data.error) {
-        //         console.log("User Created!! ", res);
-        //         props.registerUser(res.data);
-        //     } else {
-        //         props.setAlert(res.data.error, 'danger');
-        //     }
-            
-        // } catch (error) {
-        //     console.log(error);  
-        //     props.setAlert(error.body, 'danger');
-        // }
-
-        // const token = res.data.token;
-        //             console.log("TOKEN: ", token);
-        //             localStorage.setItem('jwtToken', token);
     }
 
     return (
@@ -65,7 +40,7 @@ const StudentRegister = (props) => {
             <h3> Student Registration </h3>
 
             <AlertComp />
-            
+
         <Form onSubmit={e => onSubmit(e)}>
         <FormGroup>
         <Label for="curr_university">University:</Label>

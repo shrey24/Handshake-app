@@ -5,10 +5,11 @@ import EducationForm from './EducationForm';
 // import {Flex, Item} from 'react-flex';
 // import 'react-flex/index.css';
 import { connect } from 'react-redux'
-import { getStudentEducations, 
-        deleteStudentEducations,
-        addStudentEducations,
-        updateStudentEducations } from "../../../actions/types";
+import {
+        deleteStudentEducation,
+        addStudentEducation,
+        updateStudentEducation 
+    } from "../../../actions/studentProfile";
 import propTypes from 'prop-types';
 
 
@@ -22,9 +23,6 @@ class EducationSection extends Component {
         }
     }
 
-    componentDidMount(){
-        this.props.getStudentEducations();
-    }
 
     handleAddBtn = (e) => {
         this.setState({addNew : true});
@@ -54,13 +52,13 @@ class EducationSection extends Component {
     }
     render() {
         console.log(this.props);
-        const {educationItems} = this.props.student;
+        const educationItems = this.props.data;
 
         let newItem = null;
         if (!this.state.addNew) {
             newItem = <Button 
                         onClick = {this.handleAddBtn}
-                        color="green"> Add a new education 
+                        color='link'> Add a new education 
                       </Button>
         } else {
             newItem = <EducationForm 
@@ -71,8 +69,7 @@ class EducationSection extends Component {
         }
 
         return (
-            <div>
-                
+            <div> 
                 <Card >
                 <CardBody>                
                 <CardTitle>
@@ -83,6 +80,7 @@ class EducationSection extends Component {
                         if(this.state.editItem && this.state.editItem.id === item.id) {
                             return (
                                 <EducationForm
+                                key={item.id}
                                 item={item}
                                 showForm={this.showForm}
                                 deleteItem={this.deleteItem}
@@ -93,7 +91,8 @@ class EducationSection extends Component {
                         } else {
                             return (
                                 <EducationItem 
-                                    item={item} 
+                                    key={item.id}
+                                    item={item}
                                     handleEdit = {this.handleEdit}
                                 />                            
                             );
@@ -108,17 +107,14 @@ class EducationSection extends Component {
     }
 }
 
-EducationSection.prototypes = {
-    getStudentEducations: propTypes.func.isRequired,
-    deleteStudentEducations: propTypes.func.isRequired,
-    student: propTypes.object.isRequired
+EducationSection.propTypes = {
+    deleteStudentEducation: propTypes.func.isRequired,
+    addStudentEducation: propTypes.func.isRequired,
+    updateStudentEducation: propTypes.func.isRequired,
+    data: propTypes.array.isRequired,
 }
 
-const mapStateToProps = (state) => ({
-    student : state.student
-});
-export default connect(mapStateToProps, 
-    {getStudentEducations, 
-    deleteStudentEducations,
-    addStudentEducations,
-    updateStudentEducations})(EducationSection);
+export default connect(null, 
+    {deleteStudentEducation,
+    addStudentEducation,
+    updateStudentEducation})(EducationSection);

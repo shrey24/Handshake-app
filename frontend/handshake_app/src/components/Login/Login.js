@@ -6,7 +6,6 @@ import axios from 'axios';
 import cookie from 'react-cookies';
 
 import { Link, Redirect } from 'react-router-dom';
-import ErrorBox from "./ErrorBox";
 import { connect } from "react-redux";
 import { setAlert } from '../../actions/alert';
 import propTypes from 'prop-types';
@@ -48,8 +47,9 @@ render() {
     else
     // const errBox = (this.state.error != null) ? <ErrorBox message={this.state.error}/>:null;
     return (
-        <Container fluid={true}>
-        <Row sm={10}>
+        <Container fluid='true'>
+        
+        <Row >
         <Col sm={6} style={{background : '#1569e0', color: '#fff'  }}>
         <Container fluid='true' >
             <h1>Welcome to handshake</h1>
