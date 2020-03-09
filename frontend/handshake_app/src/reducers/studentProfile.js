@@ -3,7 +3,10 @@ import {
     GET_STUDENT_PROFILE_ERR,
     UPDATE_STUDENT_EDUCATION,
     DELETE_STUDENT_EDUCATION,
-    ADD_STUDENT_EDUCATION
+    ADD_STUDENT_EDUCATION,
+    ADD_STUDENT_EXP,
+    UPDATE_STUDENT_EXP,
+    ERR_UPDATE_PROFILE
 } from '../actions/types';
 
 const initialState = {
@@ -23,6 +26,12 @@ export default function(state = initialState, action) {
             return {...state, loading:false, ...payload};
         case GET_STUDENT_PROFILE_ERR:
             return Object.assign({}, state, initialState);
+        
+        case ADD_STUDENT_EXP:
+            return {...state, loading:true};
+
+        case UPDATE_STUDENT_EXP:
+            return {...state, loading:true};
 
         case DELETE_STUDENT_EDUCATION:
             return Object.assign({}, 
@@ -48,7 +57,10 @@ export default function(state = initialState, action) {
                         }
                     })
                 }
-                );
+            );
+
+        case ERR_UPDATE_PROFILE:
+            return state;
         
         default:
             return state;

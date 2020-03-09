@@ -33,7 +33,11 @@ const ExperienceSection = (props) => {
         {
             experienceData.map((item) => {
                 if ( item.id === editId ) {
-                    return <ExperienceForm data={item} onCancel={cancelEditForm}/>;
+                    return (
+                        <div key={item.id}>
+                        <ExperienceForm data={item} onCancel={cancelEditForm}/>
+                        </div>
+                        );
                 } else {
                     return (
                     <div key={item.id}>
@@ -41,7 +45,7 @@ const ExperienceSection = (props) => {
                     <h5>  {item.title} </h5>
                     </Card.Title>
                     <Card.Subtitle>{item.company_name}, {item.location}</Card.Subtitle>
-                    <Card.Subtitle> {item.start_date} - {item.end_date}</Card.Subtitle>
+                    <Card.Text> {item.start_date} - {item.end_date}</Card.Text>
                     <Card.Text> <b>Description</b><br/> {item.work_desc} </Card.Text>
                     <Button color='link' onClick={() => setEditId(item.id)}>
                         Edit

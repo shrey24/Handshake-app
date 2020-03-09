@@ -7,14 +7,27 @@ import {
         ADD_STUDENT_EDUCATION, 
         DELETE_STUDENT_EDUCATION, 
         GET_STUDENT_EDUCATIONS,
-        UPDATE_STUDENT_EDUCATION 
+        UPDATE_STUDENT_EDUCATION,
+        UPDATE_STUDENT_EXP,
+        ADD_STUDENT_EXP,
+        DELETE_STUDENT_EXP,
+        ERR_UPDATE_PROFILE
+
     } from "./types";
 
 
+const config = {
+    headers: {
+        'Content-Type': 'application/json'
+    }
+};
+axios.defaults.withCredentials = true;
+
 export const getStudentProfile = (user_id) => async dispatch => {
     try {
-        console.log('getStudentProfile ****************************');
+        if (!user_id) user_id = 'Me';
         const res = await axios.get(`/student-profile/${user_id}`);
+        console.log('getStudentProfile ****************************');
         console.log(`/student-profile/${user_id}`, res);
         dispatch({
             type: GET_STUDENT_PROFILE,
@@ -36,21 +49,83 @@ export const getStudentProfile = (user_id) => async dispatch => {
 //     };
 // };
 
-export const addStudentEducation = (eduItem) => {
+// Experience section
+export const addStudentExperience = (expItem) => async dispatch => {
+    try {
+        const data = JSON.stringify(expItem);
+        const res = await axios.post(`/student-profile/experience`,
+                        data, 
+                        config
+                    );
+        //success
+        dispatch({
+            type: ADD_STUDENT_EXP,
+            payload: {
+                ...expItem,
+                id: res.data.id
+            }
+        });
+    } catch (error) {
+        console.log('addStudentExperience action ERROR: ', error);
+        dispatch({
+            type: ERR_UPDATE_PROFILE,
+            payload: {
+                error: error.body
+            }
+        });
+        dispatch(setAlert(`Unable to add new item: ${error.body}`, 'danger'));
+    }
+};
+
+export const updateStudentExperince = (exp_id, expItem) => async dispatch =>  {
+    try {
+        const res = await axios.put(`/student-profile/experience/${exp_id}`,
+            expItem, 
+            config
+        );
+        //success
+        dispatch({
+            type: UPDATE_STUDENT_EXP,
+            payload: {
+                ...expItem,
+                id: exp_id
+            }
+        });
+        dispatch(getStudentProfile());
+    } catch (error) {
+        console.log('updateStudentExperience action ERROR: ', error);
+        dispatch({
+            type: ERR_UPDATE_PROFILE,
+            payload: {
+                error: error.body
+            }
+        });
+        dispatch(setAlert(`Unable to add new item: ${error.body}`, 'danger'));
+    }
+};
+
+// export const deleteStudentExperience = (id) => {
+//     return {
+//         type: DELETE_STUDENT_EXP,
+//         payload: id
+//     };
+// };
+
+export const addStudentEducation = (eduItem) => async dispatch =>  {
     return {
         type: ADD_STUDENT_EDUCATION,
         payload: eduItem
     };
 };
 
-export const updateStudentEducation = (eduItem) => {
+export const updateStudentEducation = (eduItem) => async dispatch =>  {
     return {
         type: UPDATE_STUDENT_EDUCATION,
         payload: eduItem
     };
 };
 
-export const deleteStudentEducation = (id) => {
+export const deleteStudentEducation = (id) => async dispatch =>  {
     return {
         type: DELETE_STUDENT_EDUCATION,
         payload: id

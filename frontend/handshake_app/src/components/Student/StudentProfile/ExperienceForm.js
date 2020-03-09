@@ -1,39 +1,47 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Label, Form, FormGroup, Input, Container, Col, Row, CardText } from 'reactstrap';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
+import propTypes from 'prop-types';
 import AlertComp from '../../AlertComp';
+import { setAlert } from '../../../actions/alert';
+import { 
+    addStudentExperience,
+    updateStudentExperince 
+} from '../../../actions/studentProfile';
 
 const ExperienceForm = (props) => {
     const [experience, setExperience] = useState({
-            "company_name": '',
-            "title": '',
-            "location": '',
-            "start_date": '',
-            "end_date": '',
-            "work_desc": ''
+            company_name: '',
+            title: '',
+            location: '',
+            work_desc: ''
     });
 
     const [isEditMode, setEditMode] = useState(false);
     useEffect(() => {
         if(props.data) { // edit mode
             setEditMode(true);
-            setExperience({ experience, ...props.data}); // also contains id & user_id
+            setExperience({ ...experience, ...props.data}); // also contains id & user_id
         }
     }, []);
    
 
     const handleInput = e => {
-        let val = e.target.value;
+        let val = e.target.value === '' ? null : e.target.value ;
         setExperience({ ...experience, [e.target.name]: val });
     };
 
     const onSubmit = async (e) => {
         e.preventDefault();
-        if (isEditMode)
-            console.log('Call action Update experience', experience);
-        else 
-            console.log('Call Action AddExperience');
+        if (isEditMode) {
+            const { id, user_id, ...data } = experience;
+            console.log('Call action Update experience with data: ', data);
+            props.updateStudentExperince(id, data);
+
+        } else {
+            console.log('Call Action AddExperience', experience);
+            props.addStudentExperience(experience);
+        }
     }
 
     return (
@@ -89,7 +97,7 @@ const ExperienceForm = (props) => {
                 name="end_date"
                 value = {experience.end_date}
                 placeholder = 'end date'
-                type="text"
+                type="number"
             />
         </FormGroup>
         <FormGroup>
@@ -126,4 +134,14 @@ const ExperienceForm = (props) => {
     )
 };
 
-export default ExperienceForm;
+ExperienceForm.propTypes = {
+    setAlert : propTypes.func.isRequired,
+    addStudentExperience: propTypes.func.isRequired,
+    updateStudentExperince: propTypes.func.isRequired,
+}
+
+export default connect(null, { 
+    setAlert, 
+    updateStudentExperince,
+    addStudentExperience 
+})(ExperienceForm);
