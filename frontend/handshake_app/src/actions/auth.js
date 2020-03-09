@@ -31,6 +31,8 @@ export const loadUser = () => async dispatch => {
             payload: res.data
         });
     } catch (error) {   // user auth failed
+        console.log('action loadUser failed');
+        
         dispatch({
             type: AUTH_ERROR
         });
@@ -57,6 +59,7 @@ export const loginUser = (email, password, user_type) => async dispatch => {
             type: LOGIN_SUCCESS,
             payload: res.data
         });
+        setAuthTokenToHeaders(localStorage.token);
         console.log('call loadUser: ');
         dispatch(loadUser());
 

@@ -10,6 +10,7 @@ import {
         addStudentEducation,
         updateStudentEducation 
     } from "../../../actions/studentProfile";
+import Spinner from '../../Spinner';
 import propTypes from 'prop-types';
 
 
@@ -53,6 +54,9 @@ class EducationSection extends Component {
     render() {
         console.log(this.props);
         const educationItems = this.props.data;
+        if(!educationItems) {
+            return <Spinner />;
+        }
 
         let newItem = null;
         if (!this.state.addNew) {

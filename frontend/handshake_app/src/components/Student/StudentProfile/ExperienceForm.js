@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Label, Form, FormGroup, Input, Container, Col, Row, CardText } from 'reactstrap';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -15,11 +15,13 @@ const ExperienceForm = (props) => {
     });
 
     const [isEditMode, setEditMode] = useState(false);
-
-    if(props.data) { // edit mode
-        setEditMode(true);
-        setExperience(Object.assign({}, props.data)); // also contains id & user_id
-    }
+    useEffect(() => {
+        if(props.data) { // edit mode
+            setEditMode(true);
+            setExperience({ experience, ...props.data}); // also contains id & user_id
+        }
+    }, []);
+   
 
     const handleInput = e => {
         let val = e.target.value;
@@ -91,11 +93,11 @@ const ExperienceForm = (props) => {
             />
         </FormGroup>
         <FormGroup>
-        <Label for="word_desc">Job Description</Label>
+        <Label for="work_desc">Job Description</Label>
             <Input 
                 onChange={handleInput}
-                name="word_desc"
-                value = {experience.word_desc}
+                name="work_desc"
+                value = {experience.work_desc}
                 type="textarea"
             />
         </FormGroup>

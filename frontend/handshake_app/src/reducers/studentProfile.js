@@ -7,9 +7,10 @@ import {
 } from '../actions/types';
 
 const initialState = {
-    student_profile : [],
-    student_education : [],
-    student_experience : []
+    loading: true,
+    student_profile : null,
+    student_education : null,
+    student_experience : null    
 }
 
 export default function(state = initialState, action) {
@@ -18,7 +19,8 @@ export default function(state = initialState, action) {
     
     switch (type) {
         case GET_STUDENT_PROFILE:
-            return Object.assign({}, state, ...payload);
+            console.log('GET_STUDENT_PROFILE', payload);
+            return {...state, loading:false, ...payload};
         case GET_STUDENT_PROFILE_ERR:
             return Object.assign({}, state, initialState);
 

@@ -11,6 +11,7 @@ import { getStudentProfile } from '../../../actions/studentProfile';
 
 import propTypes from 'prop-types';
 import AlertComp from '../../AlertComp';
+import Spinner from '../../Spinner';
 
 class StudentProfile extends Component {
 
@@ -23,18 +24,19 @@ class StudentProfile extends Component {
             profile_data : null,
             career_objective : null
         }
+
+        // if(this.props.user){
+        //     console.log(`student profile: getStudentProfile(${this.props.user.user_id})`);
+        //     this.props.getStudentProfile(this.props.user.user_id);  
+        // }
     }
 
     componentDidMount() {
-        console.log(`student profile: getStudentProfile(${this.props.user.user_id})`);
-        getStudentProfile(this.props.user.user_id);
-        if(this.props.studentProfile) {
-            const { career_objective, ...profile_data} = this.props.studentProfile.student_profile[0];
-            this.setState({
-                career_objective,
-                profile_data                
-            });
-        }   
+        if(this.props.user){
+            console.log(`student profile: getStudentProfile(${this.props.user.user_id})`);
+            this.props.getStudentProfile(this.props.user.user_id);  
+        }
+        
     }
 
     render() {
@@ -43,6 +45,16 @@ class StudentProfile extends Component {
             return <Redirect to='/login' />;
         }
         
+        if(this.props.studentProfile.loading)
+            return <Spinner />;
+
+        console.log('rendering studentprofile', this.props.studentProfile);
+        
+        const {student_profile, student_education, student_experience} = this.props.studentProfile;
+        console.log('student_profile ', typeof student_profile);
+        console.log('student_education ', typeof student_education);
+        console.log('student_experience ', typeof student_experience);
+        
         return (
             <div>
                 <NavBar />
@@ -50,20 +62,22 @@ class StudentProfile extends Component {
                 <Container>
                     <Row>
                         <Col sm={4}>
-                            <ProfileSection data = { this.state.profile_data }/>  
+                            <ProfileSection />  
                         </Col>
                         <Col sm={8}>
                         <Container>
                             <Card>
                                 <CardBody>     
                                 <h3>Objective</h3>
-                               {this.state.career_objective}
+                               {student_profile[0].career_objective}
                                 </CardBody>
                             </Card>                
                             <br/>
-                            <EducationSection data = { this.state.student_education }/>
+                            <EducationSection 
+                            data = { student_education }/>
                             <br />
-                            <ExperienceSection data = { this.state.student_experience }/>
+                            <ExperienceSection 
+                            data = { student_experience }/>
                         </Container>                            
                         </Col>
                     </Row>

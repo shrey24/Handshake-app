@@ -14,6 +14,10 @@ import { Container,
         CardTitle,
         CardSubtitle        
     } from 'reactstrap';
+import { connect } from 'react-redux';
+import propTypes from 'prop-types'
+import Spinner from '../../Spinner';
+
 
 class ProfileSection extends Component {
     constructor(props){
@@ -24,7 +28,7 @@ class ProfileSection extends Component {
     }
 
     componentDidMount(){
-        this.setState({...this.props.data});
+        this.setState({...this.props.student_profile});
     }
 
     handleEdit = () => {
@@ -47,6 +51,9 @@ class ProfileSection extends Component {
 
     // email phone name dob curr_university curr_major edu_end avatar_path resume_path
     render() {
+        if (!this.props.student_profile){
+            return <Spinner />;
+        }
 
         const fieldNames = {
             "dob": 'birth date',
@@ -67,7 +74,7 @@ class ProfileSection extends Component {
                 curr_degree,
                 curr_university, 
                 avatar_path, 
-                resume_path, ...info} = this.props.data;
+                resume_path, ...info} = this.props.student_profile[0];
 
         if(this.state.editMode) { // render form
             return (
@@ -141,8 +148,8 @@ class ProfileSection extends Component {
                     <CardSubtitle>{curr_degree} - {curr_major}</CardSubtitle>
                    
                     {
-                        Object.keys(info).map((key, index) => {
-                            return (<CardText> {fieldNames[key]} {info[key]} </CardText>)
+                        Object.keys(info).map((k, index) => {
+                            return (<CardText> {fieldNames[k]} {info[k]} </CardText>)
                         })
                     }
                 
@@ -159,5 +166,14 @@ class ProfileSection extends Component {
         
     }
 }
+ProfileSection.propType = {
+    student_profile: propTypes.object.isRequired,
+    user: propTypes.object.isRequired
+}
 
-export default ProfileSection;
+const mapStateToProps = (state) => ({
+    user: state.auth.user,
+    student_profile : state.studentProfile.student_profile
+});
+
+export default connect(mapStateToProps)(ProfileSection);

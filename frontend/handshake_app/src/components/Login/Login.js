@@ -44,7 +44,7 @@ render() {
             console.log('USER already logged in.. REDIRECT TO Company...');
         }
     }
-    else
+    // else
     // const errBox = (this.state.error != null) ? <ErrorBox message={this.state.error}/>:null;
     return (
         <Container fluid='true'>

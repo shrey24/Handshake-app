@@ -13,8 +13,9 @@ import {
 
 export const getStudentProfile = (user_id) => async dispatch => {
     try {
-        const res = await axios.get(`/student/profile/${user_id}`);
-        console.log(`/student/profile/${user_id}`, res);
+        console.log('getStudentProfile ****************************');
+        const res = await axios.get(`/student-profile/${user_id}`);
+        console.log(`/student-profile/${user_id}`, res);
         dispatch({
             type: GET_STUDENT_PROFILE,
             payload: res.data
@@ -26,11 +27,8 @@ export const getStudentProfile = (user_id) => async dispatch => {
             type: GET_STUDENT_PROFILE_ERR,
             payload: err.body
         });
-        dispatch(setAlert(err.body.error, 'danger'));
+        // dispatch(setAlert(err.body.error, 'danger'));
     }
-    
-
-
 }
 // export const getStudentEducations = () => {
 //     return {

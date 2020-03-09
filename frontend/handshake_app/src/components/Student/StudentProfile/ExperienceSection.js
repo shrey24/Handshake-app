@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Button, Label, Form, FormGroup, Input, Container, Col, Row } from 'reactstrap';
 import { Card } from 'react-bootstrap';
 
@@ -9,18 +9,26 @@ import propTypes from 'prop-types';
 import ExperienceForm from './ExperienceForm';
 
 const ExperienceSection = (props) => {
-    const [experienceData, setExperienceData] = useState([...props.data]);
+    
+    const [experienceData, setExperienceData] = useState([]);
     const [editId, setEditId] = useState(-1);
     const [addNewForm, setAddNewForm] = useState(false);
 
+    useEffect(() => {
+        if (props.data)
+            setExperienceData([...props.data]);
+    }, []);
+
     const cancelEditForm = () => setEditId(-1);
     const cancelAddForm = () => setAddNewForm(false);
+    console.log('ExperienceSection data = ', experienceData);
 
+    
     return (
         <Card >
         <Card.Body>                
         <Card.Title>
-            <h3> Education </h3>
+            <h3> Experience </h3>
         </Card.Title>
         {
             experienceData.map((item) => {
@@ -46,12 +54,7 @@ const ExperienceSection = (props) => {
 
         <br />
         <hr />
-        {
-            (addNewForm) ? (<ExperienceForm onCancel={cancelAddForm}/>) : 
-            (
-                <Button color='link' onClick={ e => setAddNewForm(true)}/>
-            )
-        }
+        { addNewForm ? <ExperienceForm onCancel={cancelAddForm}/> : <Button color='link' onClick={ e => setAddNewForm(true)}>Add New Experience</Button>  }
         </Card.Body>
         </Card>
     );
