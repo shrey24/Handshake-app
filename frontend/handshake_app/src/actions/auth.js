@@ -59,7 +59,7 @@ export const loginUser = (email, password, user_type) => async dispatch => {
             type: LOGIN_SUCCESS,
             payload: res.data
         });
-        setAuthTokenToHeaders(localStorage.token);
+        setAuthTokenToHeaders(res.data.token);
         console.log('call loadUser: ');
         dispatch(loadUser());
 

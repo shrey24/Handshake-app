@@ -28,7 +28,7 @@ export default function(state = initialState, action) {
             return Object.assign({}, state, initialState);
         
         case ADD_STUDENT_EXP:
-            return {...state, loading:true};
+            return {...state, loading:true}; // set loading:true re-render studentprofile
 
         case UPDATE_STUDENT_EXP:
             return {...state, loading:true};
@@ -42,14 +42,14 @@ export default function(state = initialState, action) {
         case ADD_STUDENT_EDUCATION:
             return Object.assign({}, 
                 state, 
-                {educationItems: state.educationItems.concat(action.payload)}
+                {student_education: state.student_education.concat(action.payload)}
                 );
 
         case UPDATE_STUDENT_EDUCATION:
             return Object.assign({}, 
                 state, 
                 {
-                    educationItems: state.educationItems.map((item) => {
+                    student_education: state.student_education.map((item) => {
                         if(action.payload.id === item.id) {
                             return action.payload;
                         } else {

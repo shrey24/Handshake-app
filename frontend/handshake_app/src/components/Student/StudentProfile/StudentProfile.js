@@ -40,14 +40,13 @@ class StudentProfile extends Component {
     }
 
     render() {
-
         if(!this.props.user) {
             return <Redirect to='/login' />;
         }
-        
-        if(this.props.studentProfile.loading)
-            return <Spinner />;
 
+        if(this.props.studentProfile.loading)
+        return <Spinner />;
+        
         console.log('rendering studentprofile', this.props.studentProfile);
         
         const {student_profile, student_education, student_experience} = this.props.studentProfile;

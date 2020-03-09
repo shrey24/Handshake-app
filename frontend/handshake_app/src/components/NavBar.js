@@ -59,9 +59,9 @@ class NavBar extends Component {
     );
 
 const companyLinks = studentLinks;
-const links = null;
+let links = null;
 if(this.props.user) {
-  const links = this.props.user.user_type === 'student' ? studentLinks : companyLinks;
+  links = this.props.user.user_type === 'student' ? studentLinks : companyLinks;
 }
 
 

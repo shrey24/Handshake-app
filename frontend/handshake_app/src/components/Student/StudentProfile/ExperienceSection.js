@@ -55,8 +55,6 @@ const ExperienceSection = (props) => {
                 }
             })
         }
-
-        <br />
         <hr />
         { addNewForm ? <ExperienceForm onCancel={cancelAddForm}/> : <Button color='link' onClick={ e => setAddNewForm(true)}>Add New Experience</Button>  }
         </Card.Body>

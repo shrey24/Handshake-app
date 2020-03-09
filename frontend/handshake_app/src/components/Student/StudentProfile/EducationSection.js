@@ -35,17 +35,18 @@ class EducationSection extends Component {
 
     deleteItem = (item) => {
         console.log("delete the item: ", item);
-        this.props.deleteStudentEducations(item.id);
+        this.props.deleteStudentEducation(item.id);
     }
 
     addNewItem = (item) => {
         console.log("Add the item: ", item);
-        this.props.addStudentEducations(item);
+        this.props.addStudentEducation(item);
     }
 
     updateItem = (item) => {
-        console.log("Add the item: ", item);
-        this.props.updateStudentEducations(item);
+        console.log("Update the item: ", item);
+        const { id, ...data} = item;
+        this.props.updateStudentEducation(id, data);
     }
 
     handleEdit = (item) => {

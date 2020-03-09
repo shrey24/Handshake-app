@@ -68,7 +68,7 @@ router.put('/education/:id', checkAuth, (req, res) => {
     //  TODO check same user session
     let updateEduSql = 'UPDATE student_education SET ? WHERE id = ? AND user_id = ?;';
     const data = req.body;
-    const id = req.params.id;
+    const id = Number(req.params.id);
     console.log(`update data for user id: ${id}`);
     console.log('data: ', data);    
     db.query(updateEduSql, [data, id, req.jwtData.user_id], (err, result) => {

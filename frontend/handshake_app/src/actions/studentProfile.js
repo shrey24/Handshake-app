@@ -6,7 +6,6 @@ import {
         GET_STUDENT_PROFILE_ERR,
         ADD_STUDENT_EDUCATION, 
         DELETE_STUDENT_EDUCATION, 
-        GET_STUDENT_EDUCATIONS,
         UPDATE_STUDENT_EDUCATION,
         UPDATE_STUDENT_EXP,
         ADD_STUDENT_EXP,
@@ -65,6 +64,7 @@ export const addStudentExperience = (expItem) => async dispatch => {
                 id: res.data.id
             }
         });
+        dispatch(getStudentProfile()); //refresh data
     } catch (error) {
         console.log('addStudentExperience action ERROR: ', error);
         dispatch({
@@ -91,7 +91,7 @@ export const updateStudentExperince = (exp_id, expItem) => async dispatch =>  {
                 id: exp_id
             }
         });
-        dispatch(getStudentProfile());
+        dispatch(getStudentProfile()); //refresh data
     } catch (error) {
         console.log('updateStudentExperience action ERROR: ', error);
         dispatch({
@@ -112,17 +112,56 @@ export const updateStudentExperince = (exp_id, expItem) => async dispatch =>  {
 // };
 
 export const addStudentEducation = (eduItem) => async dispatch =>  {
-    return {
-        type: ADD_STUDENT_EDUCATION,
-        payload: eduItem
-    };
+    try {
+        const data = JSON.stringify(eduItem);
+        const res = await axios.post(`/student-profile/education`,
+                        data, 
+                        config
+                    );
+        //success
+        dispatch({
+            type: ADD_STUDENT_EDUCATION,
+            payload: {
+                ...eduItem,
+                id: res.data.id
+            }
+        });
+    } catch (error) {
+        dispatch({
+            type: ERR_UPDATE_PROFILE,
+            payload: {
+                error: error.body
+            }
+        });
+        dispatch(setAlert(`Unable to add new item: ${error.body}`, 'danger'));
+    }
 };
 
-export const updateStudentEducation = (eduItem) => async dispatch =>  {
-    return {
-        type: UPDATE_STUDENT_EDUCATION,
-        payload: eduItem
-    };
+export const updateStudentEducation = (id, eduItem) => async dispatch =>  {
+    try {
+        const res = await axios.put(`/student-profile/education/${id}`,
+            eduItem, 
+            config
+        );
+        //success
+        dispatch({
+            type: UPDATE_STUDENT_EDUCATION,
+            payload: {
+                ...eduItem,
+                id: id
+            }
+        });
+        // dispatch(getStudentProfile());
+    } catch (error) {
+        console.log('updateStudentEducation action ERROR: ', error);
+        dispatch({
+            type: ERR_UPDATE_PROFILE,
+            payload: {
+                error: error.body
+            }
+        });
+        dispatch(setAlert(`Unable to add new item: ${error.body}`, 'danger'));
+    }
 };
 
 export const deleteStudentEducation = (id) => async dispatch =>  {
