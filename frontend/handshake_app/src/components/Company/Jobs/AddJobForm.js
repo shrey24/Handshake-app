@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
-import { Button, Label, Form, FormGroup, Input, Container, Col, Row, Card } from 'reactstrap';
+import React, { useState, useEffect } from 'react';
+import { Button, Label, Form, FormGroup, Input, Container, Col, Row, Card, CardBody, CardTitle } from 'reactstrap';
 import { connect } from 'react-redux';
 import propTypes from 'prop-types';
-import { setAlert } from '../../../actions/alert';
-import AlertComp from '../../AlertComp';
+
 
 
 const AddJobForm = (props) => {
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    var yyyy = today.getFullYear();
 
     const [stdFormData, setStdFormData] = useState({
         job_title: '',
@@ -15,9 +18,17 @@ const AddJobForm = (props) => {
         salary: '',
         job_desc: '',
         job_catagory: '',
-        post_date: '',
+        post_date: yyyy + '-' + mm + '-' + dd,
         company_name: ''
     });
+
+    useEffect(() => {
+        if(props.profile) {
+            console.log('***************** props.profile');
+            console.log(props.profile);
+            setStdFormData({company_name: props.profile[0].name});
+        }
+    }, [props.profile]);
 
     const handleInput = e => {
         setStdFormData({...stdFormData, [e.target.name]: e.target.value});
@@ -28,15 +39,16 @@ const AddJobForm = (props) => {
         console.log('send data to /company/job: ', stdFormData);
     };
 
+    
+
     return (
-        <div>
         <Container>
         <Card>
-        <Card.Body>
-        <AlertComp />
-        <Card.Title>
+        <CardBody>
+        
+        <CardTitle>
          New Job Posting 
-        </Card.Title>
+        </CardTitle>
         <Form onSubmit={e => onSubmit(e)}>
         <FormGroup>
         <Label for="job_title">Job Title:</Label>
@@ -89,20 +101,26 @@ const AddJobForm = (props) => {
         </FormGroup>
         <Row>
         <Col>
-        <Button onClick={(e) => onSubmit(e)} >Create account</Button>
+        <Button color='success' onClick={(e) => onSubmit(e)} >Post New Opening</Button>
         </Col>
         </Row>
         </Form> 
 
-        </Card.Body>
+        </CardBody>
         </Card>
         </Container>
-        </div>
-    );
+    )
 };
 
 AddJobForm.propTypes = {
-    setAlert: propTypes.func.isRequired,
-};
+    setAlert : propTypes.func.isRequired,
+    user: propTypes.object.isRequired,
+    profile: propTypes.array.isRequired,
+}
 
-export default connect(null, { setAlert })(AddJobForm);
+
+const mapStateToProps = (state) => ({
+    user: state.auth.user,
+    profile: state.company.profile
+});
+export default connect(mapStateToProps)(AddJobForm);
