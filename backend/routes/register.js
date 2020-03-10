@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
 // const db = require('../models');
-const { user_types } = require('../config/datatypes');
+const user_types = require('../config/datatypes');
 const db = require('./database');
 
 
@@ -83,6 +83,78 @@ router.post('/student', (req, res) => {
     });
 });
 
+
+
+// Post: /register/student
+router.post('/company', (req, res) => {
+    /*
+        req: name, email, password
+    */
+    console.log(req.body);
+    const { email, password, name, location } = req.body;
+    const user_type = user_types['company'];
+    let user_auth = { 
+                        email, 
+                        password: hashPassword(password), 
+                        user_type
+                    };
+
+    let selectSql= ` SELECT * FROM user_auth WHERE email = ?;`;
+    let InsertSql = ' INSERT INTO user_auth SET ?; ';
+
+    db.query(selectSql, [email], (err, result) => {
+        if(err) {
+            console.log(err);
+            res.status(500).send(err);
+        }
+        console.log(result);
+        if (result.length !== 0) {
+            res.status(500).json({
+                error: `user ${email} already exists`
+            });
+        } else { // insert new user to user_auth table
+            db.query(InsertSql, user_auth, (err, result, fields) => {
+                if (err) {
+                    res.status(500).send(err);
+                    console.log(err);      
+                } else {  
+                    // insert new company to company_profile table                  
+                    let insertCompanyProfileSql = ' INSERT INTO company_profile SET ?; ';
+                    let user_id = result['insertId'];
+                    let profile_data = { user_id, email, name, location };
+                    db.query(insertCompanyProfileSql, 
+                        profile_data, (err, results) => {
+                            if (err) {
+                                res.status(500).send(err);
+                                console.log(err);
+                                return;    
+                            }
+                            console.log(results);
+
+                            const token = jwt.sign({
+                                email,
+                                user_id : user_id,
+                                user_type : 'company'
+                                },
+                                process.env.JWT_KEY,
+                                { expiresIn: '1h' }
+                                );
+                            //Success, send a jwt token back
+                            res.status(200).json({
+                                'msg': 'new company created',
+                                token,
+                                user: {
+                                    email,
+                                    user_id : user_id,
+                                    user_type : 'company'
+                                }
+                            });
+                        });
+                }
+            });
+        }
+    });
+});
 
 
 /* // using sequelize

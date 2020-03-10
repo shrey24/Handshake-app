@@ -5,6 +5,6 @@ const jwt = require('jsonwebtoken');
 const router = express.Router();
 // const db = require('../models');
 const db = require('./database');
-const { user_types } = require('../config/datatypes');
+const user_types = require('../config/datatypes');
 
 

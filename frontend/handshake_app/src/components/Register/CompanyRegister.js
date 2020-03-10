@@ -1,7 +1,13 @@
 import React, { useState } from 'react'
 import { Button, Label, Form, FormGroup, Input, Container, Col, Row, CardText } from 'reactstrap';
+import { connect } from 'react-redux';
+import propTypes from 'prop-types'
+import { registerUser } from '../../actions/auth';
+import { setAlert } from '../../actions/alert';
+import AlertComp from '../AlertComp';
 
-const CompanyRegister = () => {
+
+const CompanyRegister = (props) => {
 
     const [stdFormData, setStdFormData] = useState({
         email: '',
@@ -17,12 +23,15 @@ const CompanyRegister = () => {
     const onSubmit = (e) => {
         e.preventDefault();
         console.log('send data to /company: ', stdFormData);
+        props.registerUser(stdFormData, 'company');
     }
 
     return (
         <div>
             <Container>
                 <h3> Company Registration </h3>
+                <AlertComp />
+
             <Form onSubmit={e => onSubmit(e)}>
             <FormGroup>
             <Label for="name">Company Name:</Label>
@@ -76,4 +85,9 @@ const CompanyRegister = () => {
     );
 }
 
-export default CompanyRegister;
+CompanyRegister.propTypes = {
+    setAlert: propTypes.func.isRequired,
+    registerUser: propTypes.func.isRequired
+}
+
+export default connect(null, { setAlert, registerUser })(CompanyRegister);

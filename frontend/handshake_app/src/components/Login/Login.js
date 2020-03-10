@@ -25,10 +25,10 @@ constructor(props){
 //   this.onSubmit = this.onSubmit.bind(this);
 }
 
-onSubmit = async (e, user_type) => {
+onSubmit = async (e) => {
     e.preventDefault();
-    console.log("onSubmit Login:", user_type);
-    this.props.loginUser(this.state.email, this.state.password, user_type);
+    console.log("onSubmit Login:");
+    this.props.loginUser(this.state.email, this.state.password);
 };
 
 handleInput = (e) => {
@@ -42,6 +42,7 @@ render() {
             return <Redirect to='/student/profile' />;
         else {
             console.log('USER already logged in.. REDIRECT TO Company...');
+            return <Redirect to='/company/landing' />
         }
     }
     // else
@@ -64,7 +65,7 @@ render() {
             </p>
             <AlertComp />
             <Form onSubmit={this.onSubmit}>
-                <h2> Student Sign In </h2>
+                <h2>  Sign In to handshake </h2>
             <FormGroup>
             <Label for="inpEmail">Email</Label>
             <Input 
@@ -78,7 +79,7 @@ render() {
                 onChange={this.handleInput}
             type="password" name="password" id="password" placeholder="password" />
             </FormGroup>
-            <Button onClick={(e) => this.onSubmit(e, 'student')}>Submit</Button>
+            <Button onClick={(e) => this.onSubmit(e)}>Submit</Button>
             </Form> 
         </Container>
         

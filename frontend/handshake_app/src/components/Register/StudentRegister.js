@@ -7,6 +7,8 @@ import { registerUser } from '../../actions/auth';
 import propTypes from 'prop-types';
 import { Button, Label, Form, FormGroup, Input, Container, Col, Row, CardText } from 'reactstrap';
 
+
+
 const StudentRegister = (props) => {
 
     const [stdFormData, setStdFormData] = useState({

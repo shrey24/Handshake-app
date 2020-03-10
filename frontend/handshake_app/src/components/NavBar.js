@@ -46,7 +46,7 @@ class NavBar extends Component {
       <Nav.Link> <Link to='/register' style= {{ all: "inherit" }}>
           Register
       </Link></Nav.Link>  
-      <Nav.Link> <Link to='/Jobs' style= {{ all: "inherit" }}>
+      <Nav.Link> <Link to='/student/jobs' style= {{ all: "inherit" }}>
           Jobs
       </Link></Nav.Link>   
       <Nav.Link> <Link to='/Students' style= {{ all: "inherit" }}>
@@ -58,10 +58,33 @@ class NavBar extends Component {
   </Nav>
     );
 
-const companyLinks = studentLinks;
+const companyLinks = (
+<Nav className="mr-auto">
+      <Form inline>
+        <FormControl type="text" placeholder="Search" className="mr-sm-2" />
+      </Form>
+      <Nav.Link> <Link to='/company/jobs' style= {{ all: "inherit" }}>
+          Jobs
+      </Link></Nav.Link>   
+      <Nav.Link> <Link to='/Students' style= {{ all: "inherit" }}>
+          Students
+      </Link></Nav.Link>   
+      <Nav.Link> <Link to='/Events' style= {{ all: "inherit" }}>
+          Events
+      </Link></Nav.Link>
+  </Nav>
+);
+
 let links = null;
+let profileLink = null;
 if(this.props.user) {
-  links = this.props.user.user_type === 'student' ? studentLinks : companyLinks;
+  if(this.props.user.user_type === 'student') {
+    links = studentLinks;
+    profileLink = '/student/profile'
+  } else {
+    links = companyLinks;
+    profileLink = '/company/profile'
+  }
 }
 
 
@@ -75,7 +98,11 @@ return(
   <Row>
     <Col >
     <NavDropdown title="Profile" id="basic-nav-dropdown">
-      <NavDropdown.Item href="#action/3.1">View Profile</NavDropdown.Item>
+      <NavDropdown.Item>
+      <Link to={profileLink} >
+       View Profile
+      </Link>
+      </NavDropdown.Item>
       <NavDropdown.Divider />
       <NavDropdown.Item onClick={this.props.logout}>Sign Out</NavDropdown.Item>
     </NavDropdown>

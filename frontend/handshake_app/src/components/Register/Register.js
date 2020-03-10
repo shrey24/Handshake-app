@@ -27,6 +27,7 @@ class Register extends Component {
                 return <Redirect to='/student/profile' />;
             } else {
                 console.log('Already company login, Redirect to /companyLandingPage');
+                return <Redirect to='/company/landing' />;
             }
         }
 

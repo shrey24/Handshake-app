@@ -5,7 +5,7 @@ const router = express.Router();
 // const db = require('../models');
 const checkAuth = require('./check_auth'); // middleware
 const db = require('./database');
-const { user_types } = require('../config/datatypes');
+const user_types = require('../config/datatypes');
 
 const isValidPassword = (chk_password, db_password_hash) => {
     return bcrypt.compareSync(chk_password, db_password_hash);
@@ -36,8 +36,9 @@ router.get('/', checkAuth, (req, res) => {
 });
 
 // login student - return jwt
-router.post('/student', (req, res, next) => {
+router.post('/', (req, res, next) => {
     const {email, password} = req.body;
+    console.log('/login req.data: ', req.body);
     let queryUser = 'SELECT * FROM user_auth WHERE email = ?';
     db.query(queryUser,  [email] , (err, results) => {
         if(err) {
@@ -46,17 +47,17 @@ router.post('/student', (req, res, next) => {
         } else {
             console.log(results);
             if(results.length > 0) { // check password
-                if(isValidPassword(password, results[0].password) && 
-                results[0].user_type === user_types['student']) {
+                if(isValidPassword(password, results[0].password)) {
                     console.log(results[0]);
                     const token = jwt.sign({
                             email,
                             user_id : results[0].user_id,
-                            user_type : 'student'
+                            user_type : user_types.fromNumber(results[0].user_type)
                             }, 
                             process.env.JWT_KEY,
                             { expiresIn: '1h' }
                         );
+                    console.log(user_types.fromNumber(results[0].user_type));
                     //Sucess, send a jwt token back
                     res.status(200).json({
                         'msg': 'authentication successful',
@@ -64,7 +65,7 @@ router.post('/student', (req, res, next) => {
                         user: {
                             email,
                             user_id : results[0].user_id,
-                            user_type : 'student'
+                            user_type : user_types.fromNumber(results[0].user_type)
                         }
                     });
 

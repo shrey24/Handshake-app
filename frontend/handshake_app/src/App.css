@@ -2,6 +2,16 @@ body > .grid {
   height: 100%;
 }
 
+.nav .flex-column .nav-tabs {
+
+  height: 100pc;
+  overflow-x: auto;
+  overflow-y: scroll;
+}
+.nav-tabs>li {
+  float: none;
+}
+
 /* .App {
   text-align: center;
 }

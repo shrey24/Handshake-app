@@ -40,9 +40,9 @@ export const loadUser = () => async dispatch => {
 };
 
 // login user to get user object and token
-export const loginUser = (email, password, user_type) => async dispatch => {
-    const loginRoute = (user_type === 'student') ? '/login/student': '/login/company';
-
+export const loginUser = (email, password) => async dispatch => {
+    // const loginRoute = (user_type === 'student') ? '/login/student': '/login/company';
+    const loginRoute = '/login';
     const config = {
         headers: {
             'Content-Type': 'application/json'
@@ -54,12 +54,13 @@ export const loginUser = (email, password, user_type) => async dispatch => {
         const res = await axios.post(loginRoute, body, config);
 
         console.log('Login success: dispatching payload: ', res.data);
+        setAuthTokenToHeaders(res.data.token);
         //login success
         dispatch({
             type: LOGIN_SUCCESS,
             payload: res.data
         });
-        setAuthTokenToHeaders(res.data.token);
+        
         console.log('call loadUser: ');
         dispatch(loadUser());
 
