@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Button, Label, Form, FormGroup, Input, Container, Col, Row, Card, CardBody, CardTitle } from 'reactstrap';
 import { connect } from 'react-redux';
 import propTypes from 'prop-types';
-
-
+import axios from 'axios';
+import { setAlert } from '../../../actions/alert';
+import { JOB_CAT } from '../../../actions/types';
 
 const AddJobForm = (props) => {
     var today = new Date();
@@ -14,10 +15,10 @@ const AddJobForm = (props) => {
     const [stdFormData, setStdFormData] = useState({
         job_title: '',
         job_location: '',
-        deadline: '',
-        salary: '',
+        // deadline: '',
+        // salary: '',
         job_desc: '',
-        job_catagory: '',
+        job_catagory: JOB_CAT.FULLTIME,
         post_date: yyyy + '-' + mm + '-' + dd,
         company_name: ''
     });
@@ -26,7 +27,7 @@ const AddJobForm = (props) => {
         if(props.profile) {
             console.log('***************** props.profile');
             console.log(props.profile);
-            setStdFormData({company_name: props.profile[0].name});
+            setStdFormData({...stdFormData, company_name: props.profile[0].name});
         }
     }, [props.profile]);
 
@@ -37,19 +38,25 @@ const AddJobForm = (props) => {
     const onSubmit = (e) => {
         e.preventDefault();
         console.log('send data to /company/job: ', stdFormData);
+        axios.post('/company/job', stdFormData)
+        .then(res => {
+            console.log('new job added res:', res);            
+            props.onCancel();
+        })
+        .catch(err => {
+            console.log('ADD JOB ERR: ', err);
+            props.setAlert('Unable to add job', 'danger');
+        });
     };
-
-    
 
     return (
         <Container>
         <Card>
         <CardBody>
-        
         <CardTitle>
          New Job Posting 
         </CardTitle>
-        <Form onSubmit={e => onSubmit(e)}>
+        <Form >
         <FormGroup>
         <Label for="job_title">Job Title:</Label>
             <Input 
@@ -79,6 +86,22 @@ const AddJobForm = (props) => {
                 type='textarea'
                 required
             />
+        </FormGroup>
+        <FormGroup>
+        <Label for="job_catagory">Job Catagory:</Label>
+            <Input 
+                onChange={handleInput}
+                name="job_catagory"
+                value = {stdFormData.job_catagory}
+                type='select'
+                required
+            >
+                <option> {JOB_CAT.FULLTIME} </option>
+                <option> {JOB_CAT.PARTTIME} </option>
+                <option> {JOB_CAT.INTERN} </option>
+                <option> {JOB_CAT.ONCAMPUS} </option>
+                
+            </Input>
         </FormGroup>
         <FormGroup>
         <Label for="deadline">deadline to apply:</Label>
@@ -123,4 +146,4 @@ const mapStateToProps = (state) => ({
     user: state.auth.user,
     profile: state.company.profile
 });
-export default connect(mapStateToProps)(AddJobForm);
+export default connect(mapStateToProps, {setAlert})(AddJobForm);

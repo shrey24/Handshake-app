@@ -54,8 +54,10 @@ router.post('/job', checkAuth, (req, res) => {
     console.log('insert new job data:', data);
     let sqlPostJob = 'INSERT INTO jobs SET ?;';
     db.query(sqlPostJob, data, (err, result) => {
-        if(err) res.status(500).send(err);
-        else {
+        if(err) {
+            console.log(err);
+            res.status(500).send(err);
+        } else {
             res.status(200).json({ msg: 'success', id: result['insertId'] });
         }
     });

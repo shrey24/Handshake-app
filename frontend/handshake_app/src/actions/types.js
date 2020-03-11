@@ -1,3 +1,10 @@
+export const JOB_CAT = {
+    FULLTIME : 'Full-Time Job',
+    PARTTIME : 'Part-Time Job',
+    INTERN : 'Internship',
+    ONCAMPUS : 'On-Campus'    
+}
+
 export const REGISTER_SUCCESS = 'REGISTER_SUCCESS';
 export const REGISTER_FAIL = 'REGISTER_FAIL';
 
