@@ -1,33 +1,52 @@
 import React, { Component } from 'react';
 import {Card, Row, Col, Container, Modal, Button} from 'react-bootstrap';
 import axios from 'axios';
+import { connect } from 'react-redux';
+import propTypes from 'prop-types';
+import AlertComp from '../../AlertComp';
+import { setAlert } from '../../../actions/alert';
 
-export default class JobsRight extends Component {
+class JobsRight extends Component {
     constructor(props) {
         super(props);
         this.state = {
             show : false,
-            file: null
+            file: null,
+            applied: false
         }
     }
 
     onChange = (e) => {
         this.setState({file:e.target.files[0]});
     }
-
+    // { job_id, company_id, app_date, student_resume}
     onApply = (e) => {
+        var today = new Date();
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+        var yyyy = today.getFullYear();
+        const app_date = yyyy + '-' + mm + '-' + dd;
+
         const formData = new FormData();
-        formData.append('myImage',this.state.file);
+        const {data} = this.props;
+        formData.append('job_id', data.id);
+        formData.append('company_id', data.company_id);
+        formData.append('app_date', app_date);
+        formData.append('file', this.state.file);
         const config = {
             headers: {
                 'content-type': 'multipart/form-data'
             }
         };
-    //     axios.post("/upload",formData,config)
-    //         .then((response) => {
-    //             alert("The file is successfully uploaded");
-    //         }).catch((error) => {
-    //         });
+        axios.post("/jobs/apply", formData, config)
+            .then((res) => {
+                console.log('file upload success', res);
+                this.handleClose();
+                this.props.setAlert('Application Submitted!', 'success');
+                this.setState({applied: true});
+            }).catch((error) => {
+                console.log(error);                
+            });
     }
 
     showModal = (e) => {
@@ -48,7 +67,7 @@ export default class JobsRight extends Component {
             // aria-labelledby="v-pills-job-tab">
 
             <Container>
-
+            <AlertComp />
             <div className="container-fluid pad-all">
                 <h2 className="font-weight-bold">{data.job_title}</h2>
                 <h3 className="font-weight-normal">{data.company_name}</h3>
@@ -73,11 +92,21 @@ export default class JobsRight extends Component {
                         </h5>
                         </Col>
                         <Col sm={2}>
-                        <button type="button" 
-                        class="btn btn-success mar-btm"
-                        onClick = {this.showModal}>
-                            Apply
-                        </button>
+                            {
+
+                            !this.state.applied ?
+                                <button type="button" 
+                                class="btn btn-success mar-btm"
+                                onClick = {this.showModal}>
+                                    Apply
+                                </button> :
+                                <button type="button" 
+                                class="btn btn-primary mar-btm"
+                                >
+                                Applied
+                                </button> 
+
+                            }
                         </Col>
                     </Row> 
                     </Card.Body>               
@@ -106,7 +135,7 @@ export default class JobsRight extends Component {
 
             </Modal.Body>
             <Modal.Footer>
-            <Button variant="success" onClick={this.handleClose}>
+            <Button variant="success" onClick={this.onApply}>
                 Submit Application
             </Button>
             </Modal.Footer>
@@ -116,3 +145,9 @@ export default class JobsRight extends Component {
         )
     }
 }
+
+JobsRight.propTypes = {
+    setAlert : propTypes.func.isRequired,
+}
+
+export default connect(null, { setAlert })(JobsRight);

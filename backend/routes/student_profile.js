@@ -43,7 +43,7 @@ const storage = multer.diskStorage({
     filename: function(req, file, cb){
         // save as file name
         let extension = file.originalname.slice(file.originalname.indexOf('.'));
-       cb(null, String(req.jwtData.user_id)+'-pic.'+extension);
+       cb(null, String(req.jwtData.user_id)+'-pic'+extension);
     }
  });
  
