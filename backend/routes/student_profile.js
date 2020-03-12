@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
-// const db = require('../../models');
+const path = require('path');
+const multer = require('multer');
+
 const db = require('./database');
 const checkAuth = require('./check_auth');
 
@@ -36,15 +38,38 @@ router.get('/:user_id', checkAuth, (req, res) => {
         });    
 });
 
+const storage = multer.diskStorage({
+    destination: "./public/uploads/avatar/",
+    filename: function(req, file, cb){
+        // save as file name
+        let extension = file.originalname.slice(file.originalname.indexOf('.'));
+       cb(null, String(req.jwtData.user_id)+'-pic.'+extension);
+    }
+ });
+ 
+ const upload = multer({
+    storage: storage,
+    limits:{fileSize: 1000000},
+ }).single("userAvatar"); // field name
+
 //> PUT /student-profile (update student profile)
-router.put('/', checkAuth, (req, res) => {
+// Updates info or profile_pic
+router.put('/', checkAuth, upload, (req, res) => {
     const user_id = req.jwtData.user_id;
-    const data = req.body;
+    let data = req.body;
+    if(req.file) {
+        // store file path
+        let path = req.file.path;
+        var avatar_public_path = path.slice(path.indexOf('/'));
+        data = {...data, avatar_path: avatar_public_path};
+    }
     let updateProfileSql = 'UPDATE student_profile SET ? WHERE user_id = ?;';
     db.query(updateProfileSql, [data, user_id], (err, result) => {
-        if(err) res.status(500).send(err);
-        else {
-            res.status(200).json({ msg: 'success', result: result });
+        if(err) {
+            console.log(err);
+            res.status(500).send(err);
+        } else {
+            res.status(200).json({ msg: 'success', result: result, avatar_path: avatar_public_path || null });
         }
     });
 });

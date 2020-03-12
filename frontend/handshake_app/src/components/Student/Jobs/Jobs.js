@@ -1,42 +1,83 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 import JobsLeft from './JobsLeft'
 import JobsRight from './JobsRight'
 import JobsTop from './JobsTop'
 import NavBar from '../../NavBar';
+import axios from 'axios';
+import { Container } from 'react-bootstrap';
+
 export default class Jobs extends Component {
 
-    render() {
-        var styles = {
-            backgroundColor: '#DEDEDE',
-            'overflow-y': 'scroll'
-            };
+    constructor(props) {
+        super(props);
+        this.state = {
+            jobs : [],
+            active: 0,
+        }
+    }
+
+    componentDidMount() {
+        axios.get('/jobs/all')
+            .then((res) => {
+                this.setState({ jobs: [...res.data]});
+            })
+            .catch((err) => {
+                console.log('err, unable to fetch /jobs/all', err);
+
+            });
+    }
+
+
+render() {
+
+    const styles = {
+        backgroundColor: '#DEDEDE',
+        'overflow-y': 'scroll'
+    };
+    
+    const leftPaneComp = this.state.jobs.map((job, index) => {
         return (
-            <div>
-                <NavBar />
-                <div class="mar-btm">
-                <JobsTop />
-                </div>
-                <div class="card border">
-                    <div class="row">
-                        <div class="col-5">
-                            <div data-spy="scroll" class="nav flex-column nav-tabs" id="v-pills-tab" role="tablist" aria-orientation="vertical" style={styles}>
-                                <a class="nav-link active border" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab" aria-controls="v-pills-home" aria-selected="true"><JobsLeft /></a>
-                                <a class="nav-link border" id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="false"><JobsLeft /></a>
-                                <a class="nav-link border" id="v-pills-messages-tab" data-toggle="pill" href="#v-pills-messages" role="tab" aria-controls="v-pills-messages" aria-selected="false"><JobsLeft /></a>
-                                <a class="nav-link border" id="v-pills-settings-tab" data-toggle="pill" href="#v-pills-settings" role="tab" aria-controls="v-pills-settings" aria-selected="false"><JobsLeft /></a>
-                            </div>
-                        </div>
-                        <div class="col-7">
-                            <div class="tab-content" id="v-pills-tabContent">
-                                <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab"><JobsRight /></div>
-                                <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab"><JobsRight /></div>
-                                <div class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab"><JobsRight /></div>
-                                <div class="tab-pane fade" id="v-pills-settings" role="tabpanel" aria-labelledby="v-pills-settings-tab"><JobsRight /></div>
-                            </div>
-                        </div>
-                    </div>
+            <div className="nav-link active border"
+            onClick={ e => this.setState({active: index})}>
+                <JobsLeft data={job} />
+            </div>
+        );
+    });
+    
+    const rightPaneComp = (this.state.jobs.length > 0) ? 
+                        <JobsRight data={this.state.jobs[this.state.active]} /> :
+                        <h4> no results found </h4> ;
+
+    return (
+        <div>
+        <NavBar />
+        <Container>
+        <div className="mar-btm">
+        <JobsTop />
+        </div>
+
+        <div className="card border">
+        <div className="row">
+            <div className="col-5">
+                <div 
+                className="nav flex-column nav-tabs" 
+                id="v-pills-tab" 
+                role="tablist" 
+                aria-orientation="vertical">
+                    {leftPaneComp}
                 </div>
             </div>
-        )
-    }
+            
+            <div className="col-7">
+                <div className="tab-content" id="v-pills-tabContent">
+                    {rightPaneComp}
+                </div>
+            </div>
+            
+        </div>
+        </div>
+        </Container>
+        </div>
+    )
+ }
 }

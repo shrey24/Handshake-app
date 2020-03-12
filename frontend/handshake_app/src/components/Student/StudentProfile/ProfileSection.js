@@ -14,21 +14,29 @@ import { Container,
         CardTitle,
         CardSubtitle        
     } from 'reactstrap';
+import { Modal } from 'react-bootstrap';
 import { connect } from 'react-redux';
+import { getStudentProfile } from '../../../actions/studentProfile';
 import propTypes from 'prop-types'
 import Spinner from '../../Spinner';
+import axios from 'axios';
 
 
 class ProfileSection extends Component {
     constructor(props){
         super(props);
         this.state = {
+            data:null,
             editMode: false,
+            showAvatarModal : false,
+            file: null,
         }
     }
 
     componentDidMount(){
-        this.setState({...this.props.student_profile});
+        this.setState({
+            data: {...this.props.student_profile[0]}
+        });  
     }
 
     handleEdit = () => {
@@ -36,13 +44,52 @@ class ProfileSection extends Component {
     }
 
     handleInput = (e) => {
-        this.setState({[e.target.name] : e.target.value});  
+        this.setState({
+            ...this.state,
+            data: {[e.target.name] : e.target.value}
+        });  
     }
 
-    onSubmit = (e) => {
-        const {editMode, ...data} = this.state;
+    onSubmit = (e) => { 
+        const { data } = this.state;
         console.log("API Call to update/profile : ", data);
+        axios.put('/student-profile', data)
+            .then(res => {
+                console.log('prifile updated', res);
+                this.props.getStudentProfile();
+            })
+            .catch(err => {
+                console.log('update student-profile err: ', err);
+                
+            });
         this.setState({editMode:false});
+    }
+
+    uploadFile = (e) => {
+        e.preventDefault();
+        const formData = new FormData();
+        formData.append('userAvatar', this.state.file);
+        axios.put('/student-profile', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        })
+        .then(res => {
+            console.log('file upload success', res);
+            this.onCancelAvatarModal();
+            this.props.getStudentProfile();
+        })
+        .catch(err => {
+            console.log('file upload error', err);
+        });
+    }
+
+    onChangeAvatar = (e) => {
+        this.setState({file: e.target.files[0]});
+    }
+
+    onCancelAvatarModal = (e) => {
+        this.setState({showAvatarModal: false});
     }
 
     onCancel = (e) => {
@@ -76,15 +123,43 @@ class ProfileSection extends Component {
                 avatar_path, 
                 resume_path, ...info} = this.props.student_profile[0];
 
+        const modal = (
+            <Modal show={this.state.showAvatarModal} onHide={this.onCancelAvatarModal}>
+            <Modal.Header closeButton>
+            <Modal.Title>Edit Profile Picture</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+            <br /> <br /> 
+            Upload a new profile picture
+            <Form onSubmit={this.uploadFile}>
+            <input 
+            type="file" 
+            name="userAvatar" 
+            onChange= {this.onChangeAvatar} 
+            />
+            
+            <Modal.Footer>
+            <Button type='submit' color="success">
+                Upload
+            </Button>
+            </Modal.Footer>
+            </Form>
+            </Modal.Body>
+            </Modal>
+        );
+
+
         if(this.state.editMode) { // render form
             return (
                 <div>
+                {modal}
                 <Container>
                 <Card style={{ width: '18rem' }}>
                 <CardBody className="text-center"></CardBody>
                 <Avatar 
                     name={name}
                     round={true}
+                    src={avatar_path}
                 />
 
                 <Form onSubmit={this.onSubmit}>
@@ -93,7 +168,7 @@ class ProfileSection extends Component {
                     <Input 
                         onChange={this.handleInput}
                         name="name"
-                        value = {this.state['name']}
+                        value = {this.state.data['name']}
                         type="text"
                         required
                     />
@@ -103,7 +178,7 @@ class ProfileSection extends Component {
                     <Input 
                         onChange={this.handleInput}
                         name="edu_end"
-                        value = {this.state['edu_end']}
+                        value = {this.state.data['edu_end']}
                         type="number"
                         required
                     />
@@ -113,17 +188,17 @@ class ProfileSection extends Component {
                     <Input 
                         onChange={this.handleInput}
                         name="gpa"
-                        value = {this.state.gpa}
+                        value = {this.state.data.gpa}
                         type="number"
                         required
                     />
                 </FormGroup>
                 <Row>
                 <Col>
-                <Button onClick={(e) => this.onSubmit(e)} >Submit</Button>
+                <Button color='success' onClick={(e) => this.onSubmit(e)} >Submit</Button>
                 </Col>
                 <Col>
-                <Button onClick={(e) => this.onCancel(e)} >Cancel</Button>
+                <Button color='secondary' onClick={(e) => this.onCancel(e)} >Cancel</Button>
                 </Col>
                 </Row>                
                 </Form> 
@@ -137,12 +212,16 @@ class ProfileSection extends Component {
             return (
                 <div>
                 <Container>
+                {modal}
                 <Card style={{ width: '18rem' }}>
                 <CardBody className="text-center">
                     <Avatar 
                     name={name}
                     round={true} 
+                    src = {avatar_path}
+                    onClick = { (e) => this.setState({showAvatarModal: true})}
                     />
+
                     <CardTitle><h5>{name} </h5></CardTitle>
                     <CardSubtitle>{curr_university}</CardSubtitle>
                     <CardSubtitle>{curr_degree} - {curr_major}</CardSubtitle>
@@ -153,7 +232,7 @@ class ProfileSection extends Component {
                         })
                     }
                 
-                    <Button onClick={(e) => this.handleEdit()}>
+                    <Button color='link' onClick={(e) => this.handleEdit()}>
                         Edit
                     </Button>
 
@@ -168,7 +247,8 @@ class ProfileSection extends Component {
 }
 ProfileSection.propType = {
     student_profile: propTypes.object.isRequired,
-    user: propTypes.object.isRequired
+    user: propTypes.object.isRequired,
+    getStudentProfile: propTypes.func.isRequired,
 }
 
 const mapStateToProps = (state) => ({
@@ -176,4 +256,4 @@ const mapStateToProps = (state) => ({
     student_profile : state.studentProfile.student_profile
 });
 
-export default connect(mapStateToProps)(ProfileSection);
+export default connect(mapStateToProps, {getStudentProfile})(ProfileSection);

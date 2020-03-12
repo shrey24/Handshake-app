@@ -64,8 +64,7 @@ class Jobs extends Component {
                             <Container>
                             <br />
                             <Card>
-                            
-                            
+
                             <Card.Header>
                                 <Row className="show-grid">
                                     <Col sm={8}>

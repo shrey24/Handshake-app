@@ -48,8 +48,8 @@ render() {
     // else
     // const errBox = (this.state.error != null) ? <ErrorBox message={this.state.error}/>:null;
     return (
-        <Container fluid='true'>
-        
+        <div className='container'>
+
         <Row >
         <Col sm={6} style={{background : '#1569e0', color: '#fff'  }}>
         <Container fluid='true' >
@@ -88,7 +88,7 @@ render() {
            
         </Row>
         
-        </Container>
+        </div>
             
     );
   }

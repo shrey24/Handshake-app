@@ -1,8 +1,12 @@
 import React, { Component } from 'react'
+import { Card, Container } from 'react-bootstrap'
 
 export default class JobsTop extends Component {
     render() {
         return (
+  
+            <Card>
+                <Card.Body>
             <div>
                 <nav class="navbar navbar-light bg-light">
                     <form class="form-inline col-md-6">
@@ -13,6 +17,8 @@ export default class JobsTop extends Component {
                     </form>
                 </nav>
             </div>
+            </Card.Body>
+            </Card>
         )
     }
 }
