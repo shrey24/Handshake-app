@@ -119,6 +119,34 @@ export default class Jobs extends Component {
         this.filter(newFilterStatus);
     }
 
+    onChange = (e) => {
+        console.log('onChange search: ', e.target.value);
+        
+        if(e.target.value === '') {
+            this.filter(this.state.filterStatus);
+            return;
+        }
+        let newList = this.state.jobs.filter( job => 
+            (job.job_title.toLowerCase().indexOf(e.target.value.toLowerCase()) !== -1) 
+            || (job.company_name.toLowerCase().indexOf(e.target.value.toLowerCase()) !== -1) 
+            );
+        this.setState({
+            jobs: newList,
+        })
+    }
+    searchLocation = (e) => {
+        console.log('onChange Location: ', e.target.value);
+        if(e.target.value === '') {
+            this.filter(this.state.filterStatus);
+            return;
+        }
+        let newList = this.state.jobs.filter( job => 
+            (job.job_location.toLowerCase().indexOf(e.target.value.toLowerCase()) !== -1) 
+            );
+        this.setState({
+            jobs: newList,
+        })
+    }
 
 render() {
     console.log('state: ', this.state);
@@ -153,10 +181,12 @@ render() {
             <div>
                 <nav class="navbar navbar-light bg-light">
                     <form class="form-inline col-md-6">
-                        <input class="form-control w-100" type="search" placeholder="Job Titles" aria-label="Search" />
+                        <input class="form-control w-100" type="search" placeholder="Enter Job Title or a Company name.." aria-label="Search"
+                        onChange={this.onChange}  />
                     </form>
                     <form class="form-inline col-md-6 ">
-                        <input class="form-control w-100" type="search" placeholder="Location" aria-label="Search" />
+                        <input class="form-control w-100" type="search" placeholder="Enter Location" aria-label="Search" 
+                        onChange={this.searchLocation}/>
                     </form>
                 </nav>
             <Container>

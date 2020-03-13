@@ -66,7 +66,7 @@ class NavBar extends Component {
       <Nav.Link> <Link to='/Students' style= {{ all: "inherit" }}>
           Students
       </Link></Nav.Link>   
-      <Nav.Link> <Link to='/Events' style= {{ all: "inherit" }}>
+      <Nav.Link> <Link to='/student/events' style= {{ all: "inherit" }}>
           Events
       </Link></Nav.Link>
   </Nav>
@@ -83,7 +83,7 @@ const companyLinks = (
       <Nav.Link> <Link to='/Students' style= {{ all: "inherit" }}>
           Students
       </Link></Nav.Link>   
-      <Nav.Link> <Link to='/Events' style= {{ all: "inherit" }}>
+      <Nav.Link> <Link to='/company/events' style= {{ all: "inherit" }}>
           Events
       </Link></Nav.Link>
   </Nav>
@@ -118,7 +118,7 @@ return(
       </Link>
       </NavDropdown.Item>
       <NavDropdown.Divider />
-      <NavDropdown.Item onClick={this.props.logout}>Sign Out</NavDropdown.Item>
+      <NavDropdown.Item onClick={this.handleLogout}>Sign Out</NavDropdown.Item>
     </NavDropdown>
     </Col>
     <Col xs={{span:7}}> </Col>

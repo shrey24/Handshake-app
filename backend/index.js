@@ -20,6 +20,7 @@ const studentProfileRoutes = require('./routes/student_profile');
 const companyRoutes = require('./routes/company');
 const studentRoutes = require('./routes/student');
 const jobsRoutes = require('./routes/jobs');
+const eventsRoutes = require('./routes/events');
 
 app.use(express.static(path.join(__dirname, '/public'))); // specify the path of static directory
 
@@ -64,6 +65,7 @@ app.use('/student-profile', studentProfileRoutes);
 app.use('/company', companyRoutes);
 app.use('/student', studentRoutes);
 app.use('/jobs', jobsRoutes);
+app.use('/events', eventsRoutes);
 
 const server = app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
