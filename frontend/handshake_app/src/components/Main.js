@@ -4,6 +4,7 @@ import Login from './Login/Login';
 import Register from './Register/Register'
 import  StudentProfile from "./Student/StudentProfile/StudentProfile";
 import  Jobs from "./Student/Jobs/Jobs";
+import  Applications from "./Student/Applications";
 import Landing from './Company/Landing';
 import companyJobsPage from './Company/Jobs/Jobs';
 
@@ -17,8 +18,9 @@ class Main extends Component {
                 <Route exact path="/" component={Login}/>
                 <Route path="/login" component={Login}/>
                 <Route path="/register" component={Register}/>
-                <Route path="/student/profile" component={StudentProfile}/>
-                <Route path="/student/jobs" component={Jobs}/>
+                <Route exact path="/student/profile" component={StudentProfile}/>
+                <Route exact path="/student/jobs" component={Jobs}/>
+                <Route exact path="/student/jobs/applications" component={Applications}/>
                 <Route path='/company/landing' component={Landing}/>
                 <Route path='/company/jobs' component={companyJobsPage}/>
                 

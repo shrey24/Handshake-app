@@ -4,31 +4,124 @@ import JobsRight from './JobsRight'
 import JobsTop from './JobsTop'
 import NavBar from '../../NavBar';
 import axios from 'axios';
-import { Container } from 'react-bootstrap';
+import { Card, Form, Container } from 'react-bootstrap';
+import { JOB_CAT } from '../../../actions/types';
+
 
 export default class Jobs extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            jobs : [],
+            jobs : [], // view list
+            jobsDownload : [], // original list
             active: 0,
+            search: '',
+            filterStatus: {
+                'Full-Time Job' : false,
+                'Part-Time Job': false,
+                'Internship' : false,
+                'On-Campus': false
+            }
         }
     }
 
     componentDidMount() {
         axios.get('/jobs/all')
             .then((res) => {
-                this.setState({ jobs: [...res.data]});
+                if(this.state.jobsDownload !== res.data) {
+                    console.log('loading new data on componentDidMount()');
+                    this.setState({ jobsDownload: [...res.data]});
+                    this.setState({ jobs: [...res.data]});
+                }
             })
             .catch((err) => {
                 console.log('err, unable to fetch /jobs/all', err);
-
             });
+    }
+
+    filter = (newFilterStatus) => {
+        if (!Object.values(newFilterStatus).includes(true)) {
+            this.setState({
+                jobs: [ ...this.state.jobsDownload ],
+                filterStatus: { ... newFilterStatus }
+               
+            });
+        } else {
+            let  newList = [];
+            Object.keys(newFilterStatus).map((cat) => {
+                if(newFilterStatus[cat]) {
+                  newList = newList.concat(
+                      this.state.jobs.filter((job) => job.job_catagory === cat)
+                    );
+                }
+            });
+            console.log('New List, ', newList); 
+            this.setState({
+                jobs: newList,
+                filterStatus: { ... newFilterStatus }
+            });
+        }    
+    };
+
+    toggle = (stat) => {
+        let newFilterStatus = {};
+        switch (stat) {
+            case 'Full-Time Job':
+                newFilterStatus = {
+                    ...this.state.filterStatus,
+                    'Full-Time Job': !this.state.filterStatus['Full-Time Job']
+                }
+                // this.setState({
+                //     filterStatus: {
+                //         ...this.state.filterStatus,
+                //         'Full-Time Job': !this.state.filterStatus['Full-Time Job']
+                //     }                        
+                // });
+                break;
+            case 'Part-Time Job':
+                newFilterStatus = {
+                    ...this.state.filterStatus,
+                    'Part-Time Job': !this.state.filterStatus['Part-Time Job']
+                }
+                // this.setState({
+                //     filterStatus: {
+                //         ...this.state.filterStatus,
+                //         'Part-Time Job': !this.state.filterStatus['Part-Time Job']
+                //     }                        
+                // });
+                break;
+            case 'Internship':
+                newFilterStatus = {
+                    ...this.state.filterStatus,
+                    'Internship': !this.state.filterStatus['Internship']
+                }
+                // this.setState({
+                //     filterStatus: {
+                //         ...this.state.filterStatus,
+                //         'Internship': !this.state.filterStatus['Internship']
+                //     }                        
+                // });
+                break;
+            case 'On-Campus':
+                newFilterStatus = {
+                    ...this.state.filterStatus,
+                    'On-Campus': !this.state.filterStatus['On-Campus']
+                }
+                // this.setState({
+                //     filterStatus: {
+                //         ...this.state.filterStatus,
+                //         'On-Campus': !this.state.filterStatus['On-Campus']
+                //     }                        
+                // });
+                break;
+        }
+        this.filter(newFilterStatus);
     }
 
 
 render() {
+    console.log('state: ', this.state);
 
     const styles = {
         backgroundColor: '#DEDEDE',
@@ -51,9 +144,46 @@ render() {
     return (
         <div>
         <NavBar />
+        <br />
         <Container>
         <div className="mar-btm">
-        <JobsTop />
+        {/* <JobsTop /> */}
+        <Card>
+                <Card.Body>
+            <div>
+                <nav class="navbar navbar-light bg-light">
+                    <form class="form-inline col-md-6">
+                        <input class="form-control w-100" type="search" placeholder="Job Titles" aria-label="Search" />
+                    </form>
+                    <form class="form-inline col-md-6 ">
+                        <input class="form-control w-100" type="search" placeholder="Location" aria-label="Search" />
+                    </form>
+                </nav>
+            <Container>
+            <Form.Check inline 
+                type='checkbox'
+                label={'Full-Time Job'}
+                onClick = {e => { this.toggle('Full-Time Job') } }
+            />
+            <Form.Check inline 
+                 type='checkbox'
+                 label={'Part-Time Job'}
+                 onClick = {e => { this.toggle('Part-Time Job') } }
+                />
+            <Form.Check inline 
+                 type='checkbox'
+                 label={'Internship'}
+                 onClick = {e => { this.toggle('Internship') } }
+                />
+            <Form.Check inline 
+                 type='checkbox'
+                 label={'On-Campus'}
+                 onClick = {e => { this.toggle('On-Campus') } }
+                />
+                </Container>
+            </div>
+            </Card.Body>
+            </Card>
         </div>
 
         <div className="card border">

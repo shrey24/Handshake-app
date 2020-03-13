@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import handshake from './handshake.png'
 import {Card, Button, Row, Col} from 'react-bootstrap';
+import Avatar from 'react-avatar';
 
 export default class JobsLeft extends Component {
     constructor(props) {
@@ -16,7 +17,7 @@ export default class JobsLeft extends Component {
             <div style={{maxWwidth: '540px'}}  >
             <div class="row no-gutters">
             <div class="col-md-4">
-                <img src={handshake} class="card-img" alt="company logo" />
+                <img src={data.avatar_path || handshake} class="card-img" alt="company logo" />
             </div>
             <div class="col-md-8">
                 <div class="card-body">

@@ -8,6 +8,7 @@ import AlertComp from '../../AlertComp';
 import AddJobForm from './AddJobForm';
 import Navbar from '../../NavBar';
 import axios from 'axios';
+import Applicants from './Applicants';
 
 
 class Jobs extends Component {
@@ -15,6 +16,7 @@ class Jobs extends Component {
         super(props);
         this.state = {
             addJob: false,
+            viewApplicationsFor : null,
             jobsList: []
         }
     }
@@ -44,6 +46,15 @@ class Jobs extends Component {
                 console.log(err);
                 this.props.setAlert('Error, unable to fetch job postings', 'danger');
             });
+    }
+
+    handleAppView = (job_id) => {
+        console.log('viewApplicationsFor changed, ', this.state.viewApplicationsFor);
+        this.setState({viewApplicationsFor : job_id});
+    }
+
+    cancelAppView = () => {
+        this.setState({viewApplicationsFor : null});
     }
     
     render() {
@@ -83,7 +94,8 @@ class Jobs extends Component {
                                    Salary offer: {item.salary} <br />
                                </Card.Text> 
 
-                                <Button variant='primary' >
+                                <Button variant='primary' 
+                                onClick = {(e) => this.handleAppView(item.id)}>
                                 View Applicants
                                 </Button>
                             </Card.Body>
@@ -97,6 +109,10 @@ class Jobs extends Component {
             )
         } else {
             comp = <AddJobForm onCancel = {this.handleAddJob}/>
+        }
+
+        if(this.state.viewApplicationsFor) {
+            comp = <Applicants data = {{job_id : this.state.viewApplicationsFor}} />
         }
 
         return (

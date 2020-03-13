@@ -5,6 +5,12 @@ export const JOB_CAT = {
     ONCAMPUS : 'On-Campus'    
 }
 
+export const APP_STATUS = {
+    APP_STATUS_PENDING : 'pending',
+    APP_STATUS_REVIEWED : 'reviewed',
+    APP_STATUS_DECLINE : 'declined'
+}
+
 export const REGISTER_SUCCESS = 'REGISTER_SUCCESS';
 export const REGISTER_FAIL = 'REGISTER_FAIL';
 

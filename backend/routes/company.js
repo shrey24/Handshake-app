@@ -63,13 +63,31 @@ router.post('/job', checkAuth, (req, res) => {
     });
 });
 
-// get applicaions of a job // REVIEW SQL
+// get applicaions of a job 
 router.get('/applications/:job_id', checkAuth, (req, res) => {
-    let sqlGetApps = 'SELECT * FROM job_applications JOIN student_profile WHERE company_id = ? AND job_id = ?;';
-    const { user_id } = req.jwtData;
+    let sqlGetApps = 
+    'SELECT * FROM job_applications ap INNER JOIN student_profile sp ON sp.user_id = ap.student_id WHERE ap.job_id = ?;';
+    // const { user_id } = req.jwtData;
     const job_id = req.params.job_id;
 
-    db.query(sqlGetApps, [user_id, job_id], (err, results) => {
+    db.query(sqlGetApps, [job_id], (err, results) => {
+        if(err) {
+            console.log(err);
+            res.status(500).send(err);
+        } else {
+            res.status(200).json(results);
+        }
+    });
+});
+
+// update application status
+router.put('/applications', checkAuth, (req, res) => {
+    // requires id (app_id) and app_status
+    const { id, app_status } = req.body;
+    console.log('req: ', req.body)
+    let sqlUpdate = ' UPDATE job_applications SET app_status = ? WHERE id = ?;';
+    // const { user_id } = req.jwtData;
+    db.query(sqlUpdate, [app_status, id], (err, results) => {
         if(err) {
             console.log(err);
             res.status(500).send(err);

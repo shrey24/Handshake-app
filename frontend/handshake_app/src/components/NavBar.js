@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
-import {Link} from 'react-router-dom';
+import {Link, Redirect} from 'react-router-dom';
 import cookie from 'react-cookies';
-import {Redirect} from 'react-router';
+// import {Redirect} from 'react-router';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types'
 import { logout } from '../actions/auth';
@@ -35,9 +35,20 @@ import {
 class NavBar extends Component {
     constructor(props) {
       super(props)
+      this.state = {
+        logout : false
+      }
+    }
+
+    handleLogout = (e) => {
+      this.props.logout();
+      this.setState({logout: true});
     }
 
   render() {
+    if ( this.state.logout ) {
+      return <Redirect to='/login' />;
+    }
     const studentLinks = (
       <Nav className="mr-auto">
       <Form inline>
@@ -48,6 +59,9 @@ class NavBar extends Component {
       </Link></Nav.Link>  
       <Nav.Link> <Link to='/student/jobs' style= {{ all: "inherit" }}>
           Jobs
+      </Link></Nav.Link>   
+      <Nav.Link> <Link to='/student/jobs/applications' style= {{ all: "inherit" }}>
+          My Applications
       </Link></Nav.Link>   
       <Nav.Link> <Link to='/Students' style= {{ all: "inherit" }}>
           Students

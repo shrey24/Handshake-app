@@ -77,4 +77,19 @@ router.post('/apply', checkAuth, upload, (req, res) => {
 
 });
 
+// GET /jobs/aplications
+router.get('/applications', checkAuth, (req, res) => {
+    let cols = 'ap.id, ap.company_id, ap.job_id, ap.app_date, ap.app_status, jt.company_name, jt.job_location, jt.job_title, cp.avatar_path';
+    let getApps = `SELECT ${cols} FROM job_applications ap INNER JOIN jobs jt ON ap.job_id = jt.id INNER JOIN company_profile cp ON ap.company_id = cp.user_id WHERE ap.student_id = ?;`;
+    
+    db.query(getApps, [req.jwtData.user_id], (err, results) => {
+        if(err) {
+            console.log(err);
+            res.status(500).send(err);
+        } else {
+            res.status(200).json(results);
+        }
+    });
+});
+
 module.exports = router;
