@@ -19,7 +19,7 @@ export const getCompanyProfile = (cmp_id) => async dispatch => {
         if (!cmp_id) cmp_id = 'Me';
         const res = await axios.get(`/company/profile/${cmp_id}`);
         console.log('getCompanyProfile ****************************');
-        console.log(`/student-profile/${cmp_id}`, res);
+        console.log(`/company/profile/${cmp_id}`, res);
         dispatch({
             type: GET_COMPANY_PROFILE,
             payload: res.data

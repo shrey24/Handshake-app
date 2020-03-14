@@ -10,6 +10,7 @@ import Landing from './Company/Landing';
 import companyJobsPage from './Company/Jobs/Jobs';
 import Events from './Company/Events/Events';
 import EventPage from './DisplayEvent/Event';
+import CompanyProfile from './Company/CompanyProfile/CompanyProfile';
 
 //Create a Main Component
 class Main extends Component {
@@ -25,6 +26,7 @@ class Main extends Component {
                 <Route exact path="/student/jobs" component={Jobs}/>
                 <Route exact path="/student/events" component={StudentEventsPage}/>
                 <Route exact path="/student/jobs/applications" component={Applications}/>
+                <Route exact path='/company/profile' component={CompanyProfile}/>
                 <Route exact path='/company/landing' component={Landing}/>
                 <Route exact path='/company/jobs' component={companyJobsPage}/>
                 <Route exact path='/company/events' component={Events}/>

@@ -94,10 +94,10 @@ let profileLink = null;
 if(this.props.user) {
   if(this.props.user.user_type === 'student') {
     links = studentLinks;
-    profileLink = '/student/profile'
+    profileLink = '/student/profile';
   } else {
     links = companyLinks;
-    profileLink = '/company/profile'
+    profileLink = '/company/profile';
   }
 }
 

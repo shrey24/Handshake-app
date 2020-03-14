@@ -2,10 +2,10 @@ const mysql = require('mysql');
 // const dotenv = require('dotenv').config();
 
 const pool = mysql.createPool({
-    host : "127.0.0.1",
-    user : "root",
-    password: "Myroot@20",
-    database: "handshake_sql", 
+    host : process.env.DB_HOST || '127.0.0.1',
+    user : process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD || 'Myroot@20',
+    database: process.env.DB_NAME, 
     insecureAuth : true,
     debug: false,
     multipleStatements: true,

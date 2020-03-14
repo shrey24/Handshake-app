@@ -11,6 +11,8 @@ import { setAlert } from '../../actions/alert';
 import propTypes from 'prop-types';
 import AlertComp from '../AlertComp'
 import { loginUser } from '../../actions/auth';
+import { getStudentProfile } from '../../actions/studentProfile';
+import { getCompanyProfile } from '../../actions/company';
 
 class Login extends Component {
 constructor(props){
@@ -38,10 +40,12 @@ handleInput = (e) => {
 render() {
     // Redirect if logged in
     if(this.props.isAuthenticated) {
-        if(this.props.user.user_type === 'student')
+        if(this.props.user.user_type === 'student'){
+            this.props.getStudentProfile();
             return <Redirect to='/student/profile' />;
-        else {
+       } else {
             console.log('USER already logged in.. REDIRECT TO Company...');
+            this.props.getCompanyProfile();
             return <Redirect to='/company/landing' />
         }
     }
@@ -106,4 +110,5 @@ const mapStateToProps = (state) => ({
     user: state.auth.user
 });
 
-export default connect(mapStateToProps, { setAlert, loginUser })(Login);
+export default connect(mapStateToProps, 
+    { setAlert, loginUser, getStudentProfile, getCompanyProfile })(Login);

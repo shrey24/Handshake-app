@@ -39,7 +39,7 @@ app.use(cookieParser());
 // }));
 //Allow Access Control
 app.use(function(req, res, next) {
-  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+  res.setHeader('Access-Control-Allow-Origin', process.env.CLIENT_URL);
   res.setHeader('Access-Control-Allow-Credentials', 'true');
   res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT,DELETE');
   res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers');
@@ -69,5 +69,8 @@ app.use('/events', eventsRoutes);
 
 const server = app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
+    console.log(`CORs env.CLIENT_URL: ${process.env.CLIENT_URL}`);
+    console.log(`env.DB_HOST: ${process.env.DB_HOST}`);
+    console.log(`env.DB_USER: ${process.env.DB_USER}`);
   });
   
