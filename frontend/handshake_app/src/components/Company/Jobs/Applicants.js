@@ -53,7 +53,7 @@ const Applicants = (props) => {
         }
     }, []);
 
-    const pkj = JSON.parse(package);
+
 
     return (
         <Container>
