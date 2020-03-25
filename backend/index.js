@@ -12,7 +12,7 @@ const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
 const path = require('path');
 
-const db = require('./models');
+const connectDB = require('./config/mongodb');
 const homeRoutes = require('./routes/home');
 const loginRoutes = require('./routes/login');
 const registerRoutes = require('./routes/register');
@@ -47,10 +47,10 @@ app.use(function(req, res, next) {
   next();
 });
 
-// db.sequelize.sync({ force: true })
-//   .then(() => console.log('Database SYNC: connected'))
-//   .catch( e => console.log('Database SYNC ERROR:', e));
+// connect to mongodb
+connectDB();
 
+// general middleware to handle errors
 app.use((error, req, res, next) => {
   res.status(err.status || 500);
   res.json({
@@ -70,7 +70,5 @@ app.use('/events', eventsRoutes);
 const server = app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
     console.log(`CORs env.CLIENT_URL: ${process.env.CLIENT_URL}`);
-    console.log(`env.DB_HOST: ${process.env.DB_HOST}`);
-    console.log(`env.DB_USER: ${process.env.DB_USER}`);
   });
   

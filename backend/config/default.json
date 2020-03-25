@@ -1,0 +1,3 @@
+{
+    "mongoURI" : "mongodb+srv://db-user:Myroot20@handshake-mongodb-0zbyg.mongodb.net/test?retryWrites=true&w=majority"
+}
