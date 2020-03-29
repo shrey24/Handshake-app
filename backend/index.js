@@ -1,4 +1,5 @@
 // import express module
+
 const express = require('express');
 const dotenv = require('dotenv');
 dotenv.config();
@@ -13,7 +14,8 @@ const morgan = require('morgan');
 const path = require('path');
 
 const connectDB = require('./config/mongodb');
-const homeRoutes = require('./routes/home');
+console.log('..script loading');
+
 const loginRoutes = require('./routes/login');
 const registerRoutes = require('./routes/register');
 const studentProfileRoutes = require('./routes/student_profile');
@@ -47,6 +49,7 @@ app.use(function(req, res, next) {
   next();
 });
 
+console.log('connecting to mondo db...');
 // connect to mongodb
 connectDB();
 
@@ -58,7 +61,6 @@ app.use((error, req, res, next) => {
   })
 });
 
-app.use('/home', homeRoutes);
 app.use('/login', loginRoutes);
 app.use('/register', registerRoutes);
 app.use('/student-profile', studentProfileRoutes);

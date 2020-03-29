@@ -2,9 +2,10 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
-// const db = require('../models');
-const user_types = require('../config/datatypes');
-const db = require('./database');
+const UserAuth = require('../models/UserAuth');
+const student_profile = require('../models/student_profile');
+const {user_types, USER_COMPANY, USER_STUDENT} = require('../config/datatypes');
+
 
 
 const hashPassword = (password) => {
@@ -13,22 +14,54 @@ const hashPassword = (password) => {
 }
 
 // Post: /register/student
-router.post('/student', (req, res) => {
+router.post('/student', async (req, res) => {
     /*
         req: college, major, edu_end, name, email, password
     */
     console.log(req.body);
     const { email, password, curr_university, curr_major, curr_degree, edu_end, gpa } = req.body;
-    const user_type = user_types['student'];
-    let user_auth = { 
-                        email, 
-                        password: hashPassword(password), 
-                        user_type
-                    };
+    const user_type = USER_STUDENT;
 
-    let InsertSql = ' INSERT INTO user_auth SET ?; ';
-    let selectSql= ` SELECT * FROM user_auth WHERE email = ?;`;
+    try {
+        let user = await UserAuth.findOne({ email });
+        if(user) {            
+            return res.status(400).json({ error: `user ${email} already exists` });
+        }
 
+        user = new UserAuth({
+            email, 
+            password: hashPassword(password), 
+            user_type
+        });
+
+        const auth_result = await user.save();
+        console.log(auth_result);
+        
+        let student = new student_profile({
+            _id : auth_result._id,
+            student_profile: [{
+                curr_university,
+                curr_major, 
+                curr_degree, 
+                edu_end, 
+                gpa
+            }]
+        });
+
+        const sp = await student.save();
+
+        return res.json({msg: 'user registered', sp});
+
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('server error');
+    }
+    // check if user exists
+
+    // save user_auth
+
+    // create and save profile
+/*
     db.query(selectSql, [email], (err, result) => {
         if(err) {
             console.log(err);
@@ -81,6 +114,7 @@ router.post('/student', (req, res) => {
             });
         }
     });
+    */
 });
 
 

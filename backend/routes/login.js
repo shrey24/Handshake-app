@@ -55,7 +55,7 @@ router.post('/', (req, res, next) => {
                             user_type : user_types.fromNumber(results[0].user_type)
                             }, 
                             process.env.JWT_KEY,
-                            { expiresIn: '1h' }
+                            { expiresIn: '2h' }
                         );
                     console.log(user_types.fromNumber(results[0].user_type));
                     //Sucess, send a jwt token back

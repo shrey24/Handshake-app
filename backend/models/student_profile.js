@@ -1,62 +1,110 @@
+const mongoose = require('mongoose');
 
-// $ npx sequelize model:create --name student_experience --attributes student_id:string
+const student_exp_schema = new mongoose.Schema({
+    company_name: {
+        type: String,
+    },
+    title: {
+        type: String,
+    },
+    location: {
+        type: String,
+    },
+    start_date: {
+        type: Number,
+    },
+    end_date: {
+        type: Number,
+    },
+    work_desc: {
+        type: String,
+    }
+});
 
-module.exports = (sequelize, DataTypes) => {
-    const student_profile = sequelize.define('student_profile', {
-        user_id : {
-            type: DataTypes.INTEGER,
-            primaryKey: true,
-            allowNull: false,
-            unique: true
-        },
+const student_edu_schema = new mongoose.Schema({
+    college_name: {
+        type: String,
+    },
+    degree: {
+        type: String,
+    },
+    major: {
+        type: String,
+    },
+    start_date: {
+        type: Number,
+    },
+    end_date: {
+        type: Number,
+    },
+    gpa: {
+        type: Number,
+    }
+});
+
+const student_profile_schema = new mongoose.Schema({
+    _id : mongoose.ObjectId, 
+    student_profile: [{
         email: {
-            type: DataTypes.STRING,
+            type: String,
         },
         phone: {
-            type: DataTypes.STRING,
+            type: String,
         },
         name: {
-            type: DataTypes.STRING,
+            type: String,
         },
         dob: {
-            type: DataTypes.STRING,
+            type: String,
         },
         career_objective: {
-            type: DataTypes.STRING,
+            type: String,
+            default: null
         },
         address_city: {
-            type: DataTypes.STRING,
+            type: String,
+            default: null
         },
         address_state: {
-            type: DataTypes.STRING,
-        },
-        email: {
-            type: DataTypes.STRING,
+            type: String,
+            default: null
         },
         address_country: {
-            type: DataTypes.STRING,
+            type: String,
+            default: null
         },
-        university: {
-            type: DataTypes.STRING,
+        curr_university: {
+            type: String,
         },
-        major: {
-            type: DataTypes.STRING,
+        curr_major: {
+            type: String,
         },
-        degree: {
-            type: DataTypes.STRING,
+        curr_degree: {
+            type: String,
+            default: null
         },
-        start_date: {
-            type: DataTypes.DATEONLY,
+        edu_start: {
+            type: Number,
+            default: null
         },
-        end_date: {
-            type: DataTypes.DATEONLY,
+        edu_end: {
+            type: Number,
         },
-        GPA: {
-            type: DataTypes.FLOAT,
+        gpa: {
+            type: Number,
+            default: null
+        },
+        avatar_path: {
+            type: String,
+            default: null
+        },
+        resume_path: {
+            type: String,
+            default: null
         }
-    }, {
-        underscored: true
-    });
+    }],
+    student_education: [student_edu_schema],
+    student_experience: [student_exp_schema]
+});
 
-    return student_profile;
-}
+module.exports = student_profile = mongoose.model('student_profile', student_profile_schema);

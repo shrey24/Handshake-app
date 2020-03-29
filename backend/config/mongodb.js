@@ -4,6 +4,7 @@ const db_uri = config.get('mongoURI');
 
 var options = {
     useNewUrlParser: true,
+    useCreateIndex: true,
     useUnifiedTopology: true,
     poolSize: 500,
     bufferMaxEntries: 0

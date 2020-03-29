@@ -5,7 +5,10 @@ const user_types = {
     fromNumber(n) {return (n === 0 ?'student':'company')}
 }
 
-module.exports =   user_types ;
+const USER_STUDENT = 'STUDENT';
+const USER_COMPANY = 'COMPANY';
+
+module.exports = { USER_COMPANY, USER_STUDENT, user_types };
 
 
   
