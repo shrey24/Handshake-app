@@ -1,33 +1,32 @@
-'use strict';
-module.exports = (sequelize, DataTypes) => {
-  const student_experience = sequelize.define('student_experience', {
-    // user_id : {
-    //   type: DataTypes.INTEGER,
-    //   allowNull: false    
-    // },
-    company_name : {
-      type: DataTypes.STRING,
-    },
-    title : {
-      type: DataTypes.STRING,
-    },
-    location : {
-      type: DataTypes.STRING,
-    },
-    start_date : {
-      type: DataTypes.DATEONLY,
-    },
-    end_date : {
-      type: DataTypes.DATEONLY,
-    },
-    work_description : {
-      type: DataTypes.TEXT,
-    }
-  }, {
-    underscored: true
-  });
-  // student_experience.associate = function(models) {
-  //   // associations can be defined here
-  // };
-  return student_experience;
-};
+const mongoose = require('mongoose');
+
+const student_exp_schema = new mongoose.Schema({
+  company_name: {
+      type: String,
+      default: null
+  },
+  title: {
+      type: String,
+      default: null
+  },
+  location: {
+      type: String,
+      default: null
+  },
+  start_date: {
+      type: Number,
+      default: null
+  },
+  end_date: {
+      type: Number,
+      default: null
+  },
+  work_desc: {
+      type: String,
+      default: null
+  }
+});
+
+const student_experience = mongoose.model('student_experience', student_exp_schema);
+
+module.exports = { student_experience, student_exp_schema };

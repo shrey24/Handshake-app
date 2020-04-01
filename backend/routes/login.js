@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const router = express.Router();
 // const db = require('../models');
 const checkAuth = require('./check_auth'); // middleware
-const db = require('./database');
+const UserAuth = require('../models/UserAuth');
 const user_types = require('../config/datatypes');
 
 const isValidPassword = (chk_password, db_password_hash) => {
@@ -13,71 +13,71 @@ const isValidPassword = (chk_password, db_password_hash) => {
 
 // API: GET /login
 // used to get the user data if authenticated
-router.get('/', checkAuth, (req, res) => {
-    let queryUser = 'SELECT * FROM user_auth WHERE user_id = ?';
-    // query user_auth table with jwt data to check if the jwt token is still valid
-    db.query(queryUser, [req.jwtData.user_id], (err, results) => {
-        if (err) {
-            console.log(err);
-            res.status(500).send(err);
-        } else { 
-            if(results.length > 0) {
-                // jwtData is valid (token authorized): send user data
-                res.json({
-                    user_id: req.jwtData.user_id,
-                    email: req.jwtData.email,
-                    user_type: req.jwtData.user_type
-                });
-            } else {  // jwtData is invalid
-                res.status(401).send('Unauthorized');
-            }
+router.get('/', checkAuth, async (req, res) => {
+    // query user_auth collection with jwt data to check if the jwt token is still valid
+    try {
+        const userAuthResult = await UserAuth.findOne({ _id : req.jwtData.user_id });
+        if (userAuthResult) { // jwtData is valid (token authorized): send user data
+            res.json({
+                user_id: req.jwtData.user_id,
+                email: req.jwtData.email,
+                user_type: req.jwtData.user_type
+            });
+        } else {
+            res.status(401).send('Unauthorized');
         }
-    });
+    } catch (err) {
+        console.log(err);
+        res.status(500).send(err);        
+    }
 });
 
 // login student - return jwt
-router.post('/', (req, res, next) => {
+/**
+ * jwt signed as:
+ * {
+     email,
+     user_id 
+     user_type 
+ * }
+ */
+router.post('/', async (req, res, next) => {
     const {email, password} = req.body;
     console.log('/login req.data: ', req.body);
-    let queryUser = 'SELECT * FROM user_auth WHERE email = ?';
-    db.query(queryUser,  [email] , (err, results) => {
-        if(err) {
-            console.log(err);
-            res.status(500).send(err);
-        } else {
-            console.log(results);
-            if(results.length > 0) { // check password
-                if(isValidPassword(password, results[0].password)) {
-                    console.log(results[0]);
-                    const token = jwt.sign({
-                            email,
-                            user_id : results[0].user_id,
-                            user_type : user_types.fromNumber(results[0].user_type)
-                            }, 
-                            process.env.JWT_KEY,
-                            { expiresIn: '2h' }
-                        );
-                    console.log(user_types.fromNumber(results[0].user_type));
-                    //Sucess, send a jwt token back
-                    res.status(200).json({
-                        'msg': 'authentication successful',
-                        token,
-                        user: {
-                            email,
-                            user_id : results[0].user_id,
-                            user_type : user_types.fromNumber(results[0].user_type)
-                        }
-                    });
 
-                } else {
-                    res.status(401).send('Unauthorized');
-                    return;
-                }
+    try {
+        const userAuthResult = await UserAuth.findOne({ email });
+        console.log('dbResponse:', userAuthResult);
+        if(userAuthResult) {
+            if(isValidPassword(password, userAuthResult.password)) {
+                const token = jwt.sign({
+                    email,
+                    user_id : userAuthResult._id,
+                    user_type : userAuthResult.user_type
+                    }, 
+                    process.env.JWT_KEY,
+                    { expiresIn: '2h' }
+                );
+                //Sucess, send a jwt token back
+                return res.status(200).json({
+                    'msg': 'authentication successful',
+                    token,
+                    user: {
+                        email,
+                        user_id : userAuthResult._id,
+                        user_type : userAuthResult.user_type
+                    }
+                });
             } else {
-                res.status(401).send('No such user');
+                return res.status(401).send('Unauthorized');
             }
+        } else {
+            return res.status(401).send('No such user');
         }
-    });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).send(err);
+    }
 });
 
 // response: email, password

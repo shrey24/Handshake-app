@@ -1,46 +1,28 @@
 const mongoose = require('mongoose');
 
-const student_exp_schema = new mongoose.Schema({
-    company_name: {
-        type: String,
-    },
-    title: {
-        type: String,
-    },
-    location: {
-        type: String,
-    },
-    start_date: {
-        type: Number,
-    },
-    end_date: {
-        type: Number,
-    },
-    work_desc: {
-        type: String,
-    }
-});
+const student_exp = require('./student_experience');
+const student_edu = require('./student_education');
 
-const student_edu_schema = new mongoose.Schema({
-    college_name: {
-        type: String,
-    },
-    degree: {
-        type: String,
-    },
-    major: {
-        type: String,
-    },
-    start_date: {
-        type: Number,
-    },
-    end_date: {
-        type: Number,
-    },
-    gpa: {
-        type: Number,
-    }
-});
+// const student_edu_schema = new mongoose.Schema({
+//     college_name: {
+//         type: String,
+//     },
+//     degree: {
+//         type: String,
+//     },
+//     major: {
+//         type: String,
+//     },
+//     start_date: {
+//         type: Number,
+//     },
+//     end_date: {
+//         type: Number,
+//     },
+//     gpa: {
+//         type: Number,
+//     }
+// });
 
 const student_profile_schema = new mongoose.Schema({
     _id : mongoose.ObjectId, 
@@ -56,6 +38,7 @@ const student_profile_schema = new mongoose.Schema({
         },
         dob: {
             type: String,
+            default: null
         },
         career_objective: {
             type: String,
@@ -103,8 +86,8 @@ const student_profile_schema = new mongoose.Schema({
             default: null
         }
     }],
-    student_education: [student_edu_schema],
-    student_experience: [student_exp_schema]
+    student_education: [student_edu.student_edu_schema],
+    student_experience: [student_exp.student_exp_schema]
 });
 
-module.exports = student_profile = mongoose.model('student_profile', student_profile_schema);
+module.exports = student_profile = mongoose.model('student_profile', student_profile_schema);;

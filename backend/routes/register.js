@@ -49,75 +49,30 @@ router.post('/student', async (req, res) => {
         });
 
         const sp = await student.save();
-
-        return res.json({msg: 'user registered', sp});
-
+        // create jwt token and send response
+        const token = jwt.sign({
+            email,
+            user_id : auth_result._id,
+            user_type : USER_STUDENT
+            },
+            process.env.JWT_KEY,
+            { expiresIn: '2h' }
+            );
+        //Sucess, send a jwt token back
+        return res.status(200).json({
+            'msg': 'new student created',
+            token,
+            user: {
+                email,
+                user_id : auth_result._id,
+                user_type : USER_STUDENT
+            }
+        });
     } catch (err) {
         console.error(err.message);
         res.status(500).send('server error');
     }
-    // check if user exists
-
-    // save user_auth
-
-    // create and save profile
-/*
-    db.query(selectSql, [email], (err, result) => {
-        if(err) {
-            console.log(err);
-            res.status(500).send(err);
-        }
-        console.log(result);
-        if (result.length !== 0) {
-            res.status(500).json({
-                error: `user ${email} already exists`
-            });
-        } else { // insert new user to user_auth table
-            db.query(InsertSql, user_auth, (err, result, fields) => {
-                if (err) {
-                    res.status(500).send(err);
-                    console.log(err);      
-                } else {  
-                    // insert new student to student_profile table                  
-                    let insertStudentProfileSql = ' INSERT INTO student_profile SET ?; ';
-                    let user_id = result['insertId'];
-                    let student_profile_data = { user_id, email, curr_university, curr_major, curr_degree, edu_end, gpa };
-                    db.query(insertStudentProfileSql, 
-                        student_profile_data, (err, results) => {
-                            if (err) {
-                                res.status(500).send(err);
-                                console.log(err);
-                                return;    
-                            }
-                            console.log(results);
-
-                            const token = jwt.sign({
-                                email,
-                                user_id : user_id,
-                                user_type : 'student'
-                                },
-                                process.env.JWT_KEY,
-                                { expiresIn: '1h' }
-                                );
-                            //Sucess, send a jwt token back
-                            res.status(200).json({
-                                'msg': 'new student created',
-                                token,
-                                user: {
-                                    email,
-                                    user_id : user_id,
-                                    user_type : 'student'
-                                }
-                            });
-                        });
-                }
-            });
-        }
-    });
-    */
 });
-
-
 
 // Post: /register/student
 router.post('/company', (req, res) => {

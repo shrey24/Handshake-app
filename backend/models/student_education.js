@@ -1,33 +1,26 @@
-'use strict';
-const sequelize = require('sequelize')
-module.exports = (sequelize, DataTypes) => {
-  const student_education = sequelize.define('student_education', {
-    // user_id : {
-    //   type: DataTypes.INTEGER,
-    //   allowNull: false   
-    // },
-    degree : {
-      type: DataTypes.STRING,
-    },
-    major : {
-      type: DataTypes.STRING,
-    },
-    start_date : {
-      type: DataTypes.DATEONLY,
-    },
-    end_date : {
-      type: DataTypes.DATEONLY,
-    },
-    GPA : {
-      type: DataTypes.FLOAT,
-    },
+const mongoose = require('mongoose');
 
+const student_edu_schema = new mongoose.Schema({
+    college_name: {
+        type: String,
+    },
+    degree: {
+        type: String,
+    },
+    major: {
+        type: String,
+    },
+    start_date: {
+        type: Number,
+    },
+    end_date: {
+        type: Number,
+    },
+    gpa: {
+        type: Number,
+    }
+});
 
-  }, {
-    underscored: true
-  });
-  // student_education.associate = function(models) {
-  //   // associations can be defined here
-  // };
-  return student_education;
-};
+const student_education = mongoose.model('student_education', student_edu_schema);
+
+module.exports = { student_education, student_edu_schema };
