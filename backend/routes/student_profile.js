@@ -6,10 +6,6 @@ const multer = require('multer');
 const student_profile = require('../models/student_profile');
 const checkAuth = require('./check_auth');
 
-let selectStudentSql = 'SELECT * FROM student_profile WHERE user_id = ?;';
-let eduSql = 'SELECT * FROM student_education WHERE user_id = ?;';
-let expSql = 'SELECT * FROM student_experience WHERE user_id = ?;';
-
 
 //> /student-profile/:user_id
 router.get('/:user_id', checkAuth, async (req, res) => {
@@ -21,7 +17,6 @@ router.get('/:user_id', checkAuth, async (req, res) => {
         if(!profile) {
             return res.status(400).json({ error:`'${user_id}' doesnot exists` });
         }
-        print(profile);
         res.status(200).json(profile);
 
     } catch (err) {
@@ -30,6 +25,7 @@ router.get('/:user_id', checkAuth, async (req, res) => {
     }    
 });
 
+// declare multer middleware
 const storage = multer.diskStorage({
     destination: "./public/uploads/avatar/",
     filename: function(req, file, cb){
@@ -46,70 +42,93 @@ const storage = multer.diskStorage({
 
 //> PUT /student-profile (update student profile)
 // Updates info or profile_pic
-router.put('/', checkAuth, upload, (req, res) => {
+router.put('/', checkAuth, upload, async (req, res) => {
     const user_id = req.jwtData.user_id;
     let data = req.body;
+
     if(req.file) {
         // store file path
         let path = req.file.path;
-        var avatar_public_path = path.slice(path.indexOf('/'));
+        var avatar_public_path = path.slice(path.indexOf('/')); // exclude public/ from path
         data = {...data, avatar_path: avatar_public_path};
     }
-    let updateProfileSql = 'UPDATE student_profile SET ? WHERE user_id = ?;';
-    db.query(updateProfileSql, [data, user_id], (err, result) => {
-        if(err) {
-            console.log(err);
-            res.status(500).send(err);
-        } else {
-            res.status(200).json({ msg: 'success', result: result, avatar_path: avatar_public_path || null });
-        }
-    });
+    console.log('updating with new data', data);
+    
+    try {
+        const dbResp = await student_profile.updateOne(
+            { _id: user_id },
+            { $set : { 'student_profile' : [data] } } 
+            // !note: due to [{data}] schema def, only this assignment will work
+            // for student_profile array 
+        );
+        console.log('dbResp', dbResp);
+        
+        return res.status(200).json({ 
+            msg: 'success',  
+            avatar_path: avatar_public_path || null 
+        });
+    } catch (err) {
+        console.log(err);
+        res.status(500).send(err);        
+    }
 });
 
 //> POST /student-profile/education (add eduction)
-router.post('/education', checkAuth, (req, res) => {
+router.post('/education', checkAuth, async (req, res) => {
     const { college_name, degree, major, start_date, end_date, gpa } = req.body;
     const { user_id } = req.jwtData;
     const eduData = { user_id, college_name, degree, major, start_date, end_date, gpa };
-    let InsertEduSql = ' INSERT INTO student_education SET ?;';
-    db.query(InsertEduSql, eduData, (err, result) => {
-        if(err) res.status(500).send(err);
-        else {
-            res.status(200).json({ msg: 'success', id: result['insertId'] });
-        }
-    });
+    try {
+        const dbResp = await student_profile.updateOne(
+            { _id : user_id },
+            { $push: { student_education : eduData} }
+        );
+        res.status(200).json({ msg: 'success' });
+    } catch (err) {
+        console.log(err);
+        res.status(500).send(err);
+    }
 });
 
 //> PUT /student-profile/education/edu_id (update eduction)
-router.put('/education/:id', checkAuth, (req, res) => {
-    //  TODO check same user session
-    let updateEduSql = 'UPDATE student_education SET ? WHERE id = ? AND user_id = ?;';
+router.put('/education/:id', checkAuth, async (req, res) => {    
     const data = req.body;
-    const id = Number(req.params.id);
-    console.log(`update data for user id: ${id}`);
+    const { user_id } = req.jwtData;
     console.log('data: ', data);    
-    db.query(updateEduSql, [data, id, req.jwtData.user_id], (err, result) => {
-        if(err) res.status(500).send(err);
-        else {
-            res.status(200).json({ msg: 'success', result: result });
-        }
-    });
+    try {
+        const dbResp = await student_profile.updateOne(
+            { _id : user_id, 'student_education._id' : req.params.id },
+            { $set: { 'student_education.$' : data } }
+        );
+        console.log(dbResp);        
+        res.status(200).json({ msg: 'success' });
+    } catch (err) {
+        console.log(err);
+        res.status(500).send(err);
+    }
 });
 
 //> DELETE /student-profile/education/edu_id (update eduction)
-router.delete('/education/:id', checkAuth, (req, res) => {
-    //  TODO check same user session
-    let deleteEduSql = 'DELETE FROM student_education WHERE id = ? AND user_id = ?;';
+router.delete('/education/:id', checkAuth, async (req, res) => {
     const id = req.params.id;
-    db.query(deleteEduSql, [id, req.jwtData.user_id], (err, result) => {
-        if(err) res.status(500).send(err);
-        else {
-            res.status(200).json({ msg: 'success', result: result });
+    const { user_id } = req.jwtData;
+
+    try {
+        const dbResp = await student_profile.updateOne(
+            {_id: user_id },
+            { $pull: { student_education: { _id: id } } }
+        );
+        console.log(dbResp);        
+        if (dbResp.nModified === 0) {
+            return res.status(401).json({ msg: 'no doc modified. url param <id> doesnot exists'});
         }
-    });
+        return res.status(200).json({ msg: 'success' });
+    } catch (err) {
+        console.log(err);
+        res.status(500).send(err);
+    }
 });
 
-const studentExp = require('../models/student_experience');
 //> POST /student-profile/experience/ (add eduction)
 router.post('/experience', checkAuth, async (req, res) => {
     const { company_name, title, location, start_date, end_date, work_desc } = req.body;
@@ -130,44 +149,43 @@ router.post('/experience', checkAuth, async (req, res) => {
 
 //> PUT /student-profile/experience/exp_id (update eduction)
 router.put('/experience/:id', checkAuth, async (req, res) => {
-    const data = req.body;
-    // const id = Number(req.params.id);
-    console.log(`update data for user id: ${id}`);
+    let data = req.body;
+    let exp_id = req.params.id;
+    data = { ...data, _id:exp_id };
+    console.log(`update data for user id: ${req.jwtData.user_id}`);
     console.log('data: ', data); 
     
     try {
         const dbResp = await student_profile.updateOne(
-            { _id: user_id, 'student_experience._id': req.params.id },
-            { $set : { student_experience: data } }
+            { _id: req.jwtData.user_id, 'student_experience._id': exp_id },
+            { $set : { 'student_experience.$' : data } }
         );
+        console.log('dbResp', dbResp);
         
+        return res.status(200).json({ 'msg': 'success' });
     } catch (err) {
         console.log(err);
         res.status(500).send(err);        
     }
-       
-    db.query(updateEduSql, [data, id, req.jwtData.user_id], (err, result) => {
-        if(err) {
-            console.log(err);
-            res.status(500).send(err);
-        } else {
-            res.status(200).json({ msg: 'success', result: result });
-        }
-    });
 });
 
-router.delete('/experience/:id', checkAuth, (req, res) => {
-    //  TODO check same user session
-    updateEduSql = 'DELETE FROM student_experience WHERE id = ? AND user_id = ?;';
-    const id = Number(req.params.id);
-    db.query(updateEduSql, [id, req.jwtData.user_id], (err, result) => {
-        if(err) {
-            console.log(err);
-            res.status(500).send(err);
-        } else {
-            res.status(200).json({ msg: 'success', result: result });
+router.delete('/experience/:id', checkAuth, async (req, res) => {
+    const id = req.params.id;
+    const { user_id } = req.jwtData;
+    try {
+        const dbResp = await student_profile.updateOne(
+            {_id: user_id },
+            { $pull: { student_experience: { _id: id } } }
+        );
+        console.log(dbResp);        
+        if (dbResp.nModified === 0) {
+            return res.status(401).json({ msg: 'no doc modified. url param <id> doesnot exists'});
         }
-    });
+        return res.status(200).json({ msg: 'success' });
+    } catch (err) {
+        console.log(err);
+        res.status(500).send(err);
+    }
 });
 
 module.exports = router;
