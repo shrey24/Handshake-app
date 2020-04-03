@@ -3,15 +3,11 @@ const multer = require('multer');
 const router = express.Router();
 const checkAuth = require('./check_auth');
 const company_profile = require('../models/company_profile');
+const Job = require('../models/Job');
 
 const APP_STATUS_PENDING = 'pending';
 const APP_STATUS_REVIEWED = 'reviewed';
 const APP_STATUS_DECLINE = 'declined';
-
-let selectStudentSql = 'SELECT * FROM student_profile WHERE user_id = ?;';
-let eduSql = 'SELECT * FROM student_education WHERE user_id = ?;';
-let expSql = 'SELECT * FROM student_experience WHERE user_id = ?;';
-
 
 // GET company/profile/[:company_id] or company/profile/[Me]
 // NOTE: company_id is irrelevent if the request comes from a company
@@ -76,37 +72,52 @@ router.put('/profile', checkAuth, upload, async (req, res) => {
         res.status(500).send(err);        
     }
 });
+
 // get jobs posted by this company
-router.get('/jobs', checkAuth, (req, res) => {
-    let sqlGetJobs = 'SELECT * FROM jobs WHERE company_id = ?;';
-    db.query(sqlGetJobs, req.jwtData.user_id, (err, results) => {
-        if(err) {
-            console.log(err);
-            res.status(500).send(err);
-        } else {
-            res.status(200).json(results);
-        }
-    });
+router.get('/jobs', checkAuth, async (req, res) => {
+    try {
+        const dbResp = await Job.find(
+            { company_id: req.jwtData.user_id }
+        );
+        console.log('jobs fetched: ', dbResp);
+        return res.status(200).json(dbResp);
+    } catch (err) {
+        console.log(err);
+        res.status(500).send(err);
+    }
 });
 
 // add new job
-router.post('/job', checkAuth, (req, res) => {
+router.post('/job', checkAuth, async (req, res) => {
     const { user_id } = req.jwtData;
     const data = { company_id: user_id, ...req.body };
     console.log('insert new job data:', data);
-    let sqlPostJob = 'INSERT INTO jobs SET ?;';
-    db.query(sqlPostJob, data, (err, result) => {
-        if(err) {
-            console.log(err);
-            res.status(500).send(err);
-        } else {
-            res.status(200).json({ msg: 'success', id: result['insertId'] });
-        }
-    });
+    try {
+        const dbResp = await Job.create(data);
+        console.log('dbResp: ', dbResp);
+        return res.status(200).json({ msg: 'success' });
+    } catch (err) {
+        console.log(err);
+        res.status(500).send(err);
+    }
 });
 
+
+// !! TO CHECK AND VERIFY RESPONSE
 // get applicaions of a job 
-router.get('/applications/:job_id', checkAuth, (req, res) => {
+router.get('/applications/:job_id', checkAuth, async (req, res) => {
+    try {
+        const dbResp = await Job.find(
+            { company_id: req.jwtData.user_id, _id: req.params.job_id},
+            { job_applications: 1, _id: 0 }
+        );
+        console.log('applications fetched: ', dbResp);
+        return res.status(200).json(dbResp.job_applications);
+    } catch (err) {
+        console.log(err);
+        res.status(500).send(err);
+    }
+    /*
     let sqlGetApps = 
     'SELECT * FROM job_applications ap INNER JOIN student_profile sp ON sp.user_id = ap.student_id WHERE ap.job_id = ?;';
     // const { user_id } = req.jwtData;
@@ -120,6 +131,7 @@ router.get('/applications/:job_id', checkAuth, (req, res) => {
             res.status(200).json(results);
         }
     });
+    */
 });
 
 // update application status

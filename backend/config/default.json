@@ -1,3 +1,8 @@
 {
-    "mongoURI" : "mongodb+srv://db-user:Myroot20@handshake-mongodb-0zbyg.mongodb.net/test?retryWrites=true&w=majority"
+    "mongoURI" : "mongodb+srv://db-user:Myroot20@handshake-mongodb-0zbyg.mongodb.net/test?retryWrites=true&w=majority",
+    "app_status" : {
+        "APP_STATUS_PENDING": "pending",
+        "APP_STATUS_REVIEWED" : "reviewed",
+        "APP_STATUS_DECLINE" : "declined"
+    }
 }

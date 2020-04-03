@@ -1,22 +1,24 @@
 const express = require('express');
 const router = express.Router();
-const db = require('./database');
+const Job = require('../models/Job');
 const checkAuth = require('./check_auth');
 const path = require('path');
 const multer = require('multer');
 
 // get all jobs for students
 // GET /jobs/all
-router.get('/all', checkAuth, (req, res) => {
-    let sqlGetJobs = 'SELECT * FROM jobs;';
-    db.query(sqlGetJobs, (err, results) => {
-        if(err) {
-            console.log(err);
-            res.status(500).send(err);
-        } else {
-            res.status(200).json(results);
-        }
-    });
+router.get('/all', checkAuth, async (req, res) => {
+    try {
+        const dbResp = await Job.find(
+            { },
+            { job_applications: 0 }
+        );
+        console.log('jobs fetched: ', dbResp);
+        return res.status(200).json(dbResp);
+    } catch (err) {
+        console.log(err);
+        res.status(500).send(err);
+    }
 });
 
 
@@ -35,11 +37,10 @@ const storage = multer.diskStorage({
  }).single("file"); // field name
 
 //> POST /jobs/apply
-router.post('/apply', checkAuth, upload, (req, res) => {
+router.post('/apply', checkAuth, upload, async (req, res) => {
     // req = { job_id, company_id, app_date, student_resume}
     if (!req.file) { // no resume, send error
-        res.status(400).json({error: 'No resume attached'});
-        return;
+        return res.status(400).json({error: 'No resume attached'});
     }
     // prepare data to be inserted
     const { user_id } = req.jwtData;
