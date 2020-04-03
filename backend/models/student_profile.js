@@ -3,27 +3,6 @@ const mongoose = require('mongoose');
 const student_exp = require('./student_experience');
 const student_edu = require('./student_education');
 
-// const student_edu_schema = new mongoose.Schema({
-//     college_name: {
-//         type: String,
-//     },
-//     degree: {
-//         type: String,
-//     },
-//     major: {
-//         type: String,
-//     },
-//     start_date: {
-//         type: Number,
-//     },
-//     end_date: {
-//         type: Number,
-//     },
-//     gpa: {
-//         type: Number,
-//     }
-// });
-
 const student_profile_schema = new mongoose.Schema({
     _id : mongoose.ObjectId, 
     student_profile: [{

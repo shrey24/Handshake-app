@@ -37,7 +37,7 @@ class CompanyProfile extends Component {
                 ...this.state,
                 data: {
                     ...this.state.data,
-                    ...this.props.profile[0]
+                    ...this.props.profile
                 }
             
             });
@@ -114,7 +114,7 @@ class CompanyProfile extends Component {
         }
         
         
-        const {name, location, company_desc, email, phone, website, avatar_path} = this.props.profile[0];
+        const {name, location, company_desc, email, phone, website, avatar_path} = this.props.profile;
 
         const display_profile = (
             <div>
@@ -262,9 +262,9 @@ class CompanyProfile extends Component {
     }
 }
 
-Event.propTypes = {
+CompanyProfile.propTypes = {
     user: propTypes.object.isRequired,
-    profile: propTypes.array.isRequired,
+    profile: propTypes.object.isRequired,
     loading: propTypes.bool.isRequired,
 }
 
