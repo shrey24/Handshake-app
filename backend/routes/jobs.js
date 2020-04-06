@@ -37,60 +37,60 @@ const storage = multer.diskStorage({
  }).single("file"); // field name
 
 //> POST /jobs/apply
+// req params: job_id, company_id, app_date, file (student_resume)
 router.post('/apply', checkAuth, upload, async (req, res) => {
-    // req = { job_id, company_id, app_date, student_resume}
     if (!req.file) { // no resume, send error
         return res.status(400).json({error: 'No resume attached'});
     }
     // prepare data to be inserted
     const { user_id } = req.jwtData;
+    const { job_id, app_date, } = req.body;
     let path = req.file.path;
     var resume_public_path = path.slice(path.indexOf('/')); // remove '/public' from path
     const data = {  
         student_id:user_id,
-        student_resume: resume_public_path,
-         ...req.body
+        student_resume: resume_public_path,  
+        app_date
         };    
     console.log('data received: ', req.body);
-    
-    // check if already applied
-    let sqlSelect = 'SELECT * FROM job_applications WHERE job_id=? AND student_id=? ;';
-    db.query(sqlSelect, [data.job_id, data.student_id], (err, results) => {
-        if(err) {
-            console.log(err);
-            res.status(500).send(err);
-        } else if( results.length > 0) {
-            console.log("Already applied: ", results);
-            res.status(400).json({error: 'already applied!'});
-        } else { 
-            // create new application row
-            let sqlPostApp = 'INSERT INTO job_applications SET ?;';
-            db.query(sqlPostApp, data, (err, result) => {
-                if(err) {
-                    console.log(err);            
-                    res.status(500).send(err);
-                } else {
-                    res.status(200).json({ msg: 'Application submitted!', id: result['insertId'] });
-                }
-            });
+    try {
+        // check if already applied 
+        const result = await Job.findOne( { _id:job_id, 'job_applications.student_id': user_id });
+        if (result) {
+            console.log("Already applied: ", result);
+            return res.status(400).json({error: 'already applied!'});
         }
-    });
-
+        const dbResp = await Job.updateOne(
+            { _id: job_id },
+            { $push: { job_applications: data } }
+        );
+        console.log('dbResp: ', dbResp);
+        return res.status(200).json({ msg: 'success' });
+    } catch (err) {
+        console.log(err);
+        res.status(500).send(err);        
+    }
 });
 
-// GET /jobs/aplications
-router.get('/applications', checkAuth, (req, res) => {
+// GET /jobs/aplications  
+// get applications for a student
+router.get('/applications', checkAuth, async (req, res) => {
     let cols = 'ap.id, ap.company_id, ap.job_id, ap.app_date, ap.app_status, jt.company_name, jt.job_location, jt.job_title, cp.avatar_path';
     let getApps = `SELECT ${cols} FROM job_applications ap INNER JOIN jobs jt ON ap.job_id = jt.id INNER JOIN company_profile cp ON ap.company_id = cp.user_id WHERE ap.student_id = ?;`;
-    
-    db.query(getApps, [req.jwtData.user_id], (err, results) => {
-        if(err) {
-            console.log(err);
-            res.status(500).send(err);
-        } else {
-            res.status(200).json(results);
-        }
-    });
+    try {
+        const dbResp = await Job.find(
+            {'job_applications.student_id': req.jwtData.user_id },
+            { 
+                job_applications: {$elemMatch: { student_id: req.jwtData.user_id } },
+                job_location:0, salary:0, job_desc:0, deadline:0 
+            }
+        );
+        console.log(dbResp);
+        return res.status(200).json(dbResp);
+    } catch (err) {
+        console.log(err);
+        res.status(500).send(err);        
+    }
 });
 
 module.exports = router;

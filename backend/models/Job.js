@@ -4,7 +4,6 @@ const app_status = config.get("app_status");
 // student_profile schema can have job_ids for faster lookup
 
 const job_applications_schema  = new mongoose.Schema({
-    _id : mongoose.ObjectId,
     student_id: {
         type: String,
         required: true
@@ -57,6 +56,10 @@ const job_schema = new mongoose.Schema({
         required: true
     },
     company_name: {
+        type: String,
+        required: true
+    },
+    avatar_path: {
         type: String,
         required: true
     },

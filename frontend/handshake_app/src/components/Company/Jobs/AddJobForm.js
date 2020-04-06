@@ -20,14 +20,19 @@ const AddJobForm = (props) => {
         job_desc: '',
         job_catagory: JOB_CAT.FULLTIME,
         post_date: yyyy + '-' + mm + '-' + dd,
-        company_name: ''
+        company_name: '',
+        avatar_path: ''
     });
 
     useEffect(() => {
         if(props.profile) {
             console.log('***************** props.profile');
             console.log(props.profile);
-            setStdFormData({...stdFormData, company_name: props.profile[0].name});
+            setStdFormData({
+                ...stdFormData, 
+                company_name: props.profile[0].name,
+                avatar_path: props.profile[0].avatar_path
+            });
         }
     }, [props.profile]);
 

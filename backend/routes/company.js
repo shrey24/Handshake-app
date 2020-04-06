@@ -89,6 +89,7 @@ router.get('/jobs', checkAuth, async (req, res) => {
 
 // add new job
 router.post('/job', checkAuth, async (req, res) => {
+    // insert company_id, company_name, avatar_path
     const { user_id } = req.jwtData;
     const data = { company_id: user_id, ...req.body };
     console.log('insert new job data:', data);
