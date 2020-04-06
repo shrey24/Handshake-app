@@ -76,7 +76,6 @@ router.post('/apply', checkAuth, upload, async (req, res) => {
 // get applications for a student
 router.get('/applications', checkAuth, async (req, res) => {
     let cols = 'ap.id, ap.company_id, ap.job_id, ap.app_date, ap.app_status, jt.company_name, jt.job_location, jt.job_title, cp.avatar_path';
-    let getApps = `SELECT ${cols} FROM job_applications ap INNER JOIN jobs jt ON ap.job_id = jt.id INNER JOIN company_profile cp ON ap.company_id = cp.user_id WHERE ap.student_id = ?;`;
     try {
         const dbResp = await Job.find(
             {'job_applications.student_id': req.jwtData.user_id },

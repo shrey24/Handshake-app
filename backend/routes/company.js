@@ -104,11 +104,10 @@ router.post('/job', checkAuth, async (req, res) => {
 });
 
 
-// !! TO CHECK AND VERIFY RESPONSE
 // get applicaions of a job 
 router.get('/applications/:job_id', checkAuth, async (req, res) => {
     try {
-        const dbResp = await Job.find(
+        const dbResp = await Job.findOne(
             { company_id: req.jwtData.user_id, _id: req.params.job_id},
             { job_applications: 1, _id: 0 }
         );
@@ -118,38 +117,24 @@ router.get('/applications/:job_id', checkAuth, async (req, res) => {
         console.log(err);
         res.status(500).send(err);
     }
-    /*
-    let sqlGetApps = 
-    'SELECT * FROM job_applications ap INNER JOIN student_profile sp ON sp.user_id = ap.student_id WHERE ap.job_id = ?;';
-    // const { user_id } = req.jwtData;
-    const job_id = req.params.job_id;
-
-    db.query(sqlGetApps, [job_id], (err, results) => {
-        if(err) {
-            console.log(err);
-            res.status(500).send(err);
-        } else {
-            res.status(200).json(results);
-        }
-    });
-    */
 });
 
 // update application status
-router.put('/applications', checkAuth, (req, res) => {
+router.put('/applications', checkAuth, async (req, res) => {
     // requires id (app_id) and app_status
     const { id, app_status } = req.body;
     console.log('req: ', req.body)
-    let sqlUpdate = ' UPDATE job_applications SET app_status = ? WHERE id = ?;';
-    // const { user_id } = req.jwtData;
-    db.query(sqlUpdate, [app_status, id], (err, results) => {
-        if(err) {
-            console.log(err);
-            res.status(500).send(err);
-        } else {
-            res.status(200).json(results);
-        }
-    });
+    try {
+        const dbResp = await Job.updateOne(
+            { company_id: req.jwtData.user_id, 'job_applications._id': id},
+            { $set: {'job_applications.$.app_status': app_status } }
+        );
+        console.log('updated: ', dbResp);
+        return res.status(200).json({msg: 'success'});
+    } catch (err) {
+        console.log(err);
+        res.status(500).send(err);
+    }
 });
 
 
