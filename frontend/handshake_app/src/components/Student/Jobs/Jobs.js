@@ -6,7 +6,7 @@ import NavBar from '../../NavBar';
 import axios from 'axios';
 import { Card, Form, Container } from 'react-bootstrap';
 import { JOB_CAT } from '../../../actions/types';
-
+import './Jobs.css';
 
 export default class Jobs extends Component {
 
@@ -218,7 +218,7 @@ render() {
 
         <div className="card border">
         <div className="row">
-            <div className="col-5">
+            <div className="col-5 scroll">
                 <div 
                 className="nav flex-column nav-tabs" 
                 id="v-pills-tab" 
@@ -229,7 +229,7 @@ render() {
             </div>
             
             <div className="col-7">
-                <div className="tab-content" id="v-pills-tabContent">
+                <div className="tab-content scroll" id="v-pills-tabContent">
                     {rightPaneComp}
                 </div>
             </div>

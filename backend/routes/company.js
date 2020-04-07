@@ -17,13 +17,16 @@ router.get('/profile/:company_id', checkAuth, async (req, res) => {
         id = req.jwtData.user_id;
     }
     try {
-        const profile = await company_profile.findById(id);
+        const profile = await company_profile.findOne(
+            {_id: id}, 
+            {_id:0}
+        );
         console.log('dbresp: ', profile);
         if (!profile) {
             console.log(`'${id}' doesnot exists`);
             return res.status(400).json({ error:`company_id '${id}' doesnot exists` });
         }
-        return res.status(200).json(profile);
+        return res.status(200).json(profile.company_profile);
     } catch (err) {
         console.log(err);
         res.status(500).send(err);

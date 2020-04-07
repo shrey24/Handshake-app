@@ -13,7 +13,10 @@ router.get('/:user_id', checkAuth, async (req, res) => {
     let user_id = req.params.user_id;
     if(user_id === 'Me') user_id = req.jwtData.user_id;
     try {
-        let profile = await student_profile.findOne({ _id:user_id });
+        let profile = await student_profile.findOne(
+            { _id:user_id },
+            { 'student_profile._id': 0 }    
+        );
         if(!profile) {
             return res.status(400).json({ error:`'${user_id}' doesnot exists` });
         }

@@ -1,0 +1,6 @@
+.scroll{
+    height: 350px;
+    overflow-x: hidden; 
+    overflow-x: auto; 
+    text-align:justify; 
+  } 

@@ -20,7 +20,7 @@ router.post('/student', async (req, res) => {
         req: college, major, edu_end, name, email, password
     */
     console.log(req.body);
-    const { email, password, curr_university, curr_major, curr_degree, edu_end, gpa } = req.body;
+    const { email, name, password, curr_university, curr_major, curr_degree, edu_end, gpa } = req.body;
     const user_type = USER_STUDENT;
 
     try {
@@ -42,6 +42,7 @@ router.post('/student', async (req, res) => {
             _id : auth_result._id,
             student_profile: [{
                 email,
+                name,
                 curr_university,
                 curr_major, 
                 curr_degree, 

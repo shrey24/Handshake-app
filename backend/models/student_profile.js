@@ -8,12 +8,14 @@ const student_profile_schema = new mongoose.Schema({
     student_profile: [{
         email: {
             type: String,
+            required: true
         },
         phone: {
             type: String,
         },
         name: {
             type: String,
+            required: true
         },
         dob: {
             type: String,
@@ -37,9 +39,11 @@ const student_profile_schema = new mongoose.Schema({
         },
         curr_university: {
             type: String,
+            required: true
         },
         curr_major: {
             type: String,
+            required: true
         },
         curr_degree: {
             type: String,
@@ -51,6 +55,7 @@ const student_profile_schema = new mongoose.Schema({
         },
         edu_end: {
             type: Number,
+            required: true
         },
         gpa: {
             type: Number,

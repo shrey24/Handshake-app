@@ -46,7 +46,7 @@ render() {
        } else {
             console.log('USER already logged in.. REDIRECT TO Company...');
             this.props.getCompanyProfile();
-            return <Redirect to='/company/landing' />
+            return <Redirect to='/company/jobs' />
         }
     }
     // else

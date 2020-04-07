@@ -30,8 +30,8 @@ const AddJobForm = (props) => {
             console.log(props.profile);
             setStdFormData({
                 ...stdFormData, 
-                company_name: props.profile[0].name,
-                avatar_path: props.profile[0].avatar_path
+                company_name: props.profile.name,
+                avatar_path: props.profile.avatar_path
             });
         }
     }, [props.profile]);

@@ -61,7 +61,7 @@ const job_schema = new mongoose.Schema({
     },
     avatar_path: {
         type: String,
-        required: true
+        default: null
     },
     job_applications: [job_applications_schema]
 });
