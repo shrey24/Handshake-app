@@ -69,6 +69,9 @@ class NavBar extends Component {
       <Nav.Link> <Link to='/student/events' style= {{ all: "inherit" }}>
           Events
       </Link></Nav.Link>
+      <Nav.Link> <Link to='/messages' style= {{ all: "inherit" }}>
+          Messages
+      </Link></Nav.Link>   
   </Nav>
     );
 
@@ -80,12 +83,15 @@ const companyLinks = (
       <Nav.Link> <Link to='/company/jobs' style= {{ all: "inherit" }}>
           Jobs
       </Link></Nav.Link>   
-      <Nav.Link> <Link to='/Students' style= {{ all: "inherit" }}>
-          Students
-      </Link></Nav.Link>   
       <Nav.Link> <Link to='/company/events' style= {{ all: "inherit" }}>
           Events
       </Link></Nav.Link>
+      <Nav.Link> <Link to='/Students' style= {{ all: "inherit" }}>
+          Students
+      </Link></Nav.Link>   
+      <Nav.Link> <Link to='/messages' style= {{ all: "inherit" }}>
+          Messages
+      </Link></Nav.Link> 
   </Nav>
 );
 

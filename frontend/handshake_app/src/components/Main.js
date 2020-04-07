@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import {Route} from 'react-router-dom';
 import Login from './Login/Login';
-import Register from './Register/Register'
+import Register from './Register/Register';
+import ChatPage from './Messaging/ChatPage';
 import  StudentProfile from "./Student/StudentProfile/StudentProfile";
 import  Jobs from "./Student/Jobs/Jobs";
 import  Applications from "./Student/Applications";
@@ -22,6 +23,7 @@ class Main extends Component {
                 <Route exact path="/" component={Login}/>
                 <Route path="/login" component={Login}/>
                 <Route path="/register" component={Register}/>
+                <Route path="/messages" component={ChatPage}/>
                 <Route exact path="/student/profile" component={StudentProfile}/>
                 <Route exact path="/student/jobs" component={Jobs}/>
                 <Route exact path="/student/events" component={StudentEventsPage}/>
