@@ -6,6 +6,7 @@ var options = {
     useNewUrlParser: true,
     useCreateIndex: true,
     useUnifiedTopology: true,
+    useFindAndModify: false,
     poolSize: 500,
     bufferMaxEntries: 0
 };
