@@ -9,11 +9,27 @@ router.get('/all', checkAuth, async (req, res) => {
     let user_id = req.jwtData.user_id;
     try {
         let dbResp = await Conversation.find(
-            { participants_id:user_id }    
+            { participants_id:user_id }
         );
-        console.log(dbResp)
+        // let dbResp = await Conversation.aggregate(
+        //     [
+        //         {
+        //             $project: {
+        //                 participants_details: {
+        //                     $filter: {
+        //                         input: '$participants_details',
+        //                         as: 'detail',
+        //                         cond: {
+        //                             '$ne': {'$$detail.user_id': user_id}
+        //                         } 
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //     ]
+        // )
+        console.log(dbResp);
         res.status(200).json(dbResp);
-
     } catch (err) {
         console.log('error: ', err);
         res.status(500).send(err);        
@@ -52,7 +68,8 @@ router.post('/new', checkAuth, async (req, res) => {
         }
 
         let dbResp = await Conversation.findOneAndUpdate(
-            { participants_id: { $elemMatch: { $eq:user_id, $eq:to_user_id } } },
+            // { participants_id: { $elemMatch: { $eq:user_id, $eq:to_user_id } } },
+            { participants_id: {$all: [user_id, to_user_id] }},
             {
                 participants_id: [user_id, to_user_id],
                 participants_details: participantDetailsList,

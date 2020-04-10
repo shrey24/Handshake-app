@@ -14,7 +14,9 @@ const initialState = {
     loading: true,
     user: null
 }
-
+/**
+ * user: { user_id, email, user_type }
+ */
 
 export default function(state = initialState, action) {
     const { type, payload } = action;
