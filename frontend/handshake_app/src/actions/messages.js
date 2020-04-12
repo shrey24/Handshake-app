@@ -42,7 +42,7 @@ export const getMessages = () => async dispatch =>  {
 export const sendMessage = (messageObject) => async dispatch =>  {
     try {
         const data = JSON.stringify(messageObject);
-        const res = await axios.post(`/message/new`,
+        const res = await axios.post(`/messages/new`,
                         data, 
                         config
                     );

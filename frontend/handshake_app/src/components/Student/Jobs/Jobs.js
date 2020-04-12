@@ -84,36 +84,18 @@ export default class Jobs extends Component {
                     ...this.state.filterStatus,
                     'Part-Time Job': !this.state.filterStatus['Part-Time Job']
                 }
-                // this.setState({
-                //     filterStatus: {
-                //         ...this.state.filterStatus,
-                //         'Part-Time Job': !this.state.filterStatus['Part-Time Job']
-                //     }                        
-                // });
                 break;
             case 'Internship':
                 newFilterStatus = {
                     ...this.state.filterStatus,
                     'Internship': !this.state.filterStatus['Internship']
                 }
-                // this.setState({
-                //     filterStatus: {
-                //         ...this.state.filterStatus,
-                //         'Internship': !this.state.filterStatus['Internship']
-                //     }                        
-                // });
                 break;
             case 'On-Campus':
                 newFilterStatus = {
                     ...this.state.filterStatus,
                     'On-Campus': !this.state.filterStatus['On-Campus']
                 }
-                // this.setState({
-                //     filterStatus: {
-                //         ...this.state.filterStatus,
-                //         'On-Campus': !this.state.filterStatus['On-Campus']
-                //     }                        
-                // });
                 break;
         }
         this.filter(newFilterStatus);

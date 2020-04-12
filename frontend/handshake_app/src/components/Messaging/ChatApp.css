@@ -3,19 +3,28 @@
   flex-direction: column;
 }
 
+.scroll{
+  height: 450px;
+  overflow-x: hidden; 
+  overflow-x: auto; 
+  text-align:justify; 
+} 
+
 .messages {
+  height: 450px;
   overflow-y: scroll;
   overflow-x: hidden;
   flex-grow: 1;
   padding: 20px;
 }
 
-h3 {
+.header-row {
   text-align: center;
   padding: 20px 0;
   margin: 0;
   border-bottom: 1px solid #ddd;
-  background-color: #eee;
+  border-right: 1px solid #ddd;
+  /* background-color: #eee; */
 }
 
 .chat-input {
