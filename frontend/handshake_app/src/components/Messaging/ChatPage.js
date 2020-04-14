@@ -161,6 +161,11 @@ class ChatPage extends Component {
 
     componentDidMount(){
         this.props.getMessages();
+        const {conversations} = this.props.messages;
+    }
+
+    componentWillReceiveProps() {
+
     }
 
     handleInput = (e) => {this.setState({ [e.target.name]: e.target.value });}
@@ -222,7 +227,7 @@ class ChatPage extends Component {
         // messages loaded in redux store
         const { conversations } = this.props.messages;
         console.log('render: conversations:', conversations);
-        
+
         let messageList = 'select a conversation', msgHeader=null;
         if (this.state.selected_conversation) {
             let conv_id = this.state.selected_conversation;
@@ -231,20 +236,29 @@ class ChatPage extends Component {
             let convMessages = conv.messages;
             msgHeader = participant.other.user_name;
             messageList = convMessages.map((msg, index) => {
-                let msgClass, name;
+                let msgClass, name, avatar_path;
                 // let { participant } = this.state;
                 if (msg.from === this.props.user.user_id) {
                     msgClass = 'from-me';  
                     name = participant.me.user_name;
+                    avatar_path = participant.me.avatar_path;
                 } else {
                     msgClass = '';
                     name = participant.other.user_name;
+                    avatar_path = participant.other.avatar_path;
                 }
                 return (
                     <div className={`message ${msgClass}`}>
                     <div className='username'>
+                    
                     { name } at { msg.time } 
                     </div>
+                    <Avatar 
+                    name={name}
+                    round={true}
+                    size='30px'
+                    src={avatar_path}
+                    /> 
                     <div className='message-body'>
                     { msg.content }
                     </div>
@@ -259,7 +273,7 @@ class ChatPage extends Component {
         <AlertComp />
         <br />
         <Container >
-        <Card>
+        <Card >
         <Row >
         <Col sm={5}> <h3 className='header-row'>Messages</h3> </Col>
         <Col sm={7}> 
@@ -295,10 +309,10 @@ class ChatPage extends Component {
                     </Col>
                     <Col sm={9}>
                     <Row>
-                    { otherUser.user_name } 
+                    <b>{ otherUser.user_name } </b>
                     </Row>
                     <Row>
-                    {item.messages[item.messages.length - 1].content.substring(0, 10)}
+                    {item.messages[item.messages.length - 1].content.substring(0, 50)+'...'}
                     </Row>
                     
                     </Col>

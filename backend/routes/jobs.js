@@ -39,20 +39,24 @@ const storage = multer.diskStorage({
 //> POST /jobs/apply
 // req params: job_id, company_id, app_date, file (student_resume)
 router.post('/apply', checkAuth, upload, async (req, res) => {
+    console.log('data received: ', req.body);
     if (!req.file) { // no resume, send error
         return res.status(400).json({error: 'No resume attached'});
     }
     // prepare data to be inserted
     const { user_id } = req.jwtData;
-    const { job_id, app_date, } = req.body;
+    const { job_id, app_date, ...studentProfile} = req.body;
     let path = req.file.path;
     var resume_public_path = path.slice(path.indexOf('/')); // remove '/public' from path
+    console.log('studentProfile: ',typeof studentProfile, studentProfile)
+
     const data = {  
         student_id:user_id,
         student_resume: resume_public_path,  
-        app_date
+        app_date,
+        ...studentProfile
         };    
-    console.log('data received: ', req.body);
+        console.log('data: ',typeof data, data);
     try {
         // check if already applied 
         const result = await Job.findOne( { _id:job_id, 'job_applications.student_id': user_id });

@@ -82,10 +82,12 @@ const companyLinks = (
       </Form>
       <Nav.Link> <Link to='/company/jobs' style= {{ all: "inherit" }}>
           Jobs
-      </Link></Nav.Link>   
-      <Nav.Link> <Link to='/company/events' style= {{ all: "inherit" }}>
+      </Link></Nav.Link>  
+      <Nav.Link>
+       <Link to='/company/events' style= {{ all: "inherit" }}>
           Events
-      </Link></Nav.Link>
+      </Link>
+      </Nav.Link> 
       <Nav.Link> <Link to='/Students' style= {{ all: "inherit" }}>
           Students
       </Link></Nav.Link>   

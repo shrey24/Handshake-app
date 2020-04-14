@@ -19,6 +19,41 @@ const job_applications_schema  = new mongoose.Schema({
     app_status: {
         type: String,
         default: app_status.APP_STATUS_PENDING
+    },
+    email: {
+        type: String,
+        required: true
+    },
+    phone: {
+        type: String,
+    },
+    name: {
+        type: String,
+        required: true
+    },
+    curr_university: {
+        type: String,
+        required: true
+    },
+    curr_major: {
+        type: String,
+        required: true
+    },
+    curr_degree: {
+        type: String,
+        default: null
+    },
+    edu_start: {
+        type: Number,
+        default: null
+    },
+    edu_end: {
+        type: Number,
+        required: true
+    },
+    avatar_path: {
+        type: String,
+        default: null
     }
 });
 

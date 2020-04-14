@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import propTypes from 'prop-types';
 import AlertComp from '../../AlertComp';
 import { setAlert } from '../../../actions/alert';
+import { getStudentProfile } from '../../../actions/studentProfile';
 
 class JobsRight extends Component {
     constructor(props) {
@@ -16,10 +17,14 @@ class JobsRight extends Component {
         }
     }
 
+    componentDidMount() {
+        this.props.getStudentProfile();
+    }
+
     onChange = (e) => {
         this.setState({file:e.target.files[0]});
     }
-    // { job_id, company_id, app_date, student_resume}
+    // { job_id, company_id, app_date, student_resume, ...studentProfile}
     onApply = (e) => {
         var today = new Date();
         var dd = String(today.getDate()).padStart(2, '0');
@@ -29,9 +34,31 @@ class JobsRight extends Component {
 
         const formData = new FormData();
         const {data} = this.props;
-        formData.append('job_id', data.id);
+        formData.append('job_id', data._id);
         formData.append('company_id', data.company_id);
         formData.append('app_date', app_date);
+        const { 
+            name, 
+            curr_university,
+            curr_major,
+            curr_degree,
+            phone,
+            edu_start,
+            avatar_path,
+            email
+         } = this.props.studentProfile[0];
+
+        console.log(
+
+        )
+        formData.append('name', name);
+        formData.append('curr_university', curr_university);
+        curr_degree && formData.append('curr_degree', curr_degree);
+        curr_major && formData.append('curr_major', curr_major);
+        phone && formData.append('phone', phone);
+        edu_start && formData.append('edu_start', edu_start);
+        avatar_path && formData.append('avatar_path', avatar_path);
+        formData.append('email', email);
         formData.append('file', this.state.file);
         const config = {
             headers: {
@@ -60,6 +87,7 @@ class JobsRight extends Component {
     render() {
         const {data} = this.props;
         console.log('right pane data:', data);
+        console.log('profile: ', this.props.studentProfile);
         return (
             // <div 
             // className="tab-pane fade show active" 
@@ -148,6 +176,11 @@ class JobsRight extends Component {
 
 JobsRight.propTypes = {
     setAlert : propTypes.func.isRequired,
+    getStudentProfile: propTypes.func.isRequired,
 }
 
-export default connect(null, { setAlert })(JobsRight);
+const mapStateToProps = (state) => ({
+    studentProfile : state.studentProfile.student_profile
+});
+
+export default connect(mapStateToProps, { setAlert, getStudentProfile })(JobsRight);

@@ -95,7 +95,7 @@ class Jobs extends Component {
                                </Card.Text> 
 
                                 <Button variant='primary' 
-                                onClick = {(e) => this.handleAppView(item.id)}>
+                                onClick = {(e) => this.handleAppView(item._id)}>
                                 View Applicants
                                 </Button>
                             </Card.Body>
@@ -132,7 +132,7 @@ class Jobs extends Component {
 Jobs.propTypes = {
     setAlert : propTypes.func.isRequired,
     user: propTypes.object.isRequired,
-    profile: propTypes.array.isRequired,
+    profile: propTypes.object.isRequired,
     getCompanyProfile: propTypes.func.isRequired,
 }
 
