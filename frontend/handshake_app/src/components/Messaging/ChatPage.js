@@ -161,11 +161,16 @@ class ChatPage extends Component {
 
     componentDidMount(){
         this.props.getMessages();
+        const { user_id } = this.props.match.params;
+        if (user_id) {
+            console.log(`set chat for ${user_id}`);
+        } else {
+            console.log(`no new user param`);
+        }
         const {conversations} = this.props.messages;
     }
 
     componentWillReceiveProps() {
-
     }
 
     handleInput = (e) => {this.setState({ [e.target.name]: e.target.value });}

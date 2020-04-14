@@ -10,7 +10,8 @@ import {
         UPDATE_STUDENT_EXP,
         ADD_STUDENT_EXP,
         DELETE_STUDENT_EXP,
-        ERR_UPDATE_PROFILE
+        ERR_UPDATE_PROFILE,
+        GET_STUDENT_EDUCATIONS
 
     } from "./types";
 
@@ -21,6 +22,28 @@ const config = {
     }
 };
 axios.defaults.withCredentials = true;
+
+// get student profiles for students tab
+export const getStudents = () => async dispatch => {
+    try {
+        if (!user_id) user_id = 'Me';
+        const res = await axios.get(`/student-profile/students`);
+        console.log('getStudents ****************************');
+        console.log(`/student-profile/students`, res);
+        dispatch({
+            type: GET_STUDENTS,
+            payload: res.data
+        });
+
+    } catch (err) {
+        console.log('action getStudents Error:', err.body);
+        dispatch({
+            type: GET_STUDENTS_ERR,
+            payload: err.body
+        });
+        // dispatch(setAlert(err.body.error, 'danger'));
+    }
+}
 
 export const getStudentProfile = (user_id) => async dispatch => {
     try {

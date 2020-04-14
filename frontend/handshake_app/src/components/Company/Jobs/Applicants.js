@@ -68,14 +68,14 @@ const Applicants = (props) => {
                     <Card body>
 
                     <Row className="show-grid">
-                    <Col sm={1}>
+                    <Col sm={2}>
                         <Avatar
                         name={item.name}
                         round={true} 
                         src = {item.avatar_path} 
                         />
                     </Col>
-                    <Col sm={8}>
+                    <Col sm={7}>
                     <Card.Title>
                     <Link to='/students/profile' >
                     {item.name}

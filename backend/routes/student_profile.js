@@ -8,9 +8,10 @@ const checkAuth = require('./check_auth');
 
 
 //> /student-profile/:user_id
-router.get('/:user_id', checkAuth, async (req, res) => {
-    // console.log(req.body);
+router.get('/:user_id', checkAuth, async (req, res, next) => {
     let user_id = req.params.user_id;
+    if (user_id === 'students') return next();
+
     if(user_id === 'Me') user_id = req.jwtData.user_id;
     try {
         let profile = await student_profile.findOne(
@@ -27,6 +28,20 @@ router.get('/:user_id', checkAuth, async (req, res) => {
         res.status(500).send(err);        
     }    
 });
+
+// GET /student-profile/students
+// get list of all students 
+router.get('/students', checkAuth, async (req, res) => {
+    console.log('/students');
+    try {
+        let students = await student_profile.find({});
+        res.status(200).json(students);
+    } catch (err) {
+        console.log('error: ', err);
+        res.status(500).send(err);          
+    }
+});
+
 
 // declare multer middleware
 const storage = multer.diskStorage({

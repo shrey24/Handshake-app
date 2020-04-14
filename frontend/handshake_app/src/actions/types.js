@@ -21,6 +21,9 @@ export const LOGOUT = 'LOGOUT';
 export const USER_LOADED = 'USER_LOADED';
 export const AUTH_ERROR = 'AUTH_ERROR';
 
+export const GET_STUDENTS = 'GET_STUDENTS';
+export const GET_STUDENTS_ERR = 'GET_STUDENTS_ERR';
+
 export const GET_STUDENT_PROFILE = 'GET_STUDENT_PROFILE';
 export const GET_STUDENT_PROFILE_ERR = 'GET_STUDENT_PROFILE_ERR';
 

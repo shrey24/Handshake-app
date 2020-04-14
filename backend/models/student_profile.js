@@ -4,7 +4,7 @@ const student_exp = require('./student_experience');
 const student_edu = require('./student_education');
 
 const student_profile_schema = new mongoose.Schema({
-    _id : mongoose.ObjectId, 
+    id : mongoose.Types.ObjectId, 
     student_profile: [{
         email: {
             type: String,
@@ -74,4 +74,4 @@ const student_profile_schema = new mongoose.Schema({
     student_experience: [student_exp.student_exp_schema]
 });
 
-module.exports = student_profile = mongoose.model('student_profile', student_profile_schema);;
+module.exports = student_profile = mongoose.model('student_profile', student_profile_schema);
