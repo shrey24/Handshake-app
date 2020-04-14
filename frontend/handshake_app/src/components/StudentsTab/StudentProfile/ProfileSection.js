@@ -99,7 +99,6 @@ class ProfileSection extends Component {
         return (
             <div>
             <Container>
-            {modal}
             <Card style={{ width: '18rem' }}>
             <CardBody className="text-center">
                 <Avatar 

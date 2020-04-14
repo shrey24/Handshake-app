@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { Button, Card, CardTitle, CardBody } from 'reactstrap';
 import EducationItem from './EducationItem';
-import EducationForm from './EducationForm';
 // import {Flex, Item} from 'react-flex';
 // import 'react-flex/index.css';
 import { connect } from 'react-redux'
@@ -59,20 +58,6 @@ class EducationSection extends Component {
             return <Spinner />;
         }
 
-        let newItem = null;
-        if (!this.state.addNew) {
-            newItem = <Button 
-                        onClick = {this.handleAddBtn}
-                        color='link'> Add a new education 
-                      </Button>
-        } else {
-            newItem = <EducationForm 
-                        showForm={this.showForm}
-                        deleteItem={this.deleteItem}
-                        addNewItem={this.addNewItem}
-                        />
-        }
-
         return (
             <div> 
                 <Card >
@@ -82,29 +67,15 @@ class EducationSection extends Component {
                 </CardTitle>
                 {
                     educationItems.map((item) => {
-                        if(this.state.editItem && this.state.editItem.id === item.id) {
-                            return (
-                                <EducationForm
+                        return (
+                            <EducationItem 
                                 key={item.id}
                                 item={item}
-                                showForm={this.showForm}
-                                deleteItem={this.deleteItem}
-                                addNewItem={this.addNewItem}
-                                updateItem= {this.updateItem}
-                                />
-                            )
-                        } else {
-                            return (
-                                <EducationItem 
-                                    key={item.id}
-                                    item={item}
-                                    handleEdit = {this.handleEdit}
-                                />                            
-                            );
-                        }
+                                handleEdit = {this.handleEdit}
+                            />                            
+                        ); 
                     })
-                }
-                { newItem }  
+                } 
                 </CardBody>
                 </Card> 
             </div>

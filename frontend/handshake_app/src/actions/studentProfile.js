@@ -2,6 +2,8 @@ import axios from 'axios';
 import {setAlert} from './alert';
 
 import {
+        GET_STUDENTS,
+        GET_STUDENTS_ERR,
         GET_STUDENT_PROFILE, 
         GET_STUDENT_PROFILE_ERR,
         ADD_STUDENT_EDUCATION, 
@@ -26,7 +28,6 @@ axios.defaults.withCredentials = true;
 // get student profiles for students tab
 export const getStudents = () => async dispatch => {
     try {
-        if (!user_id) user_id = 'Me';
         const res = await axios.get(`/student-profile/students`);
         console.log('getStudents ****************************');
         console.log(`/student-profile/students`, res);

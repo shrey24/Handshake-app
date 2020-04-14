@@ -5,6 +5,7 @@ import { Container, Card, Row, Col, Form } from 'react-bootstrap';
 import Avatar from 'react-avatar';
 import NavBar from '../NavBar';
 import { connect } from 'react-redux';
+import { getStudents } from '../../actions/studentProfile';
 import propTypes from 'prop-types';
 
 
@@ -14,12 +15,19 @@ const Students = (props) => {
     const [showList, setShowList] = useState([]);
     
     useEffect(() => {
-
+        props.getStudents();
     }, []);
     
-
+    useEffect(() => {
+        console.log('setting state');
+        if (props.students) {
+            setStudentList(props.students);
+            setShowList(props.students);
+        }
+    }, [props.students]);
+    
     return (
-       <div>
+    <div>
     <NavBar />
     <br />       
     <Container>
@@ -50,6 +58,8 @@ const Students = (props) => {
     <Col>
     {
         showList.map((item, index) => {
+            let studentId = item._id;
+            item = item.student_profile[0];
             return (
                 <Container>
                 <Card body>
@@ -66,12 +76,13 @@ const Students = (props) => {
                 <Col sm={7}>
                 <Card.Title>
                 {/* <Link to={{pathname:'/company/profile', user_id:'comp_id'}} > */}
-                <Link to={`/students/${item._id}`}> {item.name} </Link>
+                <Link to={`/students/${studentId}`}> {item.name} </Link>
                 </Card.Title>
                 
-                <Card.Text> {item.curr_university}</Card.Text>
-                <Card.Text> {item.curr_major}</Card.Text>
-                <Card.Text> {item.curr_degree} | Graduates {item.edu_end}</Card.Text>
+                <Card.Text> {item.curr_university}
+                <br/> {item.curr_major}
+                <br/> {item.curr_degree && (`${item.curr_degree} | Graduates ${item.edu_end}`)}
+                </Card.Text>
                 </Col>
 
                 </Row>
@@ -82,14 +93,23 @@ const Students = (props) => {
         })           
     
     }
-
     </Col>
+
     </Row>
-
     </Container>
-
     </div>
     )
 }
 
-export default Students;
+Students.propTypes = {
+    getStudents: propTypes.func.isRequired,
+    students: propTypes.array.isRequired,
+    user: propTypes.object.isRequired,
+}
+
+const mapStateToProps = (state) => ({
+    user: state.auth.user,
+    students: state.studentProfile.students
+});
+
+export default connect(mapStateToProps, { getStudents })(Students);

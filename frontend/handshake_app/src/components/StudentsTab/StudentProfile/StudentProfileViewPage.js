@@ -7,7 +7,7 @@ import { Container, Row, Col, Card, CardBody } from 'reactstrap';
 
 import { Link, Redirect } from 'react-router-dom';
 import { connect } from "react-redux";
-import { getStudentProfile } from '../../../actions/studentProfile';
+import { getStudents } from '../../../actions/studentProfile';
 
 import propTypes from 'prop-types';
 import AlertComp from '../../AlertComp';
@@ -27,23 +27,33 @@ class StudentProfileViewPage extends Component {
     }
 
     componentDidMount() {
-        if(this.props.user){
-            console.log(`student profile: getStudentProfile(${this.props.user.user_id})`);
-            this.props.getStudentProfile(this.props.user.user_id);  
+        if(!this.props.students){
+            this.props.getStudents();              
         }
     }
 
     render() {
-        if(!this.props.user) {
+        if(!this.props.user)
             return <Redirect to='/login' />;
+        
+        if(!this.props.students) 
+            return <Spinner />;
+        console.log('view profile', this.props.students);
+        const { studentId } = this.props.match.params;
+        let studentProfile = this.props.students.find(item => item._id === studentId);
+        if (!studentProfile) {
+            return (
+            <div>
+                <NavBar />
+                <Container> <h3>{`Error, studentID ${studentId} not found`}</h3>
+                </Container>
+            </div>
+            )
         }
 
-        if(this.props.studentProfile.loading)
-        return <Spinner />;
+        console.log('rendering studentprofile', studentProfile);
         
-        console.log('rendering studentprofile', this.props.studentProfile);
-        
-        const {student_profile, student_education, student_experience} = this.props.studentProfile;
+        const {student_profile, student_education, student_experience} = studentProfile;
         console.log('student_profile ', typeof student_profile);
         console.log('student_education ', typeof student_education);
         console.log('student_experience ', typeof student_experience);
@@ -80,16 +90,17 @@ class StudentProfileViewPage extends Component {
     }
 }
 
-StudentProfile.propTypes = {
-    getStudentProfile: propTypes.func.isRequired,
+StudentProfileViewPage.propTypes = {
+    getStudents: propTypes.func.isRequired,
     studentProfile: propTypes.object.isRequired,
     user: propTypes.object.isRequired,
     studentId: propTypes.string.isRequired,
+    students: propTypes.array.isRequired,
 }
 
 const mapStateToProps = (state) => ({
     user: state.auth.user,
-    studentProfile : state.studentProfile
+    students : state.studentProfile.students
 });
 
-export default connect(mapStateToProps, { getStudentProfile } )(StudentProfileViewPage);
+export default connect(mapStateToProps, { getStudents } )(StudentProfileViewPage);
