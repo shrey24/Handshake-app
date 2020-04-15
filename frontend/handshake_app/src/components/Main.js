@@ -27,7 +27,8 @@ class Main extends Component {
                 <Route path="/register" component={Register}/>
                 <Route exact path="/students" component={Students}/>
                 <Route exact path="/students/:studentId" component={StudentProfileViewPage}/>
-                <Route path="/messages/:user_id" component={ChatPage}/>
+                <Route exact path="/messages/:user_id" component={ChatPage}/>
+                <Route exact path="/messages" component={ChatPage}/>
                 <Route exact path="/student/profile" component={StudentProfile}/>
                 <Route exact path="/student/jobs" component={Jobs}/>
                 <Route exact path="/student/events" component={StudentEventsPage}/>

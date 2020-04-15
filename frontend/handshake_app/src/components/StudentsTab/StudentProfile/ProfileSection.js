@@ -3,10 +3,6 @@ import Avatar from 'react-avatar';
 import { Container,
         Button,
         Col,
-        Input,
-        Label,
-        Form,
-        FormGroup,
         Row, 
         Card,
         CardText,
@@ -14,9 +10,10 @@ import { Container,
         CardTitle,
         CardSubtitle        
     } from 'reactstrap';
-import { Modal } from 'react-bootstrap';
+import { Modal, Form, FormGroup} from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { getStudentProfile } from '../../../actions/studentProfile';
+import { sendMessage } from '../../../actions/messages';
 import propTypes from 'prop-types'
 import Spinner from '../../Spinner';
 import axios from 'axios';
@@ -28,8 +25,9 @@ class ProfileSection extends Component {
         this.state = {
             data:null,
             editMode: false,
-            showAvatarModal : false,
+            showMessageModal : false,
             file: null,
+            messageText: ''
         }
     }
 
@@ -42,27 +40,28 @@ class ProfileSection extends Component {
     handleInput = (e) => {
         this.setState({
             ...this.state,
-            data: {[e.target.name] : e.target.value}
+           [e.target.name] : e.target.value
         });  
     }
 
-    newMessage = (e) => { 
-        const { data } = this.state;
-        console.log("API Call to update/profile : ", data);
-        axios.put('/student-profile', data)
-            .then(res => {
-                console.log('prifile updated', res);
-                this.props.getStudentProfile();
-            })
-            .catch(err => {
-                console.log('update student-profile err: ', err);
-                
-            });
-        this.setState({editMode:false});
+    sendMessage = (e) => { 
+        // redirect to message tab
+        e.preventDefault();
+        const messageObject = {
+            to_user_id: this.props.student_profile[0]._id, 
+            to_user_name: this.props.student_profile[0].name, 
+            to_avatar_path: this.props.student_profile[0].avatar_path, 
+            from_user_name: this.props.user_profile.name, 
+            from_avatar_path: this.props.user_profile.avatar_path, 
+            content: this.state.messageText
+        };
+        this.props.sendMessage(messageObject);
+        this.onCancelAvatarModal();
+        this.props.alertMessageSent(`message sent to ${messageObject.to_user_name}`);
     }
 
     onCancelAvatarModal = (e) => {
-        this.setState({showAvatarModal: false});
+        this.setState({showMessageModal: false});
     }
 
     onCancel = (e) => {
@@ -74,7 +73,7 @@ class ProfileSection extends Component {
         if (!this.props.student_profile){
             return <Spinner />;
         }
-
+        console.log('profile Section props: ', this.props.student_profile);
         const fieldNames = {
             "dob": 'birth date',
             "address_city": '',
@@ -86,6 +85,7 @@ class ProfileSection extends Component {
             "edu_start": 'From: ',
             "edu_end": ' To: ',
             "gpa": 'GPA',
+            "email": 'email'
         }
         console.log(this.props);
         const { user_id,
@@ -96,16 +96,57 @@ class ProfileSection extends Component {
                 avatar_path, 
                 resume_path, ...info} = this.props.student_profile[0];
 
+        const modal = (
+            <Modal 
+            show={this.state.showMessageModal} 
+            onHide={this.onCancelAvatarModal} >
+
+            <Modal.Header closeButton>
+            <Avatar 
+            name={name}
+            round={true} 
+            src = {avatar_path}
+            />
+            <Modal.Title>{`Ask ${name} about...`}</Modal.Title>
+            </Modal.Header>
+
+            <Modal.Body>
+            <br /> 
+            <br /> 
+            <Form onSubmit={this.sendMessage}>
+            <Form.Row>
+            <FormGroup as={Col} sm={10} >
+            <Form.Control
+            onChange={this.handleInput}
+            value={this.state.messageText}
+            name= 'messageText'
+            as="textarea" 
+            rows="10"
+            placeholder="Type a message..." />
+            </FormGroup>
+            </Form.Row>   
+
+            <Modal.Footer>
+            <Button variant="primary" type="submit">
+                Send
+            </Button>
+            </Modal.Footer>
+            </Form>
+            </Modal.Body>
+            </Modal>
+        );
+
         return (
             <div>
             <Container>
+            { modal }
+
             <Card style={{ width: '18rem' }}>
             <CardBody className="text-center">
                 <Avatar 
                 name={name}
                 round={true} 
                 src = {avatar_path}
-                onClick = { (e) => this.setState({showAvatarModal: true})}
                 />
 
                 <CardTitle><h5>{name} </h5></CardTitle>
@@ -114,11 +155,14 @@ class ProfileSection extends Component {
                 
                 {
                     Object.keys(info).map((k, index) => {
-                        return (<CardText> {fieldNames[k]} {info[k]} </CardText>)
+                        if (k != '_id')
+                            return (<CardText> {info[k] && `${fieldNames[k]} ${info[k]}`} </CardText>)
                     })
                 }
             
-                <Button color='primary' onClick={(e) => this.newMessage()}>
+                <Button 
+                color='primary' 
+                onClick={(e) => this.setState({showMessageModal: true})}>
                     Message
                 </Button>
 
@@ -131,14 +175,14 @@ class ProfileSection extends Component {
 }
 
 ProfileSection.propType = {
-    student_profile: propTypes.object.isRequired,
+    student_profile: propTypes.array.isRequired,
+    messageFromUser: propTypes.object.isRequired,
     user: propTypes.object.isRequired,
     getStudentProfile: propTypes.func.isRequired,
 }
 
 const mapStateToProps = (state) => ({
     user: state.auth.user,
-    student_profile : state.studentProfile.student_profile
 });
 
-export default connect(mapStateToProps, {getStudentProfile})(ProfileSection);
+export default connect(mapStateToProps, {getStudentProfile, sendMessage})(ProfileSection);

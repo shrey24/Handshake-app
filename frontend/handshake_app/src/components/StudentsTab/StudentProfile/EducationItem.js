@@ -16,10 +16,6 @@ class EducationItem extends Component {
              <CardText>{item.degree} {'  '} Major: {item.major}</CardText>
              <CardText> {item.start_date} - {item.end_date}</CardText>
              <CardText>GPA: {item.gpa}</CardText>
-              
-            <Button color='link' onClick={() => this.props.handleEdit(item)}>
-               Edit
-            </Button>
             </div>
         );
     }

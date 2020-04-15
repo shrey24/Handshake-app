@@ -5,7 +5,9 @@ import Spinner from '../Spinner';
 import AlertComp from '../AlertComp';
 import Avatar from 'react-avatar';
 import { getStudentProfile } from '../../actions/studentProfile';
+import { getCompanyProfile } from '../../actions/company';
 import { getMessages, sendMessage } from '../../actions/messages';
+import { USER_COMPANY, USER_STUDENT } from '../../actions/types';
 import { connect } from 'react-redux';
 import propTypes from 'prop-types'
 
@@ -18,7 +20,7 @@ class ChatPage extends Component {
         this.state = {
             conversationList: [],
             selected_conversation: null,
-            conversation: null,
+            conversation_messages: null,
             participant: {
                 me: null,
                 other: null      
@@ -27,147 +29,61 @@ class ChatPage extends Component {
         }
     }
 
-    getDetails = () => {
-        const dummyConv = JSON.parse(
-            `[
-                {
-                    "participants_id": [
-                        "5e8d4341d975b733882c6bfb",
-                        "5e8694a1911e7e1e531ae5b9"
-                    ],
-                    "_id": "5e8d3e9b1fffaa59c05968f5",
-                    "__v": 0,
-                    "messages": [
-                        {
-                            "_id": "5e8d3e9bd975b733882c6bee",
-                            "from": "5e8694a1911e7e1e531ae5b9",
-                            "time": "2020-04-08T03:01:47.168Z",
-                            "content": "How about next wednesday?"
-                        },
-                        {
-                            "_id": "5e8d3eadd975b733882c6bf1",
-                            "from": "5e8694a1911e7e1e531ae5b9",
-                            "time": "2020-04-08T03:02:05.992Z",
-                            "content": "PS How about next mon?"
-                        },
-                        {
-                            "_id": "5e8d3ecad975b733882c6bf4",
-                            "from": "5e8694a1911e7e1e531ae5b9",
-                            "time": "2020-04-08T03:02:34.222Z",
-                            "content": "this is 3rd time"
-                        },
-                        {
-                            "_id": "5e8d3ed8d975b733882c6bf7",
-                            "from": "5e8694a1911e7e1e531ae5b9",
-                            "time": "2020-04-08T03:02:48.243Z",
-                            "content": "this is 4th time"
-                        },
-                        {
-                            "_id": "5e8d3eedd975b733882c6bfa",
-                            "from": "5e8694a1911e7e1e531ae5b9",
-                            "time": "2020-04-08T03:03:09.975Z",
-                            "content": "this is 5h time"
-                        },
-                        {
-                            "_id": "5e8f9ed3204ba50544251d30",
-                            "from": "5e8d4341d975b733882c6bfb",
-                            "time": "2020-04-09T22:16:51.490Z",
-                            "content": "this is response from try5 to Facebook"
-                        }
-                    ],
-                    "participants_details": [
-                        {
-                            "avatar_path": null,
-                            "_id": "5e8f9ed3204ba50544251d2e",
-                            "user_id": "5e8d4341d975b733882c6bfb",
-                            "user_name": "Try5"
-                        },
-                        {
-                            "avatar_path": null,
-                            "_id": "5e8f9ed3204ba50544251d2f",
-                            "user_id": "5e8694a1911e7e1e531ae5b9",
-                            "user_name": "HR at Facebook"
-                        }
-                    ]
-                },
-                {
-                    "participants_id": [
-                        "5e8694a1911e7e1e531ae5b9",
-                        "5e8d4341d975b733882c6bfb"
-                    ],
-                    "_id": "5e8d43cc1fffaa59c05a6eff",
-                    "__v": 0,
-                    "messages": [
-                        {
-                            "_id": "5e8d43ccd975b733882c6c00",
-                            "from": "5e8694a1911e7e1e531ae5b9",
-                            "time": "2020-04-08T03:23:56.018Z",
-                            "content": "this is 1 time"
-                        },
-                        {
-                            "_id": "5e8d43d6d975b733882c6c03",
-                            "from": "5e8694a1911e7e1e531ae5b9",
-                            "time": "2020-04-08T03:24:06.195Z",
-                            "content": "this is 2 time"
-                        }
-                    ],
-                    "participants_details": [
-                        {
-                            "avatar_path": null,
-                            "_id": "5e8d43d6d975b733882c6c01",
-                            "user_id": "5e8694a1911e7e1e531ae5b9",
-                            "user_name": "HR from Facebook"
-                        },
-                        {
-                            "avatar_path": null,
-                            "_id": "5e8d43d6d975b733882c6c02",
-                            "user_id": "5e8d4341d975b733882c6bfb",
-                            "user_name": "Try5"
-                        }
-                    ]
-                }
-            ]`
-        );
-        let participants = null;
-        console.log('getDetails', dummyConv.participants_details);
-        for (let p of dummyConv.participants_details ){
-            if ( p.user_id === this.props.user.user_id ) {
-                participants.me = {
-                    name: p.user_name,
-                    avatar_path: p.avatar_path
-                }
+    // helper method to return Participant Details
+    getParticipantDetails = (conv)  => {
+        let me = null, other = null;
+        conv.participants_details.map(item => {
+            if( item.user_id === this.props.user.user_id) {
+                me = item;
             } else {
-                participants.other = {
-                    name: p.user_name,
-                    avatar_path: p.avatar_path
-                }
+                other = item;
             }
-        }
-        this.setState(
-            {
-                ...this.state,
-                participant: participants,
-                conversationList: dummyConv.map(item => {
-                    return (
-                        {
-                            ...item,
-                            participants_details: item.participants_details.filter(i => i.user_id != this.props.user.user_id)
-                        }
-                    );
-                })
-            }
-        );
+        });
+        const participant = { me, other };
+        return participant;
     }
 
     componentDidMount(){
         this.props.getMessages();
-        const { user_id } = this.props.match.params;
+        /*
+        if (this.props.user.user_type === USER_STUDENT) {
+            await this.props.getStudentProfile();
+        } else {
+            await this.props.getCompanyProfile();
+        }
+
+        const { user_id, name, avatar_path } = this.props.location.state;
+        const {conversations} = this.props.messages;
         if (user_id) {
             console.log(`set chat for ${user_id}`);
+            let newConv = conversations.find(conv => {
+                let participant = this.getParticipantDetails(conv);
+                return participant.other.user_id === user_id;
+            });
+            if (newConv) { // found existing chat
+                this.handleViewMessage(newConv);
+            } else { // create a new chat
+                this.setState({
+                    selected_conversation: 'new_conv',
+                    conversation_messages: [],
+                    participant = {
+                        other: {
+                            user_id,
+                            user_name: name,
+                            avatar_path
+                        },
+                        me: {
+                            user_id: this.props.user.user_id,
+                            user_name: 
+                            avatar_path:
+                        }
+                    }
+                });
+            }
         } else {
             console.log(`no new user param`);
         }
-        const {conversations} = this.props.messages;
+        */
     }
 
     componentWillReceiveProps() {
@@ -190,36 +106,14 @@ class ChatPage extends Component {
     }
 
     handleViewMessage = (conv) => {
-        let me = null, other = null;
-        conv.participants_details.map(item => {
-            if( item.user_id === this.props.user.user_id) {
-                me = item;
-            } else {
-                other = item;
-            }
-        });
+        let participants = this.getParticipantDetails(conv);
+        console.log('@handleViewMessage: participants= ', participants);
         this.setState({
             ...this.state,
-            conversation: conv.messages,
+            conversation_messages: conv.messages,
             selected_conversation: conv._id,
-            participant: {
-                me, other
-            }
+            participant: participants
         });
-    }
-
-    // helper method to return Participant Details
-    getParticipantDetails = (conv)  => {
-        let me = null, other = null;
-        conv.participants_details.map(item => {
-            if( item.user_id === this.props.user.user_id) {
-                me = item;
-            } else {
-                other = item;
-            }
-        });
-        const participant = { me, other };
-        return participant;
     }
 
     render() {
@@ -233,16 +127,18 @@ class ChatPage extends Component {
         const { conversations } = this.props.messages;
         console.log('render: conversations:', conversations);
 
-        let messageList = 'select a conversation', msgHeader=null;
+        let messageList = 'select a conversation';
+        let msgHeader=null;
+        
         if (this.state.selected_conversation) {
             let conv_id = this.state.selected_conversation;
-            let conv = conversations.find(item => item._id === conv_id);
+            let conv = conversations.find(i => i._id === conv_id);
+            let { messages } = conv;
             let participant = this.getParticipantDetails(conv);
-            let convMessages = conv.messages;
             msgHeader = participant.other.user_name;
-            messageList = convMessages.map((msg, index) => {
+            messageList = messages.map((msg, index) => {
                 let msgClass, name, avatar_path;
-                // let { participant } = this.state;
+                let { participant } = this.state;
                 if (msg.from === this.props.user.user_id) {
                     msgClass = 'from-me';  
                     name = participant.me.user_name;
@@ -322,7 +218,6 @@ class ChatPage extends Component {
                     
                     </Col>
                     </Row>
-                  
                         
                     </ListGroup.Item>
                 )
@@ -378,10 +273,22 @@ ChatPage.propTypes = {
     conversations: propTypes.array.isRequired,
     getMessages: propTypes.func.isRequired,
     sendMessage: propTypes.func.isRequired,
+    student_profile: propTypes.array.isRequired,
+    company_profile: propTypes.object.isRequired,
+    getStudentProfile: propTypes.func.isRequired, 
+    getCompanyProfile: propTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => ({
     user: state.auth.user,
-    messages: state.messages   
+    messages: state.messages,
+    student_profile: state.studentProfile.student_profile,
+    company_profile: state.company.profile
 });
-export default connect(mapStateToProps, { getMessages, sendMessage })(ChatPage);
+
+export default connect(mapStateToProps, { 
+    getMessages, 
+    sendMessage, 
+    getStudentProfile, 
+    getCompanyProfile 
+})(ChatPage);

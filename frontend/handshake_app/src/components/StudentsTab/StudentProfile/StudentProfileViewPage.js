@@ -7,7 +7,9 @@ import { Container, Row, Col, Card, CardBody } from 'reactstrap';
 
 import { Link, Redirect } from 'react-router-dom';
 import { connect } from "react-redux";
-import { getStudents } from '../../../actions/studentProfile';
+import { getStudents, getStudentProfile } from '../../../actions/studentProfile';
+import { getCompanyProfile } from '../../../actions/company';
+import { USER_COMPANY, USER_STUDENT } from '../../../actions/types';
 
 import propTypes from 'prop-types';
 import AlertComp from '../../AlertComp';
@@ -30,6 +32,14 @@ class StudentProfileViewPage extends Component {
         if(!this.props.students){
             this.props.getStudents();              
         }
+        if(this.props.user.user_type === USER_COMPANY)
+            this.props.getCompanyProfile();
+        else 
+            this.props.getStudentProfile();
+    }
+    
+    alertMessageSent = (text) => {
+        console.log('ALERT: MESSAGE SENT', text);
     }
 
     render() {
@@ -38,7 +48,19 @@ class StudentProfileViewPage extends Component {
         
         if(!this.props.students) 
             return <Spinner />;
-        console.log('view profile', this.props.students);
+
+        let thisUserProfile = null;
+        if (this.props.user) {
+            if ( this.props.user.user_type === USER_STUDENT) {
+                thisUserProfile = this.props.student_profile[0];
+            } else {
+                thisUserProfile = this.props.company_profile;
+            }
+            console.log(`This user profile set to ${thisUserProfile}`);
+        }
+        
+        
+        // console.log('view profile', this.props.students);
         const { studentId } = this.props.match.params;
         let studentProfile = this.props.students.find(item => item._id === studentId);
         if (!studentProfile) {
@@ -54,10 +76,11 @@ class StudentProfileViewPage extends Component {
         console.log('rendering studentprofile', studentProfile);
         
         const {student_profile, student_education, student_experience} = studentProfile;
+        student_profile[0]._id = studentProfile._id;
         console.log('student_profile ', typeof student_profile);
         console.log('student_education ', typeof student_education);
         console.log('student_experience ', typeof student_experience);
-        
+
         return (
             <div>
                 <NavBar />
@@ -65,7 +88,10 @@ class StudentProfileViewPage extends Component {
                 <Container>
                     <Row>
                         <Col sm={4}>
-                            <ProfileSection />  
+                            <ProfileSection 
+                            student_profile={student_profile} 
+                            user_profile={thisUserProfile}
+                            alertMessageSent= {this.alertMessageSent}/>  
                         </Col>
                         <Col sm={8}>
                         <Container>
@@ -96,11 +122,19 @@ StudentProfileViewPage.propTypes = {
     user: propTypes.object.isRequired,
     studentId: propTypes.string.isRequired,
     students: propTypes.array.isRequired,
+    getStudentProfile: propTypes.func.isRequired, 
+    getCompanyProfile: propTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => ({
     user: state.auth.user,
-    students : state.studentProfile.students
+    students : state.studentProfile.students,
+    student_profile: state.studentProfile.student_profile,
+    company_profile: state.company.profile
 });
 
-export default connect(mapStateToProps, { getStudents } )(StudentProfileViewPage);
+export default connect(mapStateToProps, { 
+    getStudents,
+    getCompanyProfile,
+    getStudentProfile
+ })(StudentProfileViewPage);

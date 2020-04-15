@@ -113,6 +113,7 @@ class ProfileSection extends Component {
             "edu_start": 'From: ',
             "edu_end": ' To: ',
             "gpa": 'GPA',
+            "email": ''
         }
         console.log(this.props);
         const { user_id,
@@ -228,7 +229,8 @@ class ProfileSection extends Component {
                    
                     {
                         Object.keys(info).map((k, index) => {
-                            return (<CardText> {fieldNames[k]} {info[k]} </CardText>)
+                            if (k != '_id')
+                            return (<CardText> {info[k] && `${fieldNames[k]} ${info[k]}`} </CardText>)
                         })
                     }
                 

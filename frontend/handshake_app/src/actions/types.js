@@ -1,3 +1,7 @@
+
+export const USER_STUDENT = 'student';
+export const USER_COMPANY = 'company';
+
 export const JOB_CAT = {
     FULLTIME : 'Full-Time Job',
     PARTTIME : 'Part-Time Job',

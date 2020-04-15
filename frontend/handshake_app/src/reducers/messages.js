@@ -23,7 +23,7 @@ export default function(state = initialState, action) {
             if (state.isNewConversation) {
                 return Object.assign({},
                     state,
-                    {conversations: state.conversations.concat([action.payload])},
+                    {conversations: [action.payload].concat(state.conversations)},
                     { isNewConversation: !state.isNewConversation }
                 );
             } else {
