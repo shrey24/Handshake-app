@@ -23,9 +23,18 @@ export const getMessages = () => async dispatch =>  {
         //     doc.participants_details = doc.participants_details.filter(item => item.user_id != user_id);
         // })
         //success
+        let data = res.data;
+        // sort decreasing order of message date
+        data.sort((a, b) => { 
+            let aTime = new Date(a.messages[a.messages.length-1].time);
+            let bTime = new Date(b.messages[b.messages.length-1].time);
+            if(aTime <= bTime) return 1;
+            else return -1;
+        });
+        
         dispatch({
             type: GET_CONVERSATIONS,
-            payload: res.data
+            payload: data
         });
     } catch (error) {
         dispatch({

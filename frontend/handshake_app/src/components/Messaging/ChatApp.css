@@ -40,9 +40,14 @@
   margin-right: -20px;
 }
 
-.message.from-me .username {
+/* .message.from-me .username {
   display: none;
-}
+} */
+.username.from-me {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 5px;
+} 
 
 .message.from-me {
   display: flex;

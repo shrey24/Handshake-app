@@ -149,11 +149,13 @@ class ChatPage extends Component {
                     avatar_path = participant.other.avatar_path;
                 }
                 return (
-                    <div className={`message ${msgClass}`}>
-                    <div className='username'>
+                    <div>
+                    <div className={`username ${msgClass}`}>
                     
                     { name } at { msg.time } 
                     </div>
+                    <div className={`message ${msgClass}`}>
+                    
                     <Avatar 
                     name={name}
                     round={true}
@@ -163,6 +165,7 @@ class ChatPage extends Component {
                     <div className='message-body'>
                     { msg.content }
                     </div>
+                </div>
                 </div>
                 );
             });
@@ -191,6 +194,7 @@ class ChatPage extends Component {
         {
             conversations.map((item, index) => {
                 let otherUser = item.participants_details[0];
+                let lastMsgTime = new Date(item.messages[item.messages.length - 1].time)
                 if ( item.participants_details[0].user_id === this.props.user.user_id ) 
                     otherUser = item.participants_details[1];
                 return (
@@ -210,7 +214,8 @@ class ChatPage extends Component {
                     </Col>
                     <Col sm={9}>
                     <Row>
-                    <b>{ otherUser.user_name } </b>
+                        <Col sm={8}> <b>{ otherUser.user_name } </b> </Col>
+                        <Col> { `${lastMsgTime.getMonth()+1}/${lastMsgTime.getDate()}/${lastMsgTime.getFullYear()}`}</Col>
                     </Row>
                     <Row>
                     {item.messages[item.messages.length - 1].content.substring(0, 50)+'...'}

@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import Avatar from 'react-avatar';
 import { Container,
-        Button,
         Col,
         Row, 
         Card,
@@ -10,10 +9,11 @@ import { Container,
         CardTitle,
         CardSubtitle        
     } from 'reactstrap';
-import { Modal, Form, FormGroup} from 'react-bootstrap';
+import { Button, Modal, Form, FormGroup} from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { getStudentProfile } from '../../../actions/studentProfile';
 import { sendMessage } from '../../../actions/messages';
+import { setAlert } from '../../../actions/alert';
 import propTypes from 'prop-types'
 import Spinner from '../../Spinner';
 import axios from 'axios';
@@ -58,6 +58,9 @@ class ProfileSection extends Component {
         this.props.sendMessage(messageObject);
         this.onCancelAvatarModal();
         this.props.alertMessageSent(`message sent to ${messageObject.to_user_name}`);
+        if(this.props.alert.length === 0) {
+            this.props.setAlert(`message sent to ${messageObject.to_user_name} !`, 'success');
+        }
     }
 
     onCancelAvatarModal = (e) => {
@@ -161,7 +164,8 @@ class ProfileSection extends Component {
                 }
             
                 <Button 
-                color='primary' 
+                varient='primary' 
+                style ={{width: '230px'}}
                 onClick={(e) => this.setState({showMessageModal: true})}>
                     Message
                 </Button>
@@ -176,13 +180,16 @@ class ProfileSection extends Component {
 
 ProfileSection.propType = {
     student_profile: propTypes.array.isRequired,
+    alert: propTypes.array.isRequired,
     messageFromUser: propTypes.object.isRequired,
     user: propTypes.object.isRequired,
     getStudentProfile: propTypes.func.isRequired,
+    setAlert: propTypes.func.isRequired,
 }
 
 const mapStateToProps = (state) => ({
     user: state.auth.user,
+    alert: state.alert
 });
 
-export default connect(mapStateToProps, {getStudentProfile, sendMessage})(ProfileSection);
+export default connect(mapStateToProps, {getStudentProfile, sendMessage, setAlert})(ProfileSection);

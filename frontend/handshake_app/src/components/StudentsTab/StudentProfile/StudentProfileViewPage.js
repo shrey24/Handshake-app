@@ -32,10 +32,12 @@ class StudentProfileViewPage extends Component {
         if(!this.props.students){
             this.props.getStudents();              
         }
-        if(this.props.user.user_type === USER_COMPANY)
-            this.props.getCompanyProfile();
-        else 
-            this.props.getStudentProfile();
+        if (this.props.user){
+            if (this.props.user.user_type === USER_COMPANY)
+                this.props.getCompanyProfile();
+            else 
+                this.props.getStudentProfile();
+        }
     }
     
     alertMessageSent = (text) => {
@@ -95,6 +97,7 @@ class StudentProfileViewPage extends Component {
                         </Col>
                         <Col sm={8}>
                         <Container>
+                            <AlertComp />
                             <Card>
                                 <CardBody>     
                                 <h3>Objective</h3>
