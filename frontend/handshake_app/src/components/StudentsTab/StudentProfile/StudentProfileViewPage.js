@@ -38,6 +38,8 @@ class StudentProfileViewPage extends Component {
             else 
                 this.props.getStudentProfile();
         }
+        const { studentId } = this.props.match.params;
+        this.props.getStudentProfile(studentId);
     }
     
     alertMessageSent = (text) => {
@@ -45,10 +47,13 @@ class StudentProfileViewPage extends Component {
     }
 
     render() {
+        const { studentId } = this.props.match.params;
         if(!this.props.user)
             return <Redirect to='/login' />;
         
-        if(!this.props.students) 
+        if(!this.props.otherStudentProfile) 
+            return <Spinner />;
+        if(this.props.otherStudentProfile._id !== studentId)
             return <Spinner />;
 
         let thisUserProfile = null;
@@ -61,11 +66,8 @@ class StudentProfileViewPage extends Component {
             console.log(`This user profile set to ${thisUserProfile}`);
         }
         
-        
-        // console.log('view profile', this.props.students);
-        const { studentId } = this.props.match.params;
-        let studentProfile = this.props.students.find(item => item._id === studentId);
-        if (!studentProfile) {
+        let { otherStudentProfile } = this.props;
+        if (!otherStudentProfile) {
             return (
             <div>
                 <NavBar />
@@ -75,10 +77,10 @@ class StudentProfileViewPage extends Component {
             )
         }
 
-        console.log('rendering studentprofile', studentProfile);
+        console.log('rendering studentprofile', otherStudentProfile);
         
-        const {student_profile, student_education, student_experience} = studentProfile;
-        student_profile[0]._id = studentProfile._id;
+        const {student_profile, student_education, student_experience} = otherStudentProfile;
+        student_profile[0]._id = otherStudentProfile._id;
         console.log('student_profile ', typeof student_profile);
         console.log('student_education ', typeof student_education);
         console.log('student_experience ', typeof student_experience);
@@ -132,6 +134,7 @@ StudentProfileViewPage.propTypes = {
 const mapStateToProps = (state) => ({
     user: state.auth.user,
     students : state.studentProfile.students,
+    otherStudentProfile : state.studentProfile.otherStudentProfile,
     student_profile: state.studentProfile.student_profile,
     company_profile: state.company.profile
 });

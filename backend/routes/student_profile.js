@@ -63,28 +63,36 @@ const storage = multer.diskStorage({
 router.put('/', checkAuth, upload, async (req, res) => {
     const user_id = req.jwtData.user_id;
     let data = req.body;
-
-    if(req.file) {
-        // store file path
-        let path = req.file.path;
-        var avatar_public_path = path.slice(path.indexOf('/')); // exclude public/ from path
-        data = {...data, avatar_path: avatar_public_path};
-    }
-    console.log('updating with new data', data);
-    
     try {
-        const dbResp = await student_profile.updateOne(
-            { _id: user_id },
-            { $set : { 'student_profile' : [data] } } 
-            // !note: due to [{data}] schema def, only this assignment will work
-            // for student_profile array 
-        );
-        console.log('dbResp', dbResp);
-        
-        return res.status(200).json({ 
-            msg: 'success',  
-            avatar_path: avatar_public_path || null 
-        });
+        if(req.file) { // upload profile pic
+            // store file path
+            let path = req.file.path;
+            var avatar_public_path = path.slice(path.indexOf('/')); // exclude public/ from path
+            data = {...data, avatar_path: avatar_public_path};
+
+            const dbResp = await student_profile.updateOne(
+                { _id: user_id },
+                { $set : { 'student_profile.0.avatar_path' : avatar_public_path } }
+            );
+            console.log('dbResp after updating profile pic', dbResp);
+            return res.status(200).json({ 
+                msg: 'success',  
+                avatar_path: avatar_public_path || null 
+            });
+        } else { // update profile data
+            console.log('updating with new data', data);
+            const dbResp = await student_profile.updateOne(
+                { _id: user_id },
+                { $set : { 'student_profile' : [data] } } 
+                // !note: due to [{data}] schema def, only this assignment will work
+                // for student_profile array 
+            );
+            console.log('dbResp after updating profile data', dbResp);
+            return res.status(200).json({ 
+                msg: 'success',  
+                avatar_path: avatar_public_path || null 
+            });
+        }
     } catch (err) {
         console.log(err);
         res.status(500).send(err);        

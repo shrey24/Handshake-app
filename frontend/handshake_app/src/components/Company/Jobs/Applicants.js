@@ -77,7 +77,7 @@ const Applicants = (props) => {
                     </Col>
                     <Col sm={7}>
                     <Card.Title>
-                    <Link to='/students/profile' >
+                    <Link to={`/students/${item.student_id}`} >
                     {item.name}
                     </Link>
                     </Card.Title>

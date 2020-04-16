@@ -1,5 +1,6 @@
 import {
     GET_STUDENTS,
+    GET_OTHER_STUDENT_PROFILE,
     GET_STUDENTS_ERR,
     GET_STUDENT_PROFILE,
     GET_STUDENT_PROFILE_ERR,
@@ -16,7 +17,8 @@ const initialState = {
     student_profile : null,
     student_education : null,
     student_experience : null,
-    students : null    
+    students : null,
+    otherStudentProfile: null
 }
 
 export default function(state = initialState, action) {
@@ -64,9 +66,12 @@ export default function(state = initialState, action) {
         
         case GET_STUDENTS:
             return {...state, students: payload};
+
+        case GET_OTHER_STUDENT_PROFILE:
+            return{...state, otherStudentProfile: payload};
         
         case GET_STUDENTS_ERR:
-            return {...state, students: null};
+            return {...state, students: null, otherStudentProfile: null};
             
         case ERR_UPDATE_PROFILE:
             return state;

@@ -3,6 +3,7 @@ import {setAlert} from './alert';
 
 import {
         GET_STUDENTS,
+        GET_OTHER_STUDENT_PROFILE,
         GET_STUDENTS_ERR,
         GET_STUDENT_PROFILE, 
         GET_STUDENT_PROFILE_ERR,
@@ -46,7 +47,7 @@ export const getStudents = () => async dispatch => {
     }
 }
 
-export const getStudentProfile = (user_id) => async dispatch => {
+export const getOtherStudentProfile = (user_id) => async dispatch => {
     try {
         if (!user_id) user_id = 'Me';
         const res = await axios.get(`/student-profile/${user_id}`);
@@ -61,6 +62,36 @@ export const getStudentProfile = (user_id) => async dispatch => {
         console.log('action getStudentProfile Error:', err.body);
         dispatch({
             type: GET_STUDENT_PROFILE_ERR,
+            payload: err.body
+        });
+        // dispatch(setAlert(err.body.error, 'danger'));
+    }
+}
+
+export const getStudentProfile = (user_id) => async dispatch => {
+    try {
+        if (!user_id) { // fetch and set this user's studentProfile
+            user_id = 'Me';
+            const res = await axios.get(`/student-profile/${user_id}`);
+            console.log('getStudentProfile ****************************');
+            console.log(`/student-profile/${user_id}`, res);
+            dispatch({
+                type: GET_STUDENT_PROFILE,
+                payload: res.data
+            });
+        } else { // fetch any other student profile
+            const res = await axios.get(`/student-profile/${user_id}`);
+            console.log('getStudentProfile ****************************');
+            console.log(`/student-profile/${user_id}`, res);
+            dispatch({
+                type: GET_OTHER_STUDENT_PROFILE,
+                payload: res.data
+            });
+        }
+    } catch (err) {
+        console.log('action getStudentProfile Error:', err.body);
+        dispatch({
+            type: GET_STUDENTS_ERR,
             payload: err.body
         });
         // dispatch(setAlert(err.body.error, 'danger'));
