@@ -71,6 +71,7 @@ class Jobs extends Component {
                 <h3> Current Job Openings: </h3>
                 {
                     this.state.jobsList.map((item) => {
+                        let post_date = new Date(Date(item.post_date));
                         return (
                             <Container>
                             <br />
@@ -82,7 +83,7 @@ class Jobs extends Component {
                                     {item.job_title} | job id: {item.id}
                                     </Col>
                                     <Col sm={4}>
-                                    posted on {item.post_date}
+                                    posted on {post_date.toDateString()}
                                     </Col>
                                 </Row>
                             </Card.Header>

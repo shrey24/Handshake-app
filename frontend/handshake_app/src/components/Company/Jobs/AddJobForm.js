@@ -19,7 +19,7 @@ const AddJobForm = (props) => {
         // salary: '',
         job_desc: '',
         job_catagory: JOB_CAT.FULLTIME,
-        post_date: yyyy + '-' + mm + '-' + dd,
+        post_date: yyyy + '-' + mm + '-' + dd,// Date.now(),
         company_name: '',
         avatar_path: ''
     });

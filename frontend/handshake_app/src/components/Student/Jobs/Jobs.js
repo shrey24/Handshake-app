@@ -4,17 +4,25 @@ import JobsRight from './JobsRight'
 import JobsTop from './JobsTop'
 import NavBar from '../../NavBar';
 import axios from 'axios';
-import { Card, Form, Container } from 'react-bootstrap';
+import { Card, Form, Container, Pagination, Row, Col, DropdownButton, Dropdown } from 'react-bootstrap';
 import { JOB_CAT } from '../../../actions/types';
+import Spinner from '../../Spinner';
 import './Jobs.css';
 
-export default class Jobs extends Component {
+
+import { getAllJobs, applyForJob } from '../../../actions/studentJobs';
+import { connect } from 'react-redux';
+import propTypes from 'prop-types'
+
+class Jobs extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
             jobs : [], // view list
             jobsDownload : [], // original list
+            offset: 0, // for pagination
+            numsToShow: 5, // for pagination
             active: 0,
             search: '',
             filterStatus: {
@@ -22,22 +30,89 @@ export default class Jobs extends Component {
                 'Part-Time Job': false,
                 'Internship' : false,
                 'On-Campus': false
-            }
+            },
+            sortBy: 'sort results by',
+            sortByOrder: 'ascending',
         }
     }
+    componentWillReceiveProps(nextProps){
+        if (nextProps.jobsDownload !== this.props.jobsDownload) {
+            let {offset, numsToShow} = this.state;
+            let newJobs = [...nextProps.jobsDownload];
+            offset = 0;
+            this.setState({
+                ...this.state,
+                jobsDownload: newJobs,
+                jobs: newJobs.slice(offset*numsToShow, offset*numsToShow+numsToShow),
+                offset: 0,
+                active: 0
+            });
+        }
+      }
 
     componentDidMount() {
+        this.props.getAllJobs();
+        // if(this.props.jobsDownload.length !== 0) {
+        //     let {offset, numsToShow} = this.state;
+        //     let newJobs = [...this.props.jobsDownload];
+        //     offset = 0;
+        //     this.setState({
+        //         ...this.state,
+        //         jobsDownload: newJobs,
+        //         jobs: newJobs.slice(offset*numsToShow, offset*numsToShow+numsToShow),
+        //         offset: 0,
+        //         active: 0
+        //     });
+        // }
+        /*
         axios.get('/jobs/all')
             .then((res) => {
                 if(this.state.jobsDownload !== res.data) {
                     console.log('loading new data on componentDidMount()');
                     this.setState({ jobsDownload: [...res.data]});
-                    this.setState({ jobs: [...res.data]});
+                    const {offset, numsToShow} = this.state;
+                    this.setState({ jobs: [...res.data].slice(offset*numsToShow, offset*numsToShow+numsToShow)});
                 }
             })
             .catch((err) => {
                 console.log('err, unable to fetch /jobs/all', err);
             });
+            */
+    }
+
+    sortResults = (e) => {
+        e.preventDefault();
+        if (e.target.name === 'post_date') {
+            let allJobs = this.state.jobsDownload;
+            allJobs.sort((a, b) => { 
+                let aTime = new Date(a[e.target.name]);
+                let bTime = new Date(b[e.target.name]);
+                if(aTime <= bTime) return -1;
+                else return 1;
+            });
+            let { offset, numsToShow } = this.state;
+            offset = 0;
+            this.setState({
+                ...this.state,
+                jobsDownload: [...allJobs],
+                jobs: allJobs.slice(offset*numsToShow, offset*numsToShow+numsToShow),
+                sortBy: e.target.name,
+                offset: offset,
+                sortByOrder: 'ascending'
+            });
+        } else if (e.target.name === 'job_location') {
+            this.setState({
+                ...this.state,
+                sortBy: e.target.name,
+                sortByOrder: 'ascending'
+            });
+        } else if (e.target.name === 'deadline') {
+            this.setState({
+                ...this.state,
+                sortBy: e.target.name,
+                sortByOrder: 'ascending'
+            });
+        }
     }
 
     filter = (newFilterStatus) => {
@@ -130,14 +205,44 @@ export default class Jobs extends Component {
         })
     }
 
+    setPagination = (direction) => {
+        let { offset, numsToShow } = this.state;
+        if (direction === 'left') {
+            offset = offset - 1;
+            if (offset < 0) 
+                return;
+            console.log(`pagination ${direction}`);
+            this.setState({
+                ...this.state,
+                offset: offset,
+                jobs: this.state.jobsDownload.slice(offset*numsToShow, offset*numsToShow+numsToShow)
+            });
+            
+        } else {
+            offset = offset + 1;
+            let newList = this.state.jobsDownload.slice(offset*numsToShow, offset*numsToShow+numsToShow)
+            console.log(`new list: ${newList}`);
+            if(newList.length === 0) 
+                return;
+            console.log(`pagination ${direction}`);
+            this.setState({
+                ...this.state,
+                offset: offset,
+                jobs: newList
+            });
+        }
+    }
+
 render() {
     console.log('state: ', this.state);
-
+    if(this.props.loading) {
+        return <Spinner />;
+    }
     const styles = {
         backgroundColor: '#DEDEDE',
         'overflow-y': 'scroll'
     };
-    
+    const { offset, numsToShow } = this.state;
     const leftPaneComp = this.state.jobs.map((job, index) => {
         return (
             <div className="nav-link active border"
@@ -150,6 +255,7 @@ render() {
     const rightPaneComp = (this.state.jobs.length > 0) ? 
                         <JobsRight data={this.state.jobs[this.state.active]} /> :
                         <h4> no results found </h4> ;
+
 
     return (
         <div>
@@ -172,6 +278,7 @@ render() {
                     </form>
                 </nav>
             <Container>
+                <div className='mb-3'>
             <Form.Check inline 
                 type='checkbox'
                 label={'Full-Time Job'}
@@ -192,12 +299,28 @@ render() {
                  label={'On-Campus'}
                  onClick = {e => { this.toggle('On-Campus') } }
                 />
+                </div>
                 </Container>
+                <Row>
+                <DropdownButton title={this.state.sortBy} variant='primary' inline>
+            <Dropdown.Item onClick={this.sortResults} name='post_date'>Posting date</Dropdown.Item>
+            <Dropdown.Item onClick={this.sortResults} name='job_location'>location</Dropdown.Item>
+            <Dropdown.Item onClick={this.sortResults} name='deadline'>application deadline</Dropdown.Item>
+            </DropdownButton>
+                
+                <DropdownButton title={this.state.sortByOrder} variant='secondary' inline>
+            <Dropdown.Item eventKey="1">Ascending</Dropdown.Item>
+            <Dropdown.Item eventKey="2">Descending</Dropdown.Item>
+            </DropdownButton>
+                
+                </Row>
+            
+            
             </div>
             </Card.Body>
             </Card>
         </div>
-
+    
         <div className="card border">
         <div className="row">
             <div className="col-5 scroll">
@@ -207,7 +330,21 @@ render() {
                 role="tablist" 
                 aria-orientation="vertical">
                     {leftPaneComp}
-                </div>
+                    </div>
+                <Container>
+                    <Pagination>
+                    <Pagination.Prev 
+                    variant='primary'
+                    onClick = {(e) => {this.setPagination('left')}}/>
+                    <Pagination.Item>
+                    {this.state.offset*this.state.numsToShow} - {this.state.offset*this.state.numsToShow+this.state.numsToShow} / {this.state.jobsDownload.length}
+                    </Pagination.Item>
+                    <Pagination.Next 
+                    active
+                    onClick = {(e) => {this.setPagination('right')}}/>
+                    </Pagination>
+                </Container>
+                
             </div>
             
             <div className="col-7">
@@ -223,3 +360,20 @@ render() {
     )
  }
 }
+
+
+Jobs.propTypes = {
+    jobsDownload: propTypes.array.isRequired,
+    getAllJobs: propTypes.func.isRequired,
+    applyForJob: propTypes.func.isRequired,
+    loading: propTypes.bool.isRequired,
+}
+
+const mapStateToProps = (state) => ({
+    jobsDownload: state.studentJobs.jobsDownload,
+    loading: state.studentJobs.loading,
+});
+
+export default connect(mapStateToProps, { 
+    getAllJobs, applyForJob
+})(Jobs);

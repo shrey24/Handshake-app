@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import propTypes from 'prop-types';
 import AlertComp from '../../AlertComp';
 import { setAlert } from '../../../actions/alert';
+import { applyForJob } from '../../../actions/studentJobs';
 import { getStudentProfile } from '../../../actions/studentProfile';
 
 class JobsRight extends Component {
@@ -48,9 +49,7 @@ class JobsRight extends Component {
             email
          } = this.props.studentProfile[0];
 
-        console.log(
-
-        )
+        console.log();
         formData.append('name', name);
         formData.append('curr_university', curr_university);
         curr_degree && formData.append('curr_degree', curr_degree);
@@ -74,6 +73,7 @@ class JobsRight extends Component {
             }).catch((error) => {
                 console.log(error);                
             });
+        this.props.applyForJob();
     }
 
     showModal = (e) => {
@@ -177,10 +177,11 @@ class JobsRight extends Component {
 JobsRight.propTypes = {
     setAlert : propTypes.func.isRequired,
     getStudentProfile: propTypes.func.isRequired,
+    applyForJob: propTypes.func.isRequired,
 }
 
 const mapStateToProps = (state) => ({
     studentProfile : state.studentProfile.student_profile
 });
 
-export default connect(mapStateToProps, { setAlert, getStudentProfile })(JobsRight);
+export default connect(mapStateToProps, { setAlert, getStudentProfile, applyForJob })(JobsRight);

@@ -11,6 +11,7 @@ import AlertComp from '../../AlertComp';
 import { setAlert } from '../../../actions/alert';
 import { APP_STATUS } from '../../../actions/types';
 let server_url = 'ec2-34-208-245-62.us-west-2.compute.amazonaws.com:3001';
+server_url = 'http://localhost:3001';
 
 
 const Applicants = (props) => {
@@ -44,7 +45,7 @@ const Applicants = (props) => {
         axios.put('/company/applications', {'id': id, 'app_status': new_status})
             .then(res => {
                 const newList = studentList.map((s) => {
-                    if (s.id === id) 
+                    if (s._id === id) 
                         return Object.assign({}, s, {app_status:new_status});
                     else return Object.assign({}, s);
                 });
@@ -85,7 +86,7 @@ const Applicants = (props) => {
                     <Card.Text> University:  {item.curr_university}</Card.Text>
                     <Card.Text> {item.curr_degree} , Graduates {item.edu_end} </Card.Text>
                     <Card.Text> Major:  {item.curr_major}</Card.Text>
-                    <Link to={item.student_resume} target="_blank"> View Resume </Link>
+                    <a href={server_url+item.student_resume} target="_blank"> View Resume </a>
                     </Col>
                     <Col sm={3}>
                     <Card.Text> Applied on {item.app_date}</Card.Text>
@@ -102,7 +103,7 @@ const Applicants = (props) => {
                             if (APP_STATUS[k] !== item.app_status) {
                                 return (
                                     <DropdownItem 
-                                    onClick={e => changeStatus(item.id, APP_STATUS[k])}>
+                                    onClick={e => changeStatus(item._id, APP_STATUS[k])}>
                                         {APP_STATUS[k]}
                                     </DropdownItem>
                                 )

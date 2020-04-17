@@ -4,11 +4,14 @@ import company from "./company";
 import  alert from "./alert";
 import  auth from "./auth";
 import  messages from "./messages";
+import  studentJobs from "./studentJobs";
 
 export default combineReducers({
     studentProfile: studentProfile,
     alert: alert,
     auth: auth,
     company: company,
-    messages: messages
+    messages: messages,
+    studentJobs: studentJobs
+
 });
