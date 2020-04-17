@@ -10,8 +10,10 @@ import propTypes from 'prop-types';
 import AlertComp from '../../AlertComp';
 import { setAlert } from '../../../actions/alert';
 import { APP_STATUS } from '../../../actions/types';
-let server_url = 'ec2-34-208-245-62.us-west-2.compute.amazonaws.com:3001';
-server_url = 'http://localhost:3001';
+import { SERVER_URL } from '../../../config';
+// let server_url = 'ec2-34-208-245-62.us-west-2.compute.amazonaws.com:3001';
+let server_url = SERVER_URL;
+
 
 
 const Applicants = (props) => {

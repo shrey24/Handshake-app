@@ -52,24 +52,34 @@ const storage = multer.diskStorage({
 router.put('/profile', checkAuth, upload, async (req, res) => {
     const user_id = req.jwtData.user_id;
     let data = req.body;
+    try {
     if(req.file) {
         // store file path
         let path = req.file.path;
         var avatar_public_path = path.slice(path.indexOf('/'));
         data = {...data, avatar_path: avatar_public_path};
-    }
-    try {
-        console.log('updating with new data', data);
+
         const dbResp = await company_profile.updateOne(
             { _id: user_id },
-            { $set : { 'company_profile' : data } } 
-            );
-            console.log('dbResp', dbResp);
-        
+            { $set : { 'company_profile.avatar_path' : avatar_public_path } }
+        );
+        console.log('dbResp after updating profile pic', dbResp);
         return res.status(200).json({ 
             msg: 'success',  
             avatar_path: avatar_public_path || null 
         });
+    }
+    
+    console.log('updating with new data', data);
+    const dbResp = await company_profile.updateOne(
+        { _id: user_id },
+        { $set : { 'company_profile' : data } } 
+        );
+        console.log('dbResp', dbResp);
+    
+    return res.status(200).json({ 
+        msg: 'success',  
+    });
     } catch (err) {
         console.log(err);
         res.status(500).send(err);        
